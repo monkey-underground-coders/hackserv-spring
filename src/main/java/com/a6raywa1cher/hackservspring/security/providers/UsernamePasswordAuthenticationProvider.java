@@ -24,28 +24,28 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		if (!(authentication instanceof UsernamePasswordAuthenticationToken) ||
-				!(authentication.getPrincipal() instanceof String) ||
-				!(authentication.getCredentials() instanceof String)) {
-			return null;
-		}
-		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-		String email = (String) token.getPrincipal();
-		Optional<User> byUsername = userService.getByUsername(email);
-		String inputPassword = (String) authentication.getCredentials();
-		if (byUsername.isEmpty() || !passwordEncoder.matches(inputPassword, byUsername.get().getPassword())) {
-			throw new BadCredentialsException("User not exists or incorrect password");
-		}
-		User user = byUsername.get();
-		if (!user.isEnabled()) {
-			throw new AccountExpiredException(String.format("Account %d expired at %s", user.getId(), user.getExpiringAt().format(DateTimeFormatter.ISO_INSTANT)));
-		}
-		if ("".equals(user.getPassword())) {
-			throw new DisabledException("User didn't set up password");
-		}
-		return new UsernamePasswordAuthenticationToken(
-				user.getId(), token, Collections.singletonList(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE)));
-	}
+        if (!(authentication instanceof UsernamePasswordAuthenticationToken) ||
+                !(authentication.getPrincipal() instanceof String) ||
+                !(authentication.getCredentials() instanceof String)) {
+            return null;
+        }
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+        String email = (String) token.getPrincipal();
+        Optional<User> byUsername = userService.getByEmail(email);
+        String inputPassword = (String) authentication.getCredentials();
+        if (byUsername.isEmpty() || !passwordEncoder.matches(inputPassword, byUsername.get().getPassword())) {
+            throw new BadCredentialsException("User not exists or incorrect password");
+        }
+        User user = byUsername.get();
+        if (!user.isEnabled()) {
+            throw new AccountExpiredException(String.format("Account %d expired at %s", user.getId(), user.getExpiringAt().format(DateTimeFormatter.ISO_INSTANT)));
+        }
+        if ("".equals(user.getPassword())) {
+            throw new DisabledException("User didn't set up password");
+        }
+        return new UsernamePasswordAuthenticationToken(
+                user.getId(), token, Collections.singletonList(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE)));
+    }
 
 	@Override
 	public boolean supports(Class<?> authentication) {

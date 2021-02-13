@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.security.jwt;
 
+import com.a6raywa1cher.hackservspring.model.VendorId;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,6 +16,8 @@ public class JwtToken {
     private long uid;
 
     private long refreshId;
+
+    private VendorId vendorId;
 
     private String vendorSub;
 }

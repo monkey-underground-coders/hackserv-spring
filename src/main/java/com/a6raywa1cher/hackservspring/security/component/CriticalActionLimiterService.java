@@ -1,4 +1,4 @@
-package com.a6raywa1cher.hackservspring.security;
+package com.a6raywa1cher.hackservspring.security.component;
 
 
 import com.google.common.cache.CacheBuilder;

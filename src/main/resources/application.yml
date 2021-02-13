@@ -3,11 +3,12 @@ app:
   version: '@project.version@ c:@git.commit.id.abbrev@_@git.build.time@ b:@maven.build.timestamp@'
   cors-allowed-origins: [ "*" ]
   first-admin:
-    username: # REQUIRED first admin username
-    name: # REQUIRED first admin name
+    email: # REQUIRED first admin email
+    fullName: # REQUIRED first admin name
     password: # REQUIRED first admin password
+  redirect: http://localhost:8080/ls
 jwt:
-  max-refresh-tokens-per-user: 5
+  max-refresh-tokens-per-user: 10
   secret: fill-me-later
   access-duration: PT5M
   refresh-duration: P90D
@@ -15,6 +16,32 @@ spring:
   jmx:
     default-domain: com.a6raywa1cher.hackservspring
     unique-names: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: # REQUIRED Google OAuth2 clientId
+            clientSecret: # REQUIRED Google OAuth2 clientSecret
+            scope:
+              - openid
+              - email
+              - profile
+          vk:
+            clientId: # REQUIRED VK OAuth2 clientId
+            clientSecret: # REQUIRED VK OAuth2 clientSecret (protected key)
+            scope: 4194304  # email only
+            clientAuthenticationMethod: post
+            authorizationGrantType: authorization_code
+            redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            clientName: vk.com
+        provider:
+          vk:
+            authorizationUri: https://oauth.vk.com/authorize?v=5.95
+            tokenUri: https://oauth.vk.com/access_token
+            userInfoUri: https://api.vk.com/method/users.get
+            userInfoAuthenticationMethod: form
+            userNameAttribute: user_id
 spring.jackson.mapper.DEFAULT_VIEW_INCLUSION: true
 spring.servlet.multipart.max-file-size: 100MB
 spring.servlet.multipart.max-request-size: 100MB

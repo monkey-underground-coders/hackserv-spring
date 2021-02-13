@@ -24,10 +24,10 @@ public class AppConfigProperties {
 	@Data
 	public static final class FirstAdmin {
 		@NotBlank
-		private String username;
+		private String email;
 
 		@NotBlank
-		private String name;
+		private String fullName;
 
 		@NotBlank
 		private String password;

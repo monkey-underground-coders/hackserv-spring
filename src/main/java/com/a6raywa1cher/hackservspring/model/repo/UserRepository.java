@@ -11,9 +11,13 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
-	Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 
-	Optional<User> findFirstByUserRole(UserRole userRole);
+    Optional<User> findFirstByUserRole(UserRole userRole);
 
-	List<User> findTop1ByUserRole(UserRole userRole, Pageable pageable);
+    Optional<User> findByGoogleIdOrEmail(String googleId, String email);
+
+    Optional<User> findByVkIdOrEmail(String vkId, String email);
+
+    List<User> findTop1ByUserRole(UserRole userRole, Pageable pageable);
 }

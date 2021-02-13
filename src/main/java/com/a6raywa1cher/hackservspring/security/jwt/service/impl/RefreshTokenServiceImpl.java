@@ -7,6 +7,7 @@ import com.a6raywa1cher.hackservspring.security.jwt.service.BlockedRefreshTokens
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -63,6 +64,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void invalidateAll(User user) {
 		repository.deleteAll(repository.findAllByUser(user).stream()
 				.peek(rt -> service.invalidate(rt.getId()))

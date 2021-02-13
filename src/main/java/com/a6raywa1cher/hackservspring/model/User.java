@@ -21,9 +21,17 @@ public class User {
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@Column
+	@Column(unique = true, length = 1024)
 	@JsonView(Views.Internal.class)
-	private String username;
+	private String googleId;
+
+	@Column(unique = true, length = 1024)
+	@JsonView(Views.Internal.class)
+	private String vkId;
+
+	@Column(unique = true, nullable = false, length = 1024)
+	@JsonView(Views.Internal.class)
+	private String email;
 
 	@Column
 	@JsonIgnore
@@ -31,22 +39,24 @@ public class User {
 
 	@Column
 	@JsonView(Views.Public.class)
-	private String name;
+	private UserRole userRole;
+
 
 	@Column
 	@JsonView(Views.Public.class)
-	private UserRole userRole;
+	private String fullName;
+
+
 	@Column
 	@JsonView(Views.Internal.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private ZonedDateTime expiringAt;
+
 	@Column
 	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private ZonedDateTime createdAt;
-	@Column
-	@JsonView(Views.Internal.class)
-	private String createdIp;
+
 	@Column
 	@JsonView(Views.Internal.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
