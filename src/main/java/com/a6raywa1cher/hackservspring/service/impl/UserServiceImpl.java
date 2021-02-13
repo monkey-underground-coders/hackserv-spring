@@ -36,19 +36,34 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User create(UserRole userRole, VendorId vendorId, String vendorSub, String email) {
+		return create(userRole, email, null, null, vendorId, vendorSub);
+	}
+
+	@Override
 	public User create(UserRole userRole, String email, String password) {
 		return create(userRole, email, password, null);
 	}
 
 	@Override
 	public User create(UserRole userRole, String email, String password, String fullName) {
+		return create(userRole, email, password, fullName, null, null);
+	}
+
+	private User create(UserRole userRole, String email, String password, String fullName, VendorId vendorId, String vendorSub) {
 		User user = new User();
 		user.setEmail(email);
-		user.setPassword(passwordEncoder.encode(password));
+		user.setPassword(password != null ? passwordEncoder.encode(password) : null);
 		user.setFullName(fullName);
 		user.setUserRole(userRole);
 		user.setCreatedAt(ZonedDateTime.now());
 		user.setLastVisitAt(ZonedDateTime.now());
+		if (vendorId != null)
+			switch (vendorId) {
+				case GITHUB -> user.setGithubId(vendorSub);
+				case VK -> user.setVkId(vendorSub);
+				case GOOGLE -> user.setGoogleId(vendorSub);
+			}
 		return repository.save(user);
 	}
 
@@ -72,6 +87,7 @@ public class UserServiceImpl implements UserService {
 		return switch (vendorId) {
 			case VK -> repository.findByVkIdOrEmail(vendorSub, email);
 			case GOOGLE -> repository.findByGoogleIdOrEmail(vendorSub, email);
+			case GITHUB -> repository.findByGithubIdOrEmail(vendorSub, email);
 		};
 	}
 
@@ -103,6 +119,7 @@ public class UserServiceImpl implements UserService {
 		switch (vendorId) {
 			case VK -> user.setVkId(vendorSub);
 			case GOOGLE -> user.setGoogleId(vendorSub);
+			case GITHUB -> user.setGithubId(vendorSub);
 			default -> throw new RuntimeException();
 		}
 		return repository.save(user);

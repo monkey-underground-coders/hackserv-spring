@@ -34,7 +34,7 @@ public class CreateFirstAdminApplicationListener implements ApplicationListener<
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (userService.findFirstByUserRole(UserRole.ADMIN).isEmpty()) {
-            userService.create(UserRole.ADMIN, email, fullName, password);
+            userService.create(UserRole.ADMIN, email, password, fullName);
             logger.info("Created admin-user");
         }
     }

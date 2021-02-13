@@ -10,15 +10,17 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface UserService {
-	User create(UserRole userRole, String email, String password);
+    User create(UserRole userRole, VendorId vendorId, String vendorSub, String email);
 
-	User create(UserRole userRole, String email, String password, String fullName);
+    User create(UserRole userRole, String email, String password);
 
-	Optional<User> getById(Long id);
+    User create(UserRole userRole, String email, String password, String fullName);
 
-	Stream<User> getById(Collection<Long> ids);
+    Optional<User> getById(Long id);
 
-	Optional<User> getByEmail(String email);
+    Stream<User> getById(Collection<Long> ids);
+
+    Optional<User> getByEmail(String email);
 
 	Optional<User> getByVendorIdOrEmail(VendorId vendorId, String vendorSub, String email);
 

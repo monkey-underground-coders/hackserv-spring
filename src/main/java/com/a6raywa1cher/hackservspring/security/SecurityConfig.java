@@ -163,21 +163,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		OAuth2AccessTokenResponseHttpMessageConverter tokenResponseHttpMessageConverter =
 				new OAuth2AccessTokenResponseHttpMessageConverter();
 		tokenResponseHttpMessageConverter.setTokenResponseConverter(map -> {
-			String accessToken = map.get(OAuth2ParameterNames.ACCESS_TOKEN);
-			long expiresIn = Long.parseLong(map.get(OAuth2ParameterNames.EXPIRES_IN));
+            String accessToken = map.get(OAuth2ParameterNames.ACCESS_TOKEN);
 
-			OAuth2AccessToken.TokenType accessTokenType = OAuth2AccessToken.TokenType.BEARER; // vk issue
+            OAuth2AccessToken.TokenType accessTokenType = OAuth2AccessToken.TokenType.BEARER; // vk issue
 
-			Map<String, Object> additionalParameters = new HashMap<>();
+            Map<String, Object> additionalParameters = new HashMap<>();
 
-			map.forEach(additionalParameters::put);
+            map.forEach(additionalParameters::put);
 
-			return OAuth2AccessTokenResponse.withToken(accessToken)
-					.tokenType(accessTokenType)
-					.expiresIn(expiresIn)
-					.additionalParameters(additionalParameters)
-					.build();
-		});
+            OAuth2AccessTokenResponse.Builder builder = OAuth2AccessTokenResponse.withToken(accessToken)
+                    .tokenType(accessTokenType)
+                    .additionalParameters(additionalParameters);
+            if (map.containsKey(OAuth2ParameterNames.EXPIRES_IN)) {
+                long expiresIn = Long.parseLong(map.get(OAuth2ParameterNames.EXPIRES_IN));
+                builder.expiresIn(expiresIn);
+            }
+
+            return builder.build();
+        });
 		RestTemplate restTemplate = new RestTemplate(Arrays.asList(
 				new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
 		restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());

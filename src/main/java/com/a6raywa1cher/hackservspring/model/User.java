@@ -21,19 +21,23 @@ public class User {
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@Column(unique = true, length = 1024)
+	@Column(unique = true)
 	@JsonView(Views.Internal.class)
 	private String googleId;
 
-	@Column(unique = true, length = 1024)
+	@Column(unique = true)
 	@JsonView(Views.Internal.class)
 	private String vkId;
+
+	@Column(unique = true)
+	@JsonView(Views.Internal.class)
+	private String githubId;
 
 	@Column(unique = true, nullable = false, length = 1024)
 	@JsonView(Views.Internal.class)
 	private String email;
 
-	@Column
+	@Column(length = 1024)
 	@JsonIgnore
 	private String password;
 

@@ -19,5 +19,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
     Optional<User> findByVkIdOrEmail(String vkId, String email);
 
+    Optional<User> findByGithubIdOrEmail(String githubId, String email);
+
     List<User> findTop1ByUserRole(UserRole userRole, Pageable pageable);
 }

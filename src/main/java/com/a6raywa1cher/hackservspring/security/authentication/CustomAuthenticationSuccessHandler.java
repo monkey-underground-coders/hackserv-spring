@@ -1,6 +1,7 @@
 package com.a6raywa1cher.hackservspring.security.authentication;
 
 import com.a6raywa1cher.hackservspring.model.User;
+import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.JwtRefreshPair;
@@ -20,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Component
@@ -51,15 +51,17 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		Optional<User> optionalUser = userService.getByVendorIdOrEmail(vendor, id, email);
 		User user;
 		if (optionalUser.isEmpty()) { // if that's a new user, register him
-			user = new User();
-			switch (vendor) {
-				case GOOGLE -> user.setGoogleId(id);
-				case VK -> user.setVkId(id);
-			}
-			user.setLastVisitAt(ZonedDateTime.now());
-			user.setEmail(email);
-			user.setCreatedAt(ZonedDateTime.now());
-			userRepository.save(user);
+//			user = new User();
+//			switch (vendor) {
+//				case GOOGLE -> user.setGoogleId(id);
+//				case VK -> user.setVkId(id);
+//				case GITHUB -> user.setGithubId(id);
+//			}
+//			user.setLastVisitAt(ZonedDateTime.now());
+//			user.setEmail(email);
+//			user.setCreatedAt(ZonedDateTime.now());
+//			userRepository.save(user);
+			user = userService.create(UserRole.USER, vendor, id, email);
 		} else { // or else check email collisions
 			user = optionalUser.get();
 			switch (vendor) {
@@ -72,6 +74,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 				case VK:
 					if (user.getGoogleId() == null) {
 						user.setVkId(id);
+						userRepository.save(user);
+					}
+					break;
+				case GITHUB:
+					if (user.getGithubId() == null) {
+						user.setGithubId(id);
 						userRepository.save(user);
 					}
 					break;

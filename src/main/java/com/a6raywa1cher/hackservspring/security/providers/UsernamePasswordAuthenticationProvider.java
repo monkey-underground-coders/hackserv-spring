@@ -33,15 +33,18 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         String email = (String) token.getPrincipal();
         Optional<User> byUsername = userService.getByEmail(email);
         String inputPassword = (String) authentication.getCredentials();
-        if (byUsername.isEmpty() || !passwordEncoder.matches(inputPassword, byUsername.get().getPassword())) {
+        if (byUsername.isEmpty()) {
             throw new BadCredentialsException("User not exists or incorrect password");
         }
         User user = byUsername.get();
+        if (user.getPassword() == null || "".equals(user.getPassword())) {
+            throw new DisabledException("User didn't set up password");
+        }
         if (!user.isEnabled()) {
             throw new AccountExpiredException(String.format("Account %d expired at %s", user.getId(), user.getExpiringAt().format(DateTimeFormatter.ISO_INSTANT)));
         }
-        if ("".equals(user.getPassword())) {
-            throw new DisabledException("User didn't set up password");
+        if (!passwordEncoder.matches(inputPassword, user.getPassword())) {
+            throw new BadCredentialsException("User not exists or incorrect password");
         }
         return new UsernamePasswordAuthenticationToken(
                 user.getId(), token, Collections.singletonList(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE)));

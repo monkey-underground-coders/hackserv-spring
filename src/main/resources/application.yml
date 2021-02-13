@@ -35,6 +35,11 @@ spring:
             authorizationGrantType: authorization_code
             redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             clientName: vk.com
+          github:
+            clientId: # REQUIRED GitHub OAuth2 clientId
+            clientSecret: # REQUIRED GitHub OAuth2 clientSecret
+            scope:
+              - user:email
         provider:
           vk:
             authorizationUri: https://oauth.vk.com/authorize?v=5.95
