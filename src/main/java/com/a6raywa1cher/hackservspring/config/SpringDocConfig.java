@@ -17,7 +17,7 @@ public class SpringDocConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("MUC ServingBox").version(version).license(new License().name("MIT License").url("https://github.com/monkey-underground-coders/muc-servingbox-spring/blob/master/LICENSE")))
+                .info(new Info().title("hackserv-spring").version(version).license(new License().name("MIT License").url("https://github.com/end-hackers/hackserv-spring/blob/master/LICENSE")))
                 .components(new Components()
                         .addSecuritySchemes("basic",
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic"))

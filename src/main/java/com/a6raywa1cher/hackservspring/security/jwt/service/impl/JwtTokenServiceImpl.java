@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 public class JwtTokenServiceImpl implements JwtTokenService {
-    private final static String ISSUER_NAME = "muc-servingbox-spring";
+    private final static String ISSUER_NAME = "hackserv-spring";
     private final static String REFRESH_TOKEN_ID_CLAIM = "rti";
     private final static String VENDOR_SUB = "vsub";
     private final static String VENDOR_ID = "vid";
