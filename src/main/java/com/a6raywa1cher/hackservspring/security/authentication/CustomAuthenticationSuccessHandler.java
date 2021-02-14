@@ -48,44 +48,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		VendorId vendor = getVendorId(authentication);
 		String email = oAuth2User.getAttribute("email");
 		String id = oAuth2User.getAttribute("sub");
-		Optional<User> optionalUser = userService.getByVendorIdOrEmail(vendor, id, email);
-		User user;
-		if (optionalUser.isEmpty()) { // if that's a new user, register him
-//			user = new User();
-//			switch (vendor) {
-//				case GOOGLE -> user.setGoogleId(id);
-//				case VK -> user.setVkId(id);
-//				case GITHUB -> user.setGithubId(id);
-//			}
-//			user.setLastVisitAt(ZonedDateTime.now());
-//			user.setEmail(email);
-//			user.setCreatedAt(ZonedDateTime.now());
-//			userRepository.save(user);
-			user = userService.create(UserRole.USER, vendor, id, email);
-		} else { // or else check email collisions
-			user = optionalUser.get();
-			switch (vendor) {
-				case GOOGLE:
-					if (user.getGoogleId() == null) {
-						user.setGoogleId(id);
-						userRepository.save(user);
-					}
-					break;
-				case VK:
-					if (user.getGoogleId() == null) {
-						user.setVkId(id);
-						userRepository.save(user);
-					}
-					break;
-				case GITHUB:
-					if (user.getGithubId() == null) {
-						user.setGithubId(id);
-						userRepository.save(user);
-					}
-					break;
-			}
-		}
-		return user;
+		Optional<User> optionalUser = userService.getByVendorId(vendor, id);
+		return optionalUser.orElseGet(() -> userService.create(UserRole.USER, vendor, id, email));
 	}
 
 	@Override

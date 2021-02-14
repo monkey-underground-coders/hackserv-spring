@@ -83,11 +83,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<User> getByVendorIdOrEmail(VendorId vendorId, String vendorSub, String email) {
+	public Optional<User> getByVendorId(VendorId vendorId, String vendorSub) {
 		return switch (vendorId) {
-			case VK -> repository.findByVkIdOrEmail(vendorSub, email);
-			case GOOGLE -> repository.findByGoogleIdOrEmail(vendorSub, email);
-			case GITHUB -> repository.findByGithubIdOrEmail(vendorSub, email);
+			case VK -> repository.findByVkId(vendorSub);
+			case GOOGLE -> repository.findByGoogleId(vendorSub);
+			case GITHUB -> repository.findByGithubId(vendorSub);
 		};
 	}
 
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User setVendorSub(User user, VendorId vendorId, String vendorSub) {
-		if (this.getByVendorIdOrEmail(vendorId, vendorSub, "--not email!--").isPresent()) {
+		if (this.getByVendorId(vendorId, vendorSub).isPresent()) {
 			throw new IllegalArgumentException();
 		}
 		switch (vendorId) {

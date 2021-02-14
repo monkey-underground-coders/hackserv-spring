@@ -15,11 +15,11 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
     Optional<User> findFirstByUserRole(UserRole userRole);
 
-    Optional<User> findByGoogleIdOrEmail(String googleId, String email);
+    Optional<User> findByGoogleId(String googleId);
 
-    Optional<User> findByVkIdOrEmail(String vkId, String email);
+    Optional<User> findByVkId(String vkId);
 
-    Optional<User> findByGithubIdOrEmail(String githubId, String email);
+    Optional<User> findByGithubId(String githubId);
 
     List<User> findTop1ByUserRole(UserRole userRole, Pageable pageable);
 }

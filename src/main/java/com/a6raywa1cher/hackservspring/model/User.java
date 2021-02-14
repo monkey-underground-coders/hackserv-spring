@@ -15,25 +15,30 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @Builder
+@Table(uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"google_id", "email"}),
+		@UniqueConstraint(columnNames = {"vk_id", "email"}),
+		@UniqueConstraint(columnNames = {"github_id", "email"}),
+})
 public class User {
 	@Id
 	@GeneratedValue
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@Column(unique = true)
+	@Column(name = "google_id", unique = true)
 	@JsonView(Views.Internal.class)
 	private String googleId;
 
-	@Column(unique = true)
+	@Column(name = "vk_id", unique = true)
 	@JsonView(Views.Internal.class)
 	private String vkId;
 
-	@Column(unique = true)
+	@Column(name = "github_id", unique = true)
 	@JsonView(Views.Internal.class)
 	private String githubId;
 
-	@Column(unique = true, nullable = false, length = 1024)
+	@Column(name = "email", nullable = false, length = 1024)
 	@JsonView(Views.Internal.class)
 	private String email;
 

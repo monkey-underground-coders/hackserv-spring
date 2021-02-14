@@ -112,9 +112,7 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
         return switch (userRequest.getClientRegistration().getClientName()) {
             case "vk.com" -> processVk(userRequest);
             case "GitHub" -> processGithub(userRequest);
-            default -> {
-                throw new RuntimeException();
-            }
+            default -> throw new RuntimeException();
         };
     }
 }
