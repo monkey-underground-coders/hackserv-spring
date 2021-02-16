@@ -105,7 +105,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/oauth2/**", "/error", "/login", "/logout").permitAll()
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers("/").permitAll()
-				.antMatchers("/user/create").hasRole("ADMIN")
+				.antMatchers("/user/create").permitAll()
 				.antMatchers("/user/temp").permitAll()
 				.antMatchers(HttpMethod.GET, "/user/").hasRole("MODERATOR")
 				.antMatchers(HttpMethod.GET, "/user/{uid:[0-9]+}/internal").hasRole("ADMIN")
