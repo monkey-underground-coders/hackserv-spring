@@ -75,7 +75,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
 						  AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
 						  PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
-						  @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService, @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+						  @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
+						  @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
+						  CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
 		this.userService = userService;
 		this.appConfigProperties = appConfigProperties;
 		this.jwtTokenService = jwtTokenService;

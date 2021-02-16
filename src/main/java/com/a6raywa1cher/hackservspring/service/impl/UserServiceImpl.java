@@ -31,10 +31,6 @@ public class UserServiceImpl implements UserService {
 		this.refreshTokenService = refreshTokenService;
 	}
 
-	private int extractNumber(String name) {
-		return Integer.parseInt(name.substring(name.lastIndexOf('#') + 1));
-	}
-
 	@Override
 	public User create(UserRole userRole, VendorId vendorId, String vendorSub, String email) {
 		return create(userRole, email, null, null, vendorId, vendorSub);
