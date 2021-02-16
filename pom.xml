@@ -17,6 +17,7 @@
     <properties>
         <java.version>15</java.version>
         <springdoc.version>1.4.4</springdoc.version>
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
         <dependency>
@@ -155,6 +156,17 @@
     </dependencies>
 
     <build>
+        <finalName>hackserv-spring</finalName>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/application*.yml</include>
+                    <!--                    <include>**/strings.properties</include>-->
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
