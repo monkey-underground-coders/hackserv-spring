@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring.service;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
+import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -16,23 +17,25 @@ public interface UserService {
 
 	User create(UserRole userRole, String email, String password, String fullName);
 
-	Optional<User> getById(Long id);
+    Optional<User> getById(Long id);
 
-	Stream<User> getById(Collection<Long> ids);
+    Stream<User> getById(Collection<Long> ids);
 
-	Optional<User> getByEmail(String email);
+    Optional<User> getByEmail(String email);
 
-	Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
+    Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
 
-	User editUser(User user, UserRole userRole, String email, String fullName);
+    User editUser(User user, UserRole userRole, String email, String fullName);
 
-	User editPassword(User user, String password);
+    User editUserInfo(User user, UserInfo userInfo);
 
-	User setLastVisitAt(User user, ZonedDateTime at);
+    User editPassword(User user, String password);
 
-	User setVendorSub(User user, VendorId vendorId, String vendorSub);
+    User setLastVisitAt(User user, ZonedDateTime at);
 
-	Optional<User> findFirstByUserRole(UserRole role);
+    User setVendorSub(User user, VendorId vendorId, String vendorSub);
 
-	void deleteUser(User user);
+    Optional<User> findFirstByUserRole(UserRole role);
+
+    void deleteUser(User user);
 }

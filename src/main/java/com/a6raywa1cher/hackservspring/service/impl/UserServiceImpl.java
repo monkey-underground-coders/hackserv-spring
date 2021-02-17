@@ -6,6 +6,7 @@ import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
 import com.a6raywa1cher.hackservspring.service.UserService;
+import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -84,26 +85,36 @@ public class UserServiceImpl implements UserService {
 			case VK -> repository.findByVkId(vendorSub);
 			case GOOGLE -> repository.findByGoogleId(vendorSub);
 			case GITHUB -> repository.findByGithubId(vendorSub);
-		};
-	}
+        };
+    }
 
 
-	@Override
-	public User editUser(User user, UserRole userRole, String email, String fullName) {
-		user.setFullName(fullName);
-		user.setEmail(email);
-		return repository.save(user);
-	}
+    @Override
+    public User editUser(User user, UserRole userRole, String email, String fullName) {
+        user.setFullName(fullName);
+        user.setEmail(email);
+        return repository.save(user);
+    }
 
-	@Override
-	public User editPassword(User user, String password) {
-		user.setPassword(passwordEncoder.encode(password));
-		return repository.save(user);
-	}
+    @Override
+    public User editUserInfo(User user, UserInfo userInfo) {
+        user.setFullName(userInfo.getFullName());
+        user.setTelegram(userInfo.getTelegram());
+        user.setDateOfBirth(userInfo.getDateOfBirth());
+        user.setWorkPlace(userInfo.getWorkPlace());
+        user.setOtherInfo(userInfo.getOtherInfo());
+        return repository.save(user);
+    }
 
-	@Override
-	public User setLastVisitAt(User user, ZonedDateTime at) {
-		user.setLastVisitAt(at);
+    @Override
+    public User editPassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        return repository.save(user);
+    }
+
+    @Override
+    public User setLastVisitAt(User user, ZonedDateTime at) {
+        user.setLastVisitAt(at);
 		return repository.save(user);
 	}
 
