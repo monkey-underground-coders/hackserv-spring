@@ -11,8 +11,6 @@ import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.utils.LocalHtmlUtils;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +33,6 @@ public class UserController {
 
     @PostMapping("/create")
     @JsonView(Views.Internal.class)
-    @Operation(security = @SecurityRequirement(name = "jwt"))
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest request) throws EmailAlreadyExistsException {
         if (userService.getByEmail(request.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException();
