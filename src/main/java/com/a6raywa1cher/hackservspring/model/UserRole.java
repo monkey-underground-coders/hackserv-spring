@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum UserRole {
-    USER, ADMIN(true, USER);
+    USER, JUDGE, ADMIN(true, USER, JUDGE);
     public final Set<UserRole> access;
 
     UserRole(UserRole... accessTo) {

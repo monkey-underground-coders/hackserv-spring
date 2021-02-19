@@ -8,11 +8,11 @@ import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
-import com.a6raywa1cher.hackservspring.utils.LocalHtmlUtils;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -54,14 +54,8 @@ public class UserController {
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
-
         UserInfo userInfo = new UserInfo();
-
-        userInfo.setFullName(LocalHtmlUtils.htmlEscape(request.getFullName(), 250));
-        userInfo.setTelegram(LocalHtmlUtils.htmlEscape(request.getTelegram(), 250));
-        userInfo.setDateOfBirth(request.getDateOfBirth());
-        userInfo.setWorkPlace(LocalHtmlUtils.htmlEscape(request.getWorkPlace(), 250));
-        userInfo.setOtherInfo(LocalHtmlUtils.htmlEscape(request.getOtherInfo(), 250));
+        BeanUtils.copyProperties(request, userInfo);
 
         User user = userService.editUserInfo(optionalUser.get(), userInfo);
 

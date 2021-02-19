@@ -7,7 +7,6 @@ import com.a6raywa1cher.hackservspring.security.authentication.JwtAuthentication
 import com.a6raywa1cher.hackservspring.security.jwt.JwtToken;
 import com.a6raywa1cher.hackservspring.security.jwt.service.BlockedRefreshTokensService;
 import com.a6raywa1cher.hackservspring.service.UserService;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
@@ -18,7 +17,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,15 +52,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new UsernameNotFoundException(String.format("User %d doesn't exists", userId));
 		}
 		User user = byId.get();
-		if (!user.isEnabled()) {
-			throw new AccountExpiredException(String.format("Account %d expired at %s", user.getId(), user.getExpiringAt().format(DateTimeFormatter.ISO_INSTANT)));
-		}
 		UserRole userRole = user.getUserRole();
 		Set<GrantedAuthority> authoritySet = userRole.access.stream()
 				.map(role -> new SimpleGrantedAuthority("ACCESS_" + role.name()))
 				.collect(Collectors.toSet());
 		authoritySet.add(new SimpleGrantedAuthority("ROLE_USER"));
 		authoritySet.add(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
+		if (user.isEnabled())
+			authoritySet.add(new SimpleGrantedAuthority("ENABLED"));
 		return new CustomAuthentication(authoritySet, jwtToken);
 	}
 

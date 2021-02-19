@@ -3,14 +3,18 @@ package com.a6raywa1cher.hackservspring.security.providers;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.security.SecurityConstants;
 import com.a6raywa1cher.hackservspring.service.UserService;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
@@ -40,14 +44,15 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         if (user.getPassword() == null || "".equals(user.getPassword())) {
             throw new DisabledException("User didn't set up password");
         }
-        if (!user.isEnabled()) {
-            throw new AccountExpiredException(String.format("Account %d expired at %s", user.getId(), user.getExpiringAt().format(DateTimeFormatter.ISO_INSTANT)));
-        }
         if (!passwordEncoder.matches(inputPassword, user.getPassword())) {
             throw new BadCredentialsException("User not exists or incorrect password");
         }
+        List<GrantedAuthority> authorityList = new ArrayList<>();
+        if (user.isEnabled())
+            authorityList.add(new SimpleGrantedAuthority("ENABLED"));
+        authorityList.add(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE));
         return new UsernamePasswordAuthenticationToken(
-                user.getId(), token, Collections.singletonList(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE)));
+                user.getId(), token, authorityList);
     }
 
 	@Override

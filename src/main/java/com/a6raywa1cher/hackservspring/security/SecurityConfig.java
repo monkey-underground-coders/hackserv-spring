@@ -53,118 +53,102 @@ import java.util.Map;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	private final OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService;
+    private final OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService;
 
-	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
 
-	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-	private final UserService userService;
+    private final UserService userService;
 
-	private final AppConfigProperties appConfigProperties;
+    private final AppConfigProperties appConfigProperties;
 
-	private final JwtTokenService jwtTokenService;
+    private final JwtTokenService jwtTokenService;
 
-	private final AuthenticationResolver authenticationResolver;
+    private final AuthenticationResolver authenticationResolver;
 
-	private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-	private final BlockedRefreshTokensService blockedRefreshTokensService;
+    private final BlockedRefreshTokensService blockedRefreshTokensService;
 
-	@Autowired
-	public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
-						  AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
-						  PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
-						  @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
-						  @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
-						  CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
-		this.userService = userService;
-		this.appConfigProperties = appConfigProperties;
-		this.jwtTokenService = jwtTokenService;
-		this.authenticationResolver = authenticationResolver;
-		this.passwordEncoder = passwordEncoder;
-		this.blockedRefreshTokensService = blockedRefreshTokensService;
-		this.oidcUserService = oidcUserService;
-		this.oAuth2UserService = oAuth2UserService;
-		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
-	}
+    @Autowired
+    public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
+                          AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
+                          PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
+                          @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
+                          @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
+                          CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+        this.userService = userService;
+        this.appConfigProperties = appConfigProperties;
+        this.jwtTokenService = jwtTokenService;
+        this.authenticationResolver = authenticationResolver;
+        this.passwordEncoder = passwordEncoder;
+        this.blockedRefreshTokensService = blockedRefreshTokensService;
+        this.oidcUserService = oidcUserService;
+        this.oAuth2UserService = oAuth2UserService;
+        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+    }
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) {
-		auth
-				.authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService))
-				.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder));
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth
+                .authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService))
+                .authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder));
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable()
-				.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.authorizeRequests()
-				.antMatchers("/oauth2/**", "/error", "/login", "/logout").permitAll()
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.antMatchers("/").permitAll()
-				.antMatchers("/user/create").permitAll()
-				.antMatchers("/user/temp").permitAll()
-				.antMatchers(HttpMethod.GET, "/user/").hasRole("MODERATOR")
-				.antMatchers(HttpMethod.GET, "/user/{uid:[0-9]+}/internal").hasRole("ADMIN")
-				.antMatchers("/user/change_password").hasRole("CUSTOMER")
-				.antMatchers(HttpMethod.DELETE, "/user/{uid:[0-9]+}").hasRole("ADMIN")
-				.antMatchers("/v3/api-docs/**", "/webjars/**", "/swagger-resources", "/swagger-resources/**",
-						"/swagger-ui.html", "/swagger-ui/**").permitAll()
-				.antMatchers("/csrf").permitAll()
-				.antMatchers("/ws-entry").permitAll()
-				.antMatchers("/auth/convert").hasAuthority("CONVERTIBLE")
-				.antMatchers("/auth/get_access").permitAll()
-				.antMatchers("/live/active").permitAll()
-				.antMatchers("/logout").authenticated()
-				.antMatchers("/favicon.ico").permitAll()
-				.anyRequest().hasRole("USER")
-				.and()
-				.cors()
-				.configurationSource(corsConfigurationSource(appConfigProperties));
-		http
-				.httpBasic()
-				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-				.and()
-				.formLogin();
-		http.oauth2Login()
-				.successHandler(customAuthenticationSuccessHandler)
-				.userInfoEndpoint()
-				.oidcUserService(oidcUserService)
-				.userService(oAuth2UserService)
-				.and()
-				.tokenEndpoint()
-				.accessTokenResponseClient(accessTokenResponseClient());
-		http.oauth2Client();
-		http
-				.exceptionHandling()
-//			.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-//			.accessDeniedHandler(new CustomAccessDeniedHandler())
-		;
-		http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenService, authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
-		http.addFilterAfter(new LastVisitFilter(userService, authenticationResolver), SecurityContextHolderAwareRequestFilter.class);
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests()
+                .antMatchers("/oauth2/**", "/error", "/login").permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/user/create").permitAll()
+                .antMatchers("/v3/api-docs/**", "/webjars/**", "/swagger-resources", "/swagger-resources/**",
+                        "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .antMatchers("/csrf").permitAll()
+                .antMatchers("/ws-entry").permitAll()
+                .antMatchers("/auth/convert").hasAuthority(SecurityConstants.CONVERTIBLE)
+                .antMatchers("/auth/get_access").permitAll()
+                .antMatchers("/auth/**").authenticated()
+                .antMatchers("/favicon.ico").permitAll()
+                .anyRequest().access("hasRole('USER') && hasAuthority('ENABLED')");
+        http.cors()
+                .configurationSource(corsConfigurationSource(appConfigProperties));
+        http.httpBasic()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+        http.formLogin();
+        http.oauth2Login()
+                .successHandler(customAuthenticationSuccessHandler)
+                .userInfoEndpoint()
+                .oidcUserService(oidcUserService)
+                .userService(oAuth2UserService)
+                .and()
+                .tokenEndpoint()
+                .accessTokenResponseClient(accessTokenResponseClient());
+        http.oauth2Client();
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenService, authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(new LastVisitFilter(userService, authenticationResolver), SecurityContextHolderAwareRequestFilter.class);
 //		http.addFilterBefore(new CriticalActionLimiterFilter(criticalActionLimiterService), JwtAuthenticationFilter.class);
-	}
+    }
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-	@Bean
-	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-		DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient =
-				new DefaultAuthorizationCodeTokenResponseClient();
-		accessTokenResponseClient.setRequestEntityConverter(new OAuth2AuthorizationCodeGrantRequestEntityConverter());
+    @Bean
+    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient =
+                new DefaultAuthorizationCodeTokenResponseClient();
+        accessTokenResponseClient.setRequestEntityConverter(new OAuth2AuthorizationCodeGrantRequestEntityConverter());
 
-		OAuth2AccessTokenResponseHttpMessageConverter tokenResponseHttpMessageConverter =
-				new OAuth2AccessTokenResponseHttpMessageConverter();
-		tokenResponseHttpMessageConverter.setTokenResponseConverter(map -> {
+        OAuth2AccessTokenResponseHttpMessageConverter tokenResponseHttpMessageConverter =
+                new OAuth2AccessTokenResponseHttpMessageConverter();
+        tokenResponseHttpMessageConverter.setTokenResponseConverter(map -> {
             String accessToken = map.get(OAuth2ParameterNames.ACCESS_TOKEN);
 
             OAuth2AccessToken.TokenType accessTokenType = OAuth2AccessToken.TokenType.BEARER; // vk issue
@@ -183,23 +167,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             return builder.build();
         });
-		RestTemplate restTemplate = new RestTemplate(Arrays.asList(
-				new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
-		restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
+        RestTemplate restTemplate = new RestTemplate(Arrays.asList(
+                new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
+        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
 
-		accessTokenResponseClient.setRestOperations(restTemplate);
-		return accessTokenResponseClient;
-	}
+        accessTokenResponseClient.setRestOperations(restTemplate);
+        return accessTokenResponseClient;
+    }
 
-	@Bean
-	CorsConfigurationSource corsConfigurationSource(AppConfigProperties appConfigProperties) {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList(appConfigProperties.getCorsAllowedOrigins()));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "PUT", "HEAD", "OPTIONS"));
-		configuration.setAllowedHeaders(Collections.singletonList("*"));
-		configuration.setAllowCredentials(true);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
-	}
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(AppConfigProperties appConfigProperties) {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(appConfigProperties.getCorsAllowedOrigins()));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "PUT", "HEAD", "OPTIONS"));
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
