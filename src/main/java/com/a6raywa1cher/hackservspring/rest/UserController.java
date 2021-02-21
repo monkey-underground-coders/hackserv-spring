@@ -1,11 +1,13 @@
 package com.a6raywa1cher.hackservspring.rest;
 
+import com.a6raywa1cher.hackservspring.model.EmailValidationToken;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.rest.exc.EmailAlreadyExistsException;
 import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
+import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.Optional;
@@ -28,9 +31,11 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final EmailValidationService emailValidationService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, EmailValidationService emailValidationService) {
         this.userService = userService;
+        this.emailValidationService = emailValidationService;
     }
 
     @PostMapping("/create")
@@ -61,4 +66,17 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+
+    @PostMapping("/{uid:[0-9]+}/email/req")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @JsonView(Views.Internal.class)
+    public ResponseEntity<EmailValidationToken> sendEmailValidationToken(@PathVariable long uid) throws MessagingException {
+        EmailValidationToken token = emailValidationService.createToken();
+        emailValidationService.sendMassage(token);
+
+        return ResponseEntity.ok(token);
+    }
+
 }

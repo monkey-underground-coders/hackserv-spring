@@ -53,7 +53,6 @@ public class User {
     @JsonView(Views.Public.class)
     private UserRole userRole;
 
-    @Column
     @OneToOne
     @JsonIgnore
     private EmailValidationToken emailValidationToken;
