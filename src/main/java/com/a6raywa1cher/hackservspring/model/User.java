@@ -41,7 +41,7 @@ public class User {
 	@JsonView(Views.Internal.class)
 	private String githubId;
 
-	@Column(name = "email", nullable = false, length = 1024)
+	@Column(name = "email", nullable = false, length = 1024, unique = true)
 	@JsonView(Views.Internal.class)
 	private String email;
 
