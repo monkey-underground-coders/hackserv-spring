@@ -4,8 +4,10 @@ import com.a6raywa1cher.hackservspring.model.EmailValidationToken;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.rest.exc.EmailAlreadyExistsException;
+import com.a6raywa1cher.hackservspring.rest.exc.TokenIsWrongException;
 import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
+import com.a6raywa1cher.hackservspring.rest.req.EmailValidationTokenRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
 import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.service.UserService;
@@ -46,6 +48,7 @@ public class UserController {
         }
 
         User user = userService.create(UserRole.USER, request.getEmail(), request.getPassword());
+        emailValidationService.createToken(user);
         return ResponseEntity.ok(user);
     }
 
@@ -72,11 +75,33 @@ public class UserController {
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
     @JsonView(Views.Internal.class)
-    public ResponseEntity<EmailValidationToken> sendEmailValidationToken(@PathVariable long uid) throws MessagingException {
-        EmailValidationToken token = emailValidationService.createToken();
-        emailValidationService.sendMassage(token);
+    public ResponseEntity<EmailValidationToken> sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException {
 
-        return ResponseEntity.ok(token);
+        Optional<User> optionalUser = userService.getById(uid);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+        emailValidationService.sendMassage(user);
+
+        return ResponseEntity.ok(user.getEmailValidationToken());
     }
 
+
+    @PostMapping("/{uid:[0-9]+}/email/validate")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @JsonView(Views.Internal.class)
+    public ResponseEntity<Void> validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException {
+        Optional<User> optionalUser = userService.getById(uid);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+
+        if (!emailValidationService.checkToken(user, request.getToken())) {
+            throw new TokenIsWrongException();
+        }
+        return ResponseEntity.ok().build();
+    }
 }
