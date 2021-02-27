@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -49,6 +50,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
         SecureRandom secureRandom = new SecureRandom();
         int tokenInt = 100000 + secureRandom.nextInt(900000);
         token.setToken(tokenInt);
+        token.setCreatedAt(ZonedDateTime.now());
         EmailValidationToken saved = tokenRepository.save(token);
         user.setEmailValidationToken(saved);
         userRepository.save(user);
