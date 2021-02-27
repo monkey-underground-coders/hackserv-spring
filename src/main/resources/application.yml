@@ -4,7 +4,8 @@ app:
   cors-allowed-origins: [ "*" ]
   first-admin:
     email: # REQUIRED first admin email
-    fullName: # REQUIRED first admin name
+    fullName: # REQUIRED first admin nameupload-dir: "C:\\Users\\Natsu\\IdeaProjects\\hackserv-spring\\container\\"
+
     password: # REQUIRED first admin password
   redirect: http://localhost:8080/ls
 jwt:

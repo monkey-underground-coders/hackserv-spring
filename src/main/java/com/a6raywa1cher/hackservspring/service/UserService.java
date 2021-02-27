@@ -25,7 +25,7 @@ public interface UserService {
 
     Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
 
-    User editUser(User user, UserRole userRole, String email, String fullName);
+    User editUser(User user, UserRole userRole, String email, String fullName, String resume);
 
     User editUserInfo(User user, UserInfo userInfo);
 
@@ -36,6 +36,10 @@ public interface UserService {
     User setVendorSub(User user, VendorId vendorId, String vendorSub);
 
     Optional<User> findFirstByUserRole(UserRole role);
+
+    User setDocumentResumePath(User user, String path);
+
+    User deleteResume(User user);
 
     void deleteUser(User user);
 }
