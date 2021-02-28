@@ -28,7 +28,7 @@ public class DiscServiceImpl implements DiscService {
     public DiscServiceImpl(){};
 
     private int sizeToInt() {
-        return Integer.getInteger(MaxFileSize.substring(0, MaxFileSize.lastIndexOf('K')));
+        return Integer.parseInt(MaxFileSize.substring(0, MaxFileSize.lastIndexOf("K")));
     }
 
     private Path getPath(String relativePath){

@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring.rest;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.rest.exc.EmailAlreadyExistsException;
+import com.a6raywa1cher.hackservspring.rest.exc.FileSizeLimitExceededException;
 import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
@@ -45,6 +46,7 @@ public class UserController {
 
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @GetMapping(value="/{uid}/cv/")
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
     public ResponseEntity<Resource> getResume (@PathVariable Long uid) throws UserNotExistsException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()){
@@ -60,12 +62,14 @@ public class UserController {
 
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PostMapping(path="/{uid}/cv/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<User> createResume(@PathVariable Long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException {
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    public ResponseEntity<User> createResume(@PathVariable Long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
         User user = optionalUser.get();
+
         if (user.getDocumentResumePath() != null){
             deleteResumeDocument(uid);
         }
@@ -75,6 +79,7 @@ public class UserController {
 
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @DeleteMapping(value="/{uid}/cv/")
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
     public ResponseEntity<User> deleteResumeDocument(@PathVariable Long uid) throws UserNotExistsException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
@@ -94,7 +99,6 @@ public class UserController {
         User user = userService.create(UserRole.USER, request.getEmail(), request.getPassword());
         return ResponseEntity.ok(user);
     }
-
 
     @PutMapping("/{uid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
