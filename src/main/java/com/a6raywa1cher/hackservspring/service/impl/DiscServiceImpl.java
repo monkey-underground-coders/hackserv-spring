@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
+import com.a6raywa1cher.hackservspring.rest.exc.FileSizeLimitExceededException;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.utils.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,25 @@ public class DiscServiceImpl implements DiscService {
     @Value("${app.upload-dir}")
     private String masterPath;
 
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String MaxFileSize;
+
     @Autowired
     public DiscServiceImpl(){};
+
+    private int sizeToInt() {
+        return Integer.getInteger(MaxFileSize.substring(0, MaxFileSize.lastIndexOf('K')));
+    }
 
     private Path getPath(String relativePath){
         return Path.of(masterPath, relativePath);
     }
 
     @Override
-    public String create(MultipartFile file) throws IOException {
+    public String create(MultipartFile file) throws IOException, FileSizeLimitExceededException {
+        if (file.getSize() > sizeToInt()){
+            throw new FileSizeLimitExceededException();
+        }
         String uuid = UUID.randomUUID().toString();
         String originalFilename = ServiceUtils.getFileExtension(file);
         uuid = String.join("/", uuid.substring(0, 2), uuid.substring(2, 4), uuid.substring(4, 6),
