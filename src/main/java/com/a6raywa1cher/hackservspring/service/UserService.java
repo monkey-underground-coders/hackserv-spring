@@ -25,7 +25,7 @@ public interface UserService {
 
     Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
 
-    User editUser(User user, UserRole userRole, String email, String fullName, String resume);
+    User editUser(User user, UserRole userRole, String email, String fullName);
 
     User editUserInfo(User user, UserInfo userInfo);
 

@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Optional;
@@ -94,10 +93,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User editUser(User user, UserRole userRole, String email, String fullName, String resume) {
+    public User editUser(User user, UserRole userRole, String email, String fullName) {
         user.setFullName(fullName);
         user.setEmail(email);
-        user.setResume(resume);
+        user.setUserRole(userRole);
         return repository.save(user);
     }
 
@@ -108,6 +107,7 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(userInfo.getDateOfBirth());
         user.setWorkPlace(userInfo.getWorkPlace());
         user.setOtherInfo(userInfo.getOtherInfo());
+		user.setResume(userInfo.getResume());
         return repository.save(user);
     }
 

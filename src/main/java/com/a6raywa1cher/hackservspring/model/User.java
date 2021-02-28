@@ -29,10 +29,12 @@ public class User {
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@Column(name = "user_resume")
+	@Column(length = 5000)
+	@JsonView(Views.DetailedInternal.class)
 	private String resume;
 
-	@Column(name = "document_resume_path")
+	@Column
+	@JsonView(Views.Internal.class)
 	private String documentResumePath;
 
 	@Column(name = "google_id", unique = true)

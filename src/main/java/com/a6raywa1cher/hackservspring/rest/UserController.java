@@ -16,11 +16,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,9 +46,13 @@ public class UserController {
         this.discService = discService;
     }
 
-    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @Value("${spring.servlet.multipart.max-file-size}")
+    DataSize maxFileSize;
+
     @GetMapping(value="/{uid}/cv/")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<Resource> getResume (@PathVariable Long uid) throws UserNotExistsException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()){
@@ -60,16 +66,19 @@ public class UserController {
                         file.getFilename().substring(file.getFilename().lastIndexOf('.'))).body(file);
     }
 
-    @Operation(security = @SecurityRequirement(name = "jwt"))
     @PostMapping(path="/{uid}/cv/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<User> createResume(@PathVariable Long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
+        if (maxFileSize.toBytes() < file.getSize()){
+            throw new FileSizeLimitExceededException();
+        }
         User user = optionalUser.get();
-
         if (user.getDocumentResumePath() != null){
             deleteResumeDocument(uid);
         }
@@ -77,9 +86,10 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @Operation(security = @SecurityRequirement(name = "jwt"))
     @DeleteMapping(value="/{uid}/cv/")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<User> deleteResumeDocument(@PathVariable Long uid) throws UserNotExistsException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
@@ -91,7 +101,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest request) throws EmailAlreadyExistsException {
         if (userService.getByEmail(request.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException();
@@ -103,7 +113,7 @@ public class UserController {
     @PutMapping("/{uid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<User> editUserInfo(@RequestBody @Valid PutUserInfoRequest request, @PathVariable long uid) throws UserNotExistsException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {

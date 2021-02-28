@@ -16,4 +16,6 @@ public class UserInfo {
     private String workPlace;
 
     private String otherInfo;
+
+    private String resume;
 }

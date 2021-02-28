@@ -29,5 +29,9 @@ public class PutUserInfoRequest {
 
     @Size(max = 5000)
     @HtmlEscape
+    private String resume;
+
+    @Size(max = 5000)
+    @HtmlEscape
     private String otherInfo;
 }
