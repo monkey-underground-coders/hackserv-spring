@@ -88,7 +88,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     public boolean isLastSendWasRecently(User user) {
         ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
         Duration duration = Duration.between(createdAt, ZonedDateTime.now());
-        return minEmailReq < duration.toSeconds();
+        return minEmailReq > duration.toSeconds();
     }
 
     @Override

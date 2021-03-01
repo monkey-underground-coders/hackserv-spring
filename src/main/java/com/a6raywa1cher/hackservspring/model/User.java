@@ -53,7 +53,7 @@ public class User {
     @JsonView(Views.Public.class)
     private UserRole userRole;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JsonIgnore
     private EmailValidationToken emailValidationToken;
 

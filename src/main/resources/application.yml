@@ -13,6 +13,18 @@ jwt:
   access-duration: PT5M
   refresh-duration: P90D
 spring:
+  mail:
+    host: smtp.yandex.ru
+    port: 587
+    username: ###
+    password: ###
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jmx:
     default-domain: com.a6raywa1cher.hackservspring
     unique-names: true

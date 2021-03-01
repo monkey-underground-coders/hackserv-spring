@@ -124,7 +124,7 @@ public class UserController {
         }
         User user = optionalUser.get();
 
-
+        userService.deleteUser(user);
         return ResponseEntity.ok().build();
     }
 
