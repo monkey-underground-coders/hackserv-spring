@@ -5,6 +5,7 @@ import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
+import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,15 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository repository;
 	private final PasswordEncoder passwordEncoder;
 	private final RefreshTokenService refreshTokenService;
+	private final EmailValidationService emailValidationService;
 
 	@Autowired
 	public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder,
-						   RefreshTokenService refreshTokenService) {
+						   RefreshTokenService refreshTokenService, EmailValidationService emailValidationService) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.refreshTokenService = refreshTokenService;
+		this.emailValidationService = emailValidationService;
 	}
 
 	@Override
@@ -149,6 +152,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional(rollbackOn = Exception.class)
 	public void deleteUser(User user) {
 		refreshTokenService.invalidateAll(user);
+		emailValidationService.delete(user);
 		repository.delete(user);
 	}
 }

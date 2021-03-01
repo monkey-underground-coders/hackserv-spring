@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -30,6 +31,12 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 
     @Value("${spring.mail.username}")
     private String from;
+
+    @Value("${app.min_email_req}")
+    private Integer minEmailReq;
+
+    @Value("${app.max_email_duration}")
+    private Integer maxEmailDuration;
 
     @Autowired
     public EmailValidationServiceImpl(EmailValidationTokenRepository tokenRepository, UserRepository userRepository, JavaMailSender emailSender) {
@@ -52,6 +59,9 @@ public class EmailValidationServiceImpl implements EmailValidationService {
         token.setToken(tokenInt);
         token.setCreatedAt(ZonedDateTime.now());
         EmailValidationToken saved = tokenRepository.save(token);
+        if (user.getEmailValidationToken() != null) {
+            tokenRepository.delete(user.getEmailValidationToken());
+        }
         user.setEmailValidationToken(saved);
         userRepository.save(user);
     }
@@ -72,5 +82,25 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     @Override
     public boolean checkToken(User user, int token) {
         return user.getEmailValidationToken().getToken() == token;
+    }
+
+    @Override
+    public boolean isLastSendWasRecently(User user) {
+        ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
+        Duration duration = Duration.between(createdAt, ZonedDateTime.now());
+        return minEmailReq < duration.toSeconds();
+    }
+
+    @Override
+    public boolean isTokenEnable(User user) {
+        ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
+        Duration duration = Duration.between(createdAt, ZonedDateTime.now());
+        return maxEmailDuration > duration.toSeconds();
+    }
+
+    @Override
+    public void delete(User user) {
+        EmailValidationToken token = user.getEmailValidationToken();
+        tokenRepository.delete(token);
     }
 }

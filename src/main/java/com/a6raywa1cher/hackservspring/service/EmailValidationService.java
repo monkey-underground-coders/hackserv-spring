@@ -14,4 +14,10 @@ public interface EmailValidationService {
     void sendMassage(User user) throws MessagingException;
 
     boolean checkToken(User user, int token);
+
+    boolean isLastSendWasRecently(User user);
+
+    boolean isTokenEnable(User user);
+
+    void delete(User user);
 }

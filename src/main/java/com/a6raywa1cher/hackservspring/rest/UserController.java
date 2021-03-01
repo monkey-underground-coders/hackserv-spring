@@ -3,9 +3,7 @@ package com.a6raywa1cher.hackservspring.rest;
 import com.a6raywa1cher.hackservspring.model.EmailValidationToken;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
-import com.a6raywa1cher.hackservspring.rest.exc.EmailAlreadyExistsException;
-import com.a6raywa1cher.hackservspring.rest.exc.TokenIsWrongException;
-import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
+import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
 import com.a6raywa1cher.hackservspring.rest.req.EmailValidationTokenRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
@@ -42,13 +40,14 @@ public class UserController {
 
     @PostMapping("/create")
     @JsonView(Views.Internal.class)
-    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest request) throws EmailAlreadyExistsException {
+    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest request) throws EmailAlreadyExistsException, MessagingException {
         if (userService.getByEmail(request.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException();
         }
 
         User user = userService.create(UserRole.USER, request.getEmail(), request.getPassword());
         emailValidationService.createToken(user);
+        emailValidationService.sendMassage(user);
         return ResponseEntity.ok(user);
     }
 
@@ -75,13 +74,17 @@ public class UserController {
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
     @JsonView(Views.Internal.class)
-    public ResponseEntity<EmailValidationToken> sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException {
+    public ResponseEntity<EmailValidationToken> sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException, TooManyValidationRequestsExсeption {
 
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
         User user = optionalUser.get();
+        if (emailValidationService.isLastSendWasRecently(user)) {
+            throw new TooManyValidationRequestsExсeption();
+        }
+        emailValidationService.createToken(user);
         emailValidationService.sendMassage(user);
 
         return ResponseEntity.ok(user.getEmailValidationToken());
@@ -92,16 +95,37 @@ public class UserController {
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
     @JsonView(Views.Internal.class)
-    public ResponseEntity<Void> validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException {
+    public ResponseEntity<Void> validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnebledException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
         User user = optionalUser.get();
 
+        if (!emailValidationService.isTokenEnable(user)) {
+            throw new TokenIsNotEnebledException();
+        }
         if (!emailValidationService.checkToken(user, request.getToken())) {
             throw new TokenIsWrongException();
         }
+        userService.editEmailValidated(user, true);
+
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{uid:[0-9]+}/delete")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @JsonView(Views.Internal.class)
+    public ResponseEntity<Void> delete(@PathVariable long uid) throws UserNotExistsException {
+        Optional<User> optionalUser = userService.getById(uid);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+
+
+        return ResponseEntity.ok().build();
+    }
+
 }
