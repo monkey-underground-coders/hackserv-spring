@@ -19,6 +19,9 @@ public class Team {
     @JsonView(Views.Public.class)
     private Long id;
 
+    @JsonView(Views.Public.class)
+    private String name;
+
     @OneToMany
     @JsonView(Views.Internal.class)
     @JsonIdentityReference(alwaysAsId = true)
