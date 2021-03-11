@@ -31,6 +31,8 @@ public interface UserService {
 
     User editPassword(User user, String password);
 
+    User editEmailValidated(User user, boolean expr);
+
     User setLastVisitAt(User user, ZonedDateTime at);
 
     User setVendorSub(User user, VendorId vendorId, String vendorSub);

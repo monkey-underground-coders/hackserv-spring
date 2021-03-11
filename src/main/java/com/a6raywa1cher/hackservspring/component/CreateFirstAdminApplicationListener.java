@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.component;
 
+import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import org.slf4j.Logger;
@@ -34,7 +35,8 @@ public class CreateFirstAdminApplicationListener implements ApplicationListener<
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (userService.findFirstByUserRole(UserRole.ADMIN).isEmpty()) {
-            userService.create(UserRole.ADMIN, email, password, fullName);
+            User user = userService.create(UserRole.ADMIN, email, password, fullName);
+            userService.editEmailValidated(user, true);
             logger.info("Created admin-user");
         }
     }
