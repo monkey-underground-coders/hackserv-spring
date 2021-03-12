@@ -6,12 +6,15 @@ import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.rest.exc.TeamNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
+import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
+import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +50,12 @@ public class TeamController {
         return ResponseEntity.ok(team);
     }
 
-    @GetMapping("/{uid:[0-9]+}")
+    @GetMapping("/{teamid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#teamid)")
     @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> getTeam(@PathVariable long uid) throws TeamNotExistsException {
-        Optional<Team> optionalTeam = teamService.getById(uid);
+    public ResponseEntity<Team> getTeam(@PathVariable long teamid) throws TeamNotExistsException {
+        Optional<Team> optionalTeam = teamService.getById(teamid);
         if (optionalTeam.isEmpty()) {
             throw new TeamNotExistsException();
         }
@@ -61,9 +64,21 @@ public class TeamController {
         return ResponseEntity.ok(team);
     }
 
-    @PutMapping("/{uid:[0-9]+}")
+    @PutMapping("/{teamid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#teamid)")
     @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> putTeam(, @PathVariable long uid)
+    public ResponseEntity<Team> editTeamInfo(@RequestBody PutTeamInfoRequest request, @PathVariable long teamid) throws TeamNotExistsException {
+        Optional<Team> optionalTeam = teamService.getById(teamid);
+        if (optionalTeam.isEmpty()) {
+            throw new TeamNotExistsException();
+        }
+
+        TeamInfo teamInfo = new TeamInfo();
+        BeanUtils.copyProperties(request, teamInfo);
+
+        Team team = teamService.editTeam(optionalTeam.get(), teamInfo);
+
+        return ResponseEntity.ok(team);
+    }
 }

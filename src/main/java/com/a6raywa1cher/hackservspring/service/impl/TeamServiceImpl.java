@@ -5,6 +5,7 @@ import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.repo.TeamRepository;
 import com.a6raywa1cher.hackservspring.service.TeamService;
+import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -42,6 +43,12 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Optional<Team> getById(long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public Team editTeam(Team team, TeamInfo teamInfo) {
+        team.setName(teamInfo.getName());
+        return repository.save(team);
     }
 
 }
