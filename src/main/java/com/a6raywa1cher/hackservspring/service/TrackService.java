@@ -13,7 +13,7 @@ public interface TrackService {
     Track create(String trackName);
     Optional<Track> getById(Long id);
     Stream<Track> getById(Collection<Long> ids);
-    Track editTrack(String trackName, List<VoteCriteria> criteriaList, List<Team> teams);
+    Track editTrack(Track track, String trackName, List<VoteCriteria> criteriaList, List<Team> teams);
     Track addTeam(Track track, Team team);
     Track addCriteria(Track track, VoteCriteria criteria);
     void delete(Track track);
