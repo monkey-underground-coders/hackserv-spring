@@ -15,4 +15,8 @@ public interface TeamService {
     Optional<Team> getById(long id);
 
     Team editTeam(Team team, TeamInfo teamInfo);
+
+    Team requestInTeam(Team team, User user);
+
+    void deleteTeam(Team team);
 }

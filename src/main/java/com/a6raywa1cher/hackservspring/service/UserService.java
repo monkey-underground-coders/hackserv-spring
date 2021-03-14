@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.service;
 
+import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
@@ -32,6 +33,8 @@ public interface UserService {
     User editPassword(User user, String password);
 
     User editEmailValidated(User user, boolean expr);
+
+    User editTeam(User user, Team team);
 
     User setLastVisitAt(User user, ZonedDateTime at);
 

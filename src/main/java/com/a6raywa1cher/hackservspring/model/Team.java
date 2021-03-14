@@ -19,13 +19,19 @@ public class Team {
     @JsonView(Views.Public.class)
     private Long id;
 
+    @Column
     @JsonView(Views.Public.class)
     private String name;
 
     @OneToMany
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     @JsonIdentityReference(alwaysAsId = true)
     private List<User> members;
+
+    @OneToMany
+    @JsonView(Views.Public.class)
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<User> requests;
 
     @OneToOne
     @JsonView(Views.Public.class)

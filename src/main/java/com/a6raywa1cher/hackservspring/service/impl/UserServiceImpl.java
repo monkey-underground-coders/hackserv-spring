@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
+import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
@@ -109,26 +110,32 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User editPassword(User user, String password) {
-		user.setPassword(passwordEncoder.encode(password));
-		return repository.save(user);
-	}
+    public User editPassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        return repository.save(user);
+    }
 
-	@Override
-	public User editEmailValidated(User user, boolean expr) {
-		user.setEmailValidated(expr);
-		return repository.save(user);
-	}
+    @Override
+    public User editEmailValidated(User user, boolean expr) {
+        user.setEmailValidated(expr);
+        return repository.save(user);
+    }
 
-	@Override
-	public User setLastVisitAt(User user, ZonedDateTime at) {
-		user.setLastVisitAt(at);
-		return repository.save(user);
-	}
+    @Override
+    public User editTeam(User user, Team team) {
+        user.setTeam(team);
+        return repository.save(user);
+    }
 
-	@Override
-	public User setVendorSub(User user, VendorId vendorId, String vendorSub) {
-		if (this.getByVendorId(vendorId, vendorSub).isPresent()) {
+    @Override
+    public User setLastVisitAt(User user, ZonedDateTime at) {
+        user.setLastVisitAt(at);
+        return repository.save(user);
+    }
+
+    @Override
+    public User setVendorSub(User user, VendorId vendorId, String vendorSub) {
+        if (this.getByVendorId(vendorId, vendorSub).isPresent()) {
 			throw new IllegalArgumentException();
 		}
 		switch (vendorId) {

@@ -4,9 +4,11 @@ package com.a6raywa1cher.hackservspring.rest;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.rest.exc.TeamNotExistsException;
+import com.a6raywa1cher.hackservspring.rest.exc.UserAlreadyInTeam;
 import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
+import com.a6raywa1cher.hackservspring.rest.req.RequestInTeamRequest;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
@@ -39,12 +41,15 @@ public class TeamController {
     @PostMapping("/create")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamRequest request) throws UserNotExistsException {
+    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamRequest request) throws UserNotExistsException, UserAlreadyInTeam {
         Optional<User> optionalCaptain = userService.getById(request.getCaptainId());
         if (optionalCaptain.isEmpty()) {
             throw new UserNotExistsException();
         }
         User captain = optionalCaptain.get();
+        if (captain.getTeam() != null) {
+            throw new UserAlreadyInTeam();
+        }
         Team team = teamService.createTeam(request.getName(), captain);
 
         return ResponseEntity.ok(team);
@@ -52,7 +57,6 @@ public class TeamController {
 
     @GetMapping("/{teamid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#teamid)")
     @JsonView(Views.Internal.class)
     public ResponseEntity<Team> getTeam(@PathVariable long teamid) throws TeamNotExistsException {
         Optional<Team> optionalTeam = teamService.getById(teamid);
@@ -66,7 +70,7 @@ public class TeamController {
 
     @PutMapping("/{teamid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#teamid)")
+    @PreAuthorize("@mvcAccessChecker.checkTeamCaptainWithCurrentUser(#teamid)")
     @JsonView(Views.Internal.class)
     public ResponseEntity<Team> editTeamInfo(@RequestBody PutTeamInfoRequest request, @PathVariable long teamid) throws TeamNotExistsException {
         Optional<Team> optionalTeam = teamService.getById(teamid);
@@ -81,4 +85,41 @@ public class TeamController {
 
         return ResponseEntity.ok(team);
     }
+
+
+    @DeleteMapping("/{teamid:[0-9]+}")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @PreAuthorize("@mvcAccessChecker.checkTeamCaptainWithCurrentUser(#teamid)")
+    @JsonView(Views.Internal.class)
+    public ResponseEntity<Void> deleteTeam(@PathVariable long teamid) throws TeamNotExistsException {
+        Optional<Team> optionalTeam = teamService.getById(teamid);
+        if (optionalTeam.isEmpty()) {
+            throw new TeamNotExistsException();
+        }
+        Team team = optionalTeam.get();
+        teamService.deleteTeam(team);
+
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/{teamid:[0-9]+}/req")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @JsonView(Views.Internal.class)
+    public ResponseEntity<Team> requestInTeam(@RequestBody RequestInTeamRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException {
+        Optional<User> optionalUser = userService.getById(request.getUserId());
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+        Optional<Team> optionalTeam = teamService.getById(teamid);
+        if (optionalTeam.isEmpty()) {
+            throw new TeamNotExistsException();
+        }
+
+        Team team = teamService.requestInTeam(optionalTeam.get(), user);
+
+        return ResponseEntity.ok(team);
+    }
+
 }
