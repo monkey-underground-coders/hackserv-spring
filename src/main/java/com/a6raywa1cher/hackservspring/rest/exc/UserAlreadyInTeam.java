@@ -4,5 +4,5 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "User already in team")
-public class UserAlreadyInTeam extends Exception {
+public class UserAlreadyInTeam extends RuntimeException {
 }

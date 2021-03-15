@@ -14,6 +14,8 @@ public interface TeamService {
 
     Optional<Team> getById(long id);
 
+    Optional<Team> getTeamRequestForUser(User user);
+
     Team editTeam(Team team, TeamInfo teamInfo);
 
     Team requestInTeam(Team team, User user);

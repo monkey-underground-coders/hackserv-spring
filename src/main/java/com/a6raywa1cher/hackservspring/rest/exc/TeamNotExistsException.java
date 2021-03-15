@@ -4,5 +4,5 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Team not exists")
-public class TeamNotExistsException extends Exception {
+public class TeamNotExistsException extends RuntimeException {
 }

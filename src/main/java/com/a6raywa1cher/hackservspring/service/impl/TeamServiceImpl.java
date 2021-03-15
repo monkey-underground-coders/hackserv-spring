@@ -55,6 +55,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public Optional<Team> getTeamRequestForUser(User user) {
+        return teamRepository.findTeamRequestForUser(user);
+    }
+
+    @Override
     public Team editTeam(Team team, TeamInfo teamInfo) {
         team.setName(teamInfo.getName());
         return teamRepository.save(team);

@@ -5,6 +5,7 @@ import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.rest.exc.TeamNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.exc.UserAlreadyInTeam;
+import com.a6raywa1cher.hackservspring.rest.exc.UserAlreadyMadeRequest;
 import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
@@ -106,12 +107,18 @@ public class TeamController {
     @PostMapping("/{teamid:[0-9]+}/req")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> requestInTeam(@RequestBody RequestInTeamRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException {
+    public ResponseEntity<Team> requestInTeam(@RequestBody RequestInTeamRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
         Optional<User> optionalUser = userService.getById(request.getUserId());
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
         User user = optionalUser.get();
+        if (user.getTeam() != null) {
+            throw new UserAlreadyInTeam();
+        }
+        if (teamService.getTeamRequestForUser(user).isPresent()) {
+            throw new UserAlreadyMadeRequest();
+        }
         Optional<Team> optionalTeam = teamService.getById(teamid);
         if (optionalTeam.isEmpty()) {
             throw new TeamNotExistsException();
