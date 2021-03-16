@@ -10,7 +10,6 @@ import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
-import com.a6raywa1cher.hackservspring.utils.ServiceUtils;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;

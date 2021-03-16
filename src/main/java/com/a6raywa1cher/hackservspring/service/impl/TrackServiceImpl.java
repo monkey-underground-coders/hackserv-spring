@@ -26,7 +26,7 @@ public class TrackServiceImpl implements TrackService {
     public Track create(String trackName){
         Track track = new Track();
         track.setTrackName(trackName);
-        return track;
+        return repository.save(track);
     }
 
     @Override
@@ -44,23 +44,12 @@ public class TrackServiceImpl implements TrackService {
         track.setTrackName(trackName);
         track.setCriteriaList(criteriaList);
         track.setTeams(teams);
-        return track;
-    }
-
-    @Override
-    public Track addTeam(Track track, Team team) {
-        track.getTeams().add(team);
-        return track;
-    }
-
-    @Override
-    public Track addCriteria(Track track, VoteCriteria criteria) {
-        track.getCriteriaList().add(criteria);
-        return track;
+        return repository.save(track);
     }
 
     @Override
     public void delete(Track track) {
+        track.getTeams().forEach(team -> team.setTrack(null));
         repository.delete(track);
     }
 }
