@@ -3,10 +3,7 @@ package com.a6raywa1cher.hackservspring.rest;
 
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
-import com.a6raywa1cher.hackservspring.rest.exc.TeamNotExistsException;
-import com.a6raywa1cher.hackservspring.rest.exc.UserAlreadyInTeam;
-import com.a6raywa1cher.hackservspring.rest.exc.UserAlreadyMadeRequest;
-import com.a6raywa1cher.hackservspring.rest.exc.UserNotExistsException;
+import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
 import com.a6raywa1cher.hackservspring.rest.req.RequestInTeamRequest;
@@ -50,6 +47,9 @@ public class TeamController {
         User captain = optionalCaptain.get();
         if (captain.getTeam() != null) {
             throw new UserAlreadyInTeam();
+        }
+        if (teamService.getTeamRequestForUser(captain).isPresent()) {
+            throw new UserAlreadyMadeRequest();
         }
         Team team = teamService.createTeam(request.getName(), captain);
 
@@ -127,6 +127,31 @@ public class TeamController {
         Team team = teamService.requestInTeam(optionalTeam.get(), user);
 
         return ResponseEntity.ok(team);
+    }
+
+
+    @PostMapping("/{teamid:[0-9]+}/accept")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @JsonView(Views.Internal.class)
+    @PreAuthorize("@mvcAccessChecker.checkTeamCaptainWithCurrentUser(#teamid)")
+    public ResponseEntity<Team> acceptUser(@RequestBody RequestInTeamRequest request, @PathVariable long teamid) {
+        Optional<User> optionalUser = userService.getById(request.getUserId());
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+        Optional<Team> optionalTeam = teamService.getById(teamid);
+        if (optionalTeam.isEmpty()) {
+            throw new TeamNotExistsException();
+        }
+        Team team = optionalTeam.get();
+        if (!teamService.isUserInRequestList(team, user)) {
+            throw new UserNotInRequestListException();
+        }
+
+        Team advancedTeam = teamService.acceptInTeam(team, user);
+
+        return ResponseEntity.ok(advancedTeam);
     }
 
 }

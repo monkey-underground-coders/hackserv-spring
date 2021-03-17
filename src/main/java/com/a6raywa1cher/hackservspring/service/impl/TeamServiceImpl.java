@@ -74,6 +74,29 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public Team acceptInTeam(Team team, User user) {
+        List<User> advancedRequests = team.getRequests();
+        advancedRequests.remove(user);
+        team.setRequests(advancedRequests);
+
+        List<User> advancedMembers = team.getMembers();
+        advancedMembers.add(user);
+        team.setMembers(advancedMembers);
+
+        return teamRepository.save(team);
+    }
+
+    @Override
+    public Boolean isUserInRequestList(Team team, User user) {
+        for (User requests : team.getRequests()) {
+            if (requests.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void deleteTeam(Team team) {
         for (User user : team.getMembers()) {
             userService.editTeam(user, null);

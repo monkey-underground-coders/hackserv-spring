@@ -20,5 +20,9 @@ public interface TeamService {
 
     Team requestInTeam(Team team, User user);
 
+    Team acceptInTeam(Team team, User user);
+
+    Boolean isUserInRequestList(Team team, User user);
+
     void deleteTeam(Team team);
 }
