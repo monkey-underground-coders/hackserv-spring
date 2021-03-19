@@ -4,12 +4,14 @@ import com.a6raywa1cher.hackservspring.model.VoteCriteria;
 import com.a6raywa1cher.hackservspring.model.repo.VoteCriteriaRepository;
 import com.a6raywa1cher.hackservspring.service.VoteCriteriaService;
 import com.a6raywa1cher.hackservspring.service.dto.VoteCriteriaInfo;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@Service
 public class VoteCriteriaServiceImpl implements VoteCriteriaService {
     private final VoteCriteriaRepository repository;
 
