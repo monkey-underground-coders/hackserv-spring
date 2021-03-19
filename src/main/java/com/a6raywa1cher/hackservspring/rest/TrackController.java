@@ -14,7 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/track")
@@ -49,7 +51,6 @@ public class TrackController {
 
     @PutMapping("/{trackid}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#trackid)")
     @JsonView(Views.Internal.class)
     public ResponseEntity<Track> editTrack(@RequestBody PutTrackRequest request, @PathVariable Long trackid) throws TrackNotExistsException {
         Optional<Track> optionalTrack = trackService.getById(trackid);
@@ -63,7 +64,6 @@ public class TrackController {
 
     @DeleteMapping("/{trackid}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#trackid)")
     @JsonView(Views.Internal.class)
     public ResponseEntity<Track> deleteTrack(@PathVariable Long trackid) throws TrackNotExistsException {
         Optional<Track> optionalTrack = trackService.getById(trackid);
@@ -73,5 +73,13 @@ public class TrackController {
         Track track = optionalTrack.get();
         trackService.delete(track);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/track")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @JsonView(Views.Internal.class)
+    public ResponseEntity<List<Track>> getAllTracks() {
+        List<Track> tracks = trackService.getAllTracks().collect(Collectors.toList());
+        return ResponseEntity.ok(tracks);
     }
 }

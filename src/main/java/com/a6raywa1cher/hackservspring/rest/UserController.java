@@ -25,7 +25,6 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.Multipart;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;

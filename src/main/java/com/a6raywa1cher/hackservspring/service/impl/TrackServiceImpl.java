@@ -40,6 +40,11 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
+    public Stream<Track> getAllTracks() {
+        return StreamSupport.stream(repository.findAll().spliterator(), false);
+    }
+
+    @Override
     public Track editTrack(Track track, String trackName, List<VoteCriteria> criteriaList, List<Team> teams) {
         track.setTrackName(trackName);
         track.setCriteriaList(criteriaList);
