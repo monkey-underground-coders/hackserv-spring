@@ -10,7 +10,7 @@ public interface VoteCriteriaService {
     VoteCriteria create(String criteriaName, int maxValue);
     Optional<VoteCriteria> getById(Long id);
     Stream<VoteCriteria> getById(Collection<Long> ids);
-    Stream<VoteCriteria> getAllCriterias();
+    Stream<VoteCriteria> getAllCriteria();
     VoteCriteria editCriteria(VoteCriteria criteria, String criteriaName, int maxValue);
     VoteCriteria editCriteriaInfo(VoteCriteria criteria, VoteCriteriaInfo criteriaInfo);
     void deleteCriteria(VoteCriteria criteria);

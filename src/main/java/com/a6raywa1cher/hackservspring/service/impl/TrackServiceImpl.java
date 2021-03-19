@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class TrackServiceImpl implements TrackService {
-    TrackRepository repository;
+    private final TrackRepository repository;
 
     @Autowired
     public TrackServiceImpl(TrackRepository trackRepository){

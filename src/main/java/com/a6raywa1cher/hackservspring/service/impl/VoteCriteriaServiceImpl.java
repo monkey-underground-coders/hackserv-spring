@@ -11,7 +11,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class VoteCriteriaServiceImpl implements VoteCriteriaService {
-    private VoteCriteriaRepository repository;
+    private final VoteCriteriaRepository repository;
+
+    public VoteCriteriaServiceImpl(VoteCriteriaRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public VoteCriteria create(String criteriaName, int maxValue) {
@@ -32,7 +36,7 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
     }
 
     @Override
-    public Stream<VoteCriteria> getAllCriterias() {
+    public Stream<VoteCriteria> getAllCriteria() {
         return StreamSupport.stream(repository.findAll().spliterator(), false);
     }
 
@@ -53,7 +57,6 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
         return repository.save(criteria);
     }
 
-    Икщлут
     @Override
     public void deleteCriteria(VoteCriteria criteria) {
         repository.delete(criteria);

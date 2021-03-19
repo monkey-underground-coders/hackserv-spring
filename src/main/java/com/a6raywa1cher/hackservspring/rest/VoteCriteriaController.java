@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -86,7 +85,7 @@ public class VoteCriteriaController {
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.Internal.class)
     public ResponseEntity<List<VoteCriteria>> getAllCriteria() {
-        List<VoteCriteria> criteriaList = criteriaService.getAllCriterias().collect(Collectors.toList());
+        List<VoteCriteria> criteriaList = criteriaService.getAllCriteria().collect(Collectors.toList());
         return ResponseEntity.ok(criteriaList);
     }
 }
