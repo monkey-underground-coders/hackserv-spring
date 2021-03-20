@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class RequestInTeamRequest {
+public class UserIdRequest {
 
     @NotNull
     private long userId;

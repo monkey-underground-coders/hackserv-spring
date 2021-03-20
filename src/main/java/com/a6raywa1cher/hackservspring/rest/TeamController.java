@@ -6,7 +6,7 @@ import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
-import com.a6raywa1cher.hackservspring.rest.req.RequestInTeamRequest;
+import com.a6raywa1cher.hackservspring.rest.req.UserIdRequest;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
@@ -107,7 +107,7 @@ public class TeamController {
     @PostMapping("/{teamid:[0-9]+}/req")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> requestInTeam(@RequestBody RequestInTeamRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
+    public ResponseEntity<Team> requestInTeam(@RequestBody UserIdRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
         Optional<User> optionalUser = userService.getById(request.getUserId());
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
@@ -134,7 +134,7 @@ public class TeamController {
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.Internal.class)
     @PreAuthorize("@mvcAccessChecker.checkTeamCaptainWithCurrentUser(#teamid)")
-    public ResponseEntity<Team> acceptUser(@RequestBody RequestInTeamRequest request, @PathVariable long teamid) {
+    public ResponseEntity<Team> acceptUser(@RequestBody UserIdRequest request, @PathVariable long teamid) {
         Optional<User> optionalUser = userService.getById(request.getUserId());
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
@@ -152,6 +152,30 @@ public class TeamController {
         Team advancedTeam = teamService.acceptInTeam(team, user);
 
         return ResponseEntity.ok(advancedTeam);
+    }
+
+
+    @PostMapping("/{teamid:[0-9]+}/change_captain")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @JsonView(Views.Internal.class)
+    @PreAuthorize("@mvcAccessChecker.checkTeamCaptainWithCurrentUser(#teamid)")
+    public ResponseEntity<Team> changeCaptain(@RequestBody UserIdRequest request, @PathVariable long teamid) {
+        Optional<User> optionalUser = userService.getById(request.getUserId());
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+        Optional<Team> optionalTeam = teamService.getById(teamid);
+        if (optionalTeam.isEmpty()) {
+            throw new TeamNotExistsException();
+        }
+
+        if (user.getTeam().getId() != teamid) {
+            throw new UserNotInTeamException();
+        }
+
+        Team team = teamService.changeCaptain(optionalTeam.get(), user);
+        return ResponseEntity.ok(team);
     }
 
 }

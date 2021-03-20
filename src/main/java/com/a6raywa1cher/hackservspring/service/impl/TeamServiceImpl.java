@@ -87,6 +87,12 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public Team changeCaptain(Team team, User user) {
+        team.setCaptain(user);
+        return teamRepository.save(team);
+    }
+
+    @Override
     public Boolean isUserInRequestList(Team team, User user) {
         for (User requests : team.getRequests()) {
             if (requests.getId().equals(user.getId())) {
