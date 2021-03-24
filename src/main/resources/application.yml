@@ -7,8 +7,8 @@ app:
     fullName: # REQUIRED first admin name
     password: # REQUIRED first admin password
   redirect: http://localhost:8080/ls
-  min-email-req: 60
-  max-email-duration: 86400
+  min-email-req: PT1M
+  max-email-duration: P1D
 jwt:
   max-refresh-tokens-per-user: 10
   secret: fill-me-later

@@ -81,9 +81,6 @@ public class UserController {
             throw new UserNotExistsException();
         }
         User user = optionalUser.get();
-        if (user.getEmailValidationToken() == null) {
-            throw new TokenNotExistsException();
-        }
         if (emailValidationService.isLastSendWasRecently(user)) {
             throw new TooManyValidationRequestsExсeption();
         }

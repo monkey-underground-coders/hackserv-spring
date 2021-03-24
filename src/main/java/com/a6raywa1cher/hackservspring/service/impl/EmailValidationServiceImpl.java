@@ -34,10 +34,10 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     private String from;
 
     @Value("${app.min-email-req}")
-    private Integer minEmailReq;
+    private Duration minEmailReq;
 
     @Value("${app.max-email-duration}")
-    private Integer maxEmailDuration;
+    private Duration maxEmailDuration;
 
     @Autowired
     public EmailValidationServiceImpl(EmailValidationTokenRepository tokenRepository, UserRepository userRepository, JavaMailSender emailSender) {
@@ -86,16 +86,19 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 
     @Override
     public boolean isLastSendWasRecently(User user) {
+        if (user.getEmailValidationToken() == null) {
+            return false;
+        }
         ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
         Duration duration = Duration.between(createdAt, ZonedDateTime.now());
-        return minEmailReq.compareTo((int) duration.toSeconds()) > 0;
+        return minEmailReq.compareTo(duration) > 0;
     }
 
     @Override
     public boolean isTokenEnable(User user) {
         ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
         Duration duration = Duration.between(createdAt, ZonedDateTime.now());
-        return maxEmailDuration.compareTo((int) duration.toSeconds()) > 0;
+        return maxEmailDuration.compareTo(duration) > 0;
     }
 
     @Override
