@@ -55,12 +55,14 @@ public class UserServiceImpl implements UserService {
 		user.setUserRole(userRole);
 		user.setCreatedAt(ZonedDateTime.now());
 		user.setLastVisitAt(ZonedDateTime.now());
-		if (vendorId != null)
+		if (vendorId != null) {
+			user.setEmailValidated(true);
 			switch (vendorId) {
 				case GITHUB -> user.setGithubId(vendorSub);
 				case VK -> user.setVkId(vendorSub);
 				case GOOGLE -> user.setGoogleId(vendorSub);
 			}
+		}
 		return repository.save(user);
 	}
 
@@ -101,20 +103,26 @@ public class UserServiceImpl implements UserService {
         user.setFullName(userInfo.getFullName());
         user.setTelegram(userInfo.getTelegram());
         user.setDateOfBirth(userInfo.getDateOfBirth());
-        user.setWorkPlace(userInfo.getWorkPlace());
-        user.setOtherInfo(userInfo.getOtherInfo());
-        return repository.save(user);
-    }
+		user.setWorkPlace(userInfo.getWorkPlace());
+		user.setOtherInfo(userInfo.getOtherInfo());
+		return repository.save(user);
+	}
 
-    @Override
-    public User editPassword(User user, String password) {
-        user.setPassword(passwordEncoder.encode(password));
-        return repository.save(user);
-    }
+	@Override
+	public User editPassword(User user, String password) {
+		user.setPassword(passwordEncoder.encode(password));
+		return repository.save(user);
+	}
 
-    @Override
-    public User setLastVisitAt(User user, ZonedDateTime at) {
-        user.setLastVisitAt(at);
+	@Override
+	public User editEmailValidated(User user, boolean expr) {
+		user.setEmailValidated(expr);
+		return repository.save(user);
+	}
+
+	@Override
+	public User setLastVisitAt(User user, ZonedDateTime at) {
+		user.setLastVisitAt(at);
 		return repository.save(user);
 	}
 

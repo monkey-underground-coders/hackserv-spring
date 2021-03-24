@@ -7,12 +7,26 @@ app:
     fullName: # REQUIRED first admin name
     password: # REQUIRED first admin password
   redirect: http://localhost:8080/ls
+  min-email-req: PT1M
+  max-email-duration: P1D
 jwt:
   max-refresh-tokens-per-user: 10
   secret: fill-me-later
   access-duration: PT5M
   refresh-duration: P90D
 spring:
+  mail:
+    host: # REQUIRED
+    port: # REQUIRED
+    username: # REQUIRED
+    password: # REQUIRED
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jmx:
     default-domain: com.a6raywa1cher.hackservspring
     unique-names: true
