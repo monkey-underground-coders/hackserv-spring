@@ -25,7 +25,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     private final EmailValidationTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final JavaMailSender emailSender;
-    SecureRandom secureRandom = new SecureRandom();
+    private final SecureRandom secureRandom = new SecureRandom();
 
     @Value("classpath:emails/EmailValidationTemplate.html")
     private Resource mailHtml;
