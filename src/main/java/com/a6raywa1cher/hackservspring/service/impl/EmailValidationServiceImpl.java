@@ -25,6 +25,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     private final EmailValidationTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final JavaMailSender emailSender;
+    SecureRandom secureRandom = new SecureRandom();
 
     @Value("classpath:emails/EmailValidationTemplate.html")
     private Resource mailHtml;
@@ -32,10 +33,10 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     @Value("${spring.mail.username}")
     private String from;
 
-    @Value("${app.min_email_req}")
+    @Value("${app.min-email-req}")
     private Integer minEmailReq;
 
-    @Value("${app.max_email_duration}")
+    @Value("${app.max-email-duration}")
     private Integer maxEmailDuration;
 
     @Autowired
@@ -54,7 +55,6 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     @Override
     public void createToken(User user) {
         EmailValidationToken token = new EmailValidationToken();
-        SecureRandom secureRandom = new SecureRandom();
         int tokenInt = 100000 + secureRandom.nextInt(900000);
         token.setToken(tokenInt);
         token.setCreatedAt(ZonedDateTime.now());
@@ -88,14 +88,14 @@ public class EmailValidationServiceImpl implements EmailValidationService {
     public boolean isLastSendWasRecently(User user) {
         ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
         Duration duration = Duration.between(createdAt, ZonedDateTime.now());
-        return minEmailReq > duration.toSeconds();
+        return minEmailReq.compareTo((int) duration.toSeconds()) > 0;
     }
 
     @Override
     public boolean isTokenEnable(User user) {
         ZonedDateTime createdAt = user.getEmailValidationToken().getCreatedAt();
         Duration duration = Duration.between(createdAt, ZonedDateTime.now());
-        return maxEmailDuration > duration.toSeconds();
+        return maxEmailDuration.compareTo((int) duration.toSeconds()) > 0;
     }
 
     @Override

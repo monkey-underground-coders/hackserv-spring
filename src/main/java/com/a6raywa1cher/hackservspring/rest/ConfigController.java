@@ -14,10 +14,10 @@ public class ConfigController {
     @Value("${spring.servlet.multipart.max-file-size}")
     private String maxFileSize;
 
-    @Value("${app.min_email_req}")
+    @Value("${app.min-email-req}")
     private Integer minEmailReq;
 
-    @Value("${app.max_email_duration}")
+    @Value("${app.max-email-duration}")
     private Integer maxEmailDuration;
 
     @GetMapping("/conf")

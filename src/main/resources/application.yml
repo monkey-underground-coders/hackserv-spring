@@ -7,6 +7,8 @@ app:
     fullName: # REQUIRED first admin name
     password: # REQUIRED first admin password
   redirect: http://localhost:8080/ls
+  min-email-req: 60
+  max-email-duration: 86400
 jwt:
   max-refresh-tokens-per-user: 10
   secret: fill-me-later
@@ -14,10 +16,10 @@ jwt:
   refresh-duration: P90D
 spring:
   mail:
-    host: smtp.yandex.ru
-    port: 587
-    username: ###
-    password: ###
+    host: # REQUIRED
+    port: # REQUIRED
+    username: # REQUIRED
+    password: # REQUIRED
     test-connection: true
     properties:
       mail:
