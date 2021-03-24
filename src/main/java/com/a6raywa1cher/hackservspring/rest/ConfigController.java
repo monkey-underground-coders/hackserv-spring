@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+
 @RestController
 public class ConfigController {
 
@@ -15,10 +17,10 @@ public class ConfigController {
     private String maxFileSize;
 
     @Value("${app.min-email-req}")
-    private Integer minEmailReq;
+    private Duration minEmailReq;
 
     @Value("${app.max-email-duration}")
-    private Integer maxEmailDuration;
+    private Duration maxEmailDuration;
 
     @GetMapping("/conf")
     @Operation(security = @SecurityRequirement(name = "jwt"))
@@ -26,8 +28,8 @@ public class ConfigController {
 
         GetConfigResponse response = new GetConfigResponse();
         response.setMaxFileSize(maxFileSize);
-        response.setMinEmailReq(minEmailReq);
-        response.setMaxEmailDuration(maxEmailDuration);
+        response.setMinEmailReq(minEmailReq.toSeconds());
+        response.setMaxEmailDuration(maxEmailDuration.toSeconds());
 
         return ResponseEntity.ok(response);
     }
