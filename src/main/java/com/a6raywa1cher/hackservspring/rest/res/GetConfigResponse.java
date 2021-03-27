@@ -7,7 +7,7 @@ public class GetConfigResponse {
 
     private String maxFileSize;
 
-    private Integer minEmailReq;
+    private Long minEmailReq;
 
-    private Integer maxEmailDuration;
+    private Long maxEmailDuration;
 }

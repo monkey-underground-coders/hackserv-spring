@@ -94,16 +94,18 @@ public class UserController {
     @PostMapping("/{uid:[0-9]+}/email/validate")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
-    @JsonView(Views.Internal.class)
-    public ResponseEntity<Void> validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnebledException {
+    public ResponseEntity<Void> validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnabledException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException();
         }
         User user = optionalUser.get();
 
+        if (user.getEmailValidationToken() == null) {
+            throw new TokenNotExistsException();
+        }
         if (!emailValidationService.isTokenEnable(user)) {
-            throw new TokenIsNotEnebledException();
+            throw new TokenIsNotEnabledException();
         }
         if (!emailValidationService.checkToken(user, request.getToken())) {
             throw new TokenIsWrongException();
@@ -116,7 +118,6 @@ public class UserController {
     @DeleteMapping("/{uid:[0-9]+}/delete")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
-    @JsonView(Views.Internal.class)
     public ResponseEntity<Void> delete(@PathVariable long uid) throws UserNotExistsException {
         Optional<User> optionalUser = userService.getById(uid);
         if (optionalUser.isEmpty()) {
