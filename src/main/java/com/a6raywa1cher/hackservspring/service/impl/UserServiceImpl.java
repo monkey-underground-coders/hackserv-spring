@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
+	//private final TeamService teamService;
 	private final UserRepository repository;
 	private final PasswordEncoder passwordEncoder;
 	private final RefreshTokenService refreshTokenService;
@@ -28,6 +29,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder,
 						   RefreshTokenService refreshTokenService) {
+		//this.teamService = teamService;
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.refreshTokenService = refreshTokenService;
@@ -156,6 +158,12 @@ public class UserServiceImpl implements UserService {
 	@Transactional(rollbackOn = Exception.class)
 	public void deleteUser(User user) {
 		refreshTokenService.invalidateAll(user);
+		/*if(user.getTeam() != null){
+			teamService.deleteMember(user.getTeam(), user);
+		}
+		if(teamService.getTeamRequestForUser(user).isPresent()){
+			teamService.deleteRequest(teamService.getTeamRequestForUser(user).get(),user);
+		}*/
 		repository.delete(user);
 	}
 }

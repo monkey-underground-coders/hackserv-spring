@@ -52,6 +52,18 @@ public class MvcAccessChecker {
         return this.checkTeamCaptainWithCurrentUser(teamId, getCurrentUser());
     }
 
+    public boolean checkTeamCaptainOrInternalWithCurrentUser(Long teamId, User requester) {
+        if (checkTeamCaptainWithCurrentUser(teamId)) {
+            return true;
+        }
+        Optional<Team> optionalTeam = teamService.getById(teamId);
+        return teamService.isUserInRequestList(optionalTeam.get(), requester) || requester.getTeam().getId().equals(teamId);
+    }
+
+    public boolean checkTeamCaptainOrInternalWithCurrentUser(Long teamId) {
+        return checkTeamCaptainOrInternalWithCurrentUser(teamId, getCurrentUser());
+    }
+
     // ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------
 
     public boolean checkUserPasswordChangeAccess(Long id, User requester) {

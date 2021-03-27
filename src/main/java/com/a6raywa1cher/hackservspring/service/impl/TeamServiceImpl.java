@@ -83,6 +83,8 @@ public class TeamServiceImpl implements TeamService {
         advancedMembers.add(user);
         team.setMembers(advancedMembers);
 
+        userService.editTeam(user, team);
+
         return teamRepository.save(team);
     }
 
@@ -93,13 +95,47 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Boolean isUserInRequestList(Team team, User user) {
+    public boolean isUserInRequestList(Team team, User user) {
         for (User requests : team.getRequests()) {
             if (requests.getId().equals(user.getId())) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isUserCaptain(Team team, User user) {
+        return team.getCaptain().getId().equals(user.getId());
+    }
+
+    @Override
+    public boolean isUserInTeam(Team team, User user) {
+        return team.getId().equals(user.getTeam().getId());
+    }
+
+    @Override
+    public void deleteRequest(Team team, User user) {
+        List<User> advancedRequests = team.getRequests();
+        advancedRequests.remove(user);
+        team.setRequests(advancedRequests);
+        teamRepository.save(team);
+    }
+
+    @Override
+    public void deleteMember(Team team, User user) {
+        userService.editTeam(user, null);
+        List<User> advancedMembers = team.getMembers();
+        advancedMembers.remove(user);
+        team.setMembers(advancedMembers);
+        if (team.getMembers().size() == 0) {
+            this.deleteTeam(team);
+            return;
+        }
+        if (this.isUserCaptain(team, user)) {
+            changeCaptain(team, team.getMembers().get(0));
+        }
+        teamRepository.save(team);
     }
 
     @Override

@@ -24,7 +24,15 @@ public interface TeamService {
 
     Team changeCaptain(Team team, User user);
 
-    Boolean isUserInRequestList(Team team, User user);
+    boolean isUserInRequestList(Team team, User user);
+
+    boolean isUserCaptain(Team team, User user);
+
+    boolean isUserInTeam(Team team, User user);
+
+    void deleteRequest(Team team, User user);
+
+    void deleteMember(Team team, User user);
 
     void deleteTeam(Team team);
 }

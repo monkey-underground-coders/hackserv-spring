@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring.rest;
 
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
+import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
@@ -13,6 +14,7 @@ import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
@@ -170,12 +172,43 @@ public class TeamController {
             throw new TeamNotExistsException();
         }
 
-        if (user.getTeam().getId() != teamid) {
+        if (!teamService.isUserInTeam(optionalTeam.get(), user)) {
             throw new UserNotInTeamException();
         }
 
         Team team = teamService.changeCaptain(optionalTeam.get(), user);
         return ResponseEntity.ok(team);
+    }
+
+    @DeleteMapping("/{teamid:[0-9]+}/del_member")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @JsonView(Views.Internal.class)
+    @PreAuthorize("@mvcAccessChecker.checkTeamCaptainOrInternalWithCurrentUser(#teamid)")
+    public ResponseEntity<Void> deleteMember(@RequestBody UserIdRequest request, @PathVariable long teamid, @Parameter(hidden = true) User requester) {
+        Optional<User> optionalUser = userService.getById(request.getUserId());
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+        User user = optionalUser.get();
+        Optional<Team> optionalTeam = teamService.getById(teamid);
+        if (optionalTeam.isEmpty()) {
+            throw new TeamNotExistsException();
+        }
+        Team team = optionalTeam.get();
+
+        if (!requester.getId().equals(user.getId()) && !teamService.isUserCaptain(team, requester) && !requester.getUserRole().equals(UserRole.ADMIN)) {
+            throw new NotCaptainTryDeleteAnotherUserException();
+        }
+
+        if (teamService.isUserInTeam(team, user)) {
+            teamService.deleteMember(team, user);
+        } else if (teamService.isUserInRequestList(team, user)) {
+            teamService.deleteRequest(team, user);
+        } else {
+            throw new UserNotInTeamOrRequestsListException();
+        }
+
+        return ResponseEntity.ok().build();
     }
 
 }
