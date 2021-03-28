@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.rest.req;
 
+import com.a6raywa1cher.hackservspring.model.Track;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -13,4 +14,7 @@ public class CreateVoteCriteriaRequest {
 
     @NotNull
     private int maxValue;
+
+    @NotNull
+    private Track track;
 }

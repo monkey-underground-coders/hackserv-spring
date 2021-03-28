@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
+import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.VoteCriteria;
 import com.a6raywa1cher.hackservspring.model.repo.VoteCriteriaRepository;
 import com.a6raywa1cher.hackservspring.service.VoteCriteriaService;
@@ -20,10 +21,11 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
     }
 
     @Override
-    public VoteCriteria create(String criteriaName, int maxValue) {
+    public VoteCriteria create(String criteriaName, int maxValue, Track track) {
         VoteCriteria criteria = new VoteCriteria();
         criteria.setName(criteriaName);
         criteria.setMaxValue(maxValue);
+        criteria.setTrack(track);
         return repository.save(criteria);
     }
 

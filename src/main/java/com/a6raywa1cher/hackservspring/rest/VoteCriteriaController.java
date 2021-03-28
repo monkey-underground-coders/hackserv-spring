@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +42,7 @@ public class VoteCriteriaController {
         return ResponseEntity.ok(criteria);
     }
 
-    @PutMapping(path="/{criteriaid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path="/{criteriaid}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<VoteCriteria> editCriteriaInfo(@PathVariable Long criteriaid, @RequestBody PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
@@ -60,15 +59,15 @@ public class VoteCriteriaController {
         return ResponseEntity.ok(criteria);
     }
 
-    @PostMapping(path="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path="/create")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<VoteCriteria> createCriteria(@RequestBody CreateVoteCriteriaRequest request) {
-        VoteCriteria criteria = criteriaService.create(request.getName(), request.getMaxValue());
+        VoteCriteria criteria = criteriaService.create(request.getName(), request.getMaxValue(), request.getTrack());
         return ResponseEntity.ok(criteria);
     }
 
-    @DeleteMapping(path="/{criteriaid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(path="/{criteriaid}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @JsonView(Views.DetailedInternal.class)
     public ResponseEntity<VoteCriteria> deleteCriteria(@PathVariable Long criteriaid) throws VoteCriteriaNotExistsException {

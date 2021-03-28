@@ -16,12 +16,9 @@ public class PutVoteCriteriaInfoRequest {
     @NotNull
     private int maxValue;
 
-    @NotBlank
     private String description;
 
-    @NotNull
     private Track track;
 
-    @NotNull
     private List<Vote> voteList;
 }
