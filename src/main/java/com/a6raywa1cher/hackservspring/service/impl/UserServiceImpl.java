@@ -5,6 +5,7 @@ import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
+import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,15 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository repository;
 	private final PasswordEncoder passwordEncoder;
 	private final RefreshTokenService refreshTokenService;
+	private final DiscService discService;
 
 	@Autowired
 	public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder,
-						   RefreshTokenService refreshTokenService) {
+						   RefreshTokenService refreshTokenService, DiscService discService) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.refreshTokenService = refreshTokenService;
+		this.discService = discService;
 	}
 
 	@Override
@@ -95,6 +98,7 @@ public class UserServiceImpl implements UserService {
     public User editUser(User user, UserRole userRole, String email, String fullName) {
         user.setFullName(fullName);
         user.setEmail(email);
+        user.setUserRole(userRole);
         return repository.save(user);
     }
 
@@ -103,10 +107,11 @@ public class UserServiceImpl implements UserService {
         user.setFullName(userInfo.getFullName());
         user.setTelegram(userInfo.getTelegram());
         user.setDateOfBirth(userInfo.getDateOfBirth());
-		user.setWorkPlace(userInfo.getWorkPlace());
-		user.setOtherInfo(userInfo.getOtherInfo());
-		return repository.save(user);
-	}
+        user.setWorkPlace(userInfo.getWorkPlace());
+        user.setOtherInfo(userInfo.getOtherInfo());
+		user.setResume(userInfo.getResume());
+        return repository.save(user);
+    }
 
 	@Override
 	public User editPassword(User user, String password) {
@@ -146,8 +151,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User setDocumentResumePath(User user, String path) {
+		user.setDocumentResumePath(path);
+		return repository.save(user);
+	}
+
+	@Override
+	public User deleteResume(User user) {
+		discService.deleteResource(user.getDocumentResumePath());
+		user.setDocumentResumePath(null);
+		return repository.save(user);
+	}
+
+	@Override
 	@Transactional(rollbackOn = Exception.class)
 	public void deleteUser(User user) {
+		discService.deleteResource(user.getDocumentResumePath());
 		refreshTokenService.invalidateAll(user);
 		repository.delete(user);
 	}

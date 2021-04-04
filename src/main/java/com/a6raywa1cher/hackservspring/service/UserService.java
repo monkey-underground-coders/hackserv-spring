@@ -39,5 +39,9 @@ public interface UserService {
 
     Optional<User> findFirstByUserRole(UserRole role);
 
+    User setDocumentResumePath(User user, String path);
+
+    User deleteResume(User user);
+
     void deleteUser(User user);
 }

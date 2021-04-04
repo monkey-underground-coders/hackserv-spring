@@ -35,7 +35,7 @@ public class VoteCriteria {
     @JsonIdentityReference(alwaysAsId = true)
     private Track track;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonView(Views.Public.class)
     @JsonIgnore
     private List<Vote> voteList;
