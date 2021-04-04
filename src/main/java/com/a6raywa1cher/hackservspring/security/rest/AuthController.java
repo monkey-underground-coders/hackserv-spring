@@ -43,8 +43,8 @@ public class AuthController {
 	private final UserService userService;
 
 	public AuthController(AuthenticationResolver authenticationResolver, RefreshTokenService refreshTokenService,
-						  JwtRefreshPairService jwtRefreshPairService, JwtTokenService jwtTokenService,
-						  UserService userService) {
+	                      JwtRefreshPairService jwtRefreshPairService, JwtTokenService jwtTokenService,
+	                      UserService userService) {
 		this.authenticationResolver = authenticationResolver;
 		this.refreshTokenService = refreshTokenService;
 		this.jwtRefreshPairService = jwtRefreshPairService;

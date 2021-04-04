@@ -12,30 +12,30 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticationResolverImpl implements AuthenticationResolver {
-    private final UserService userService;
+	private final UserService userService;
 
-    public AuthenticationResolverImpl(UserService userService) {
-        this.userService = userService;
-    }
+	public AuthenticationResolverImpl(UserService userService) {
+		this.userService = userService;
+	}
 
-    @Override
-    public User getUser() throws AuthenticationException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return getUser(authentication);
-    }
+	@Override
+	public User getUser() throws AuthenticationException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return getUser(authentication);
+	}
 
-    @Override
-    public User getUser(Authentication authentication) throws AuthenticationException {
-        if (authentication == null) {
-            throw new BadCredentialsException("No credentials presented");
-        }
-        if (authentication instanceof CustomAuthentication) {
-            CustomAuthentication customAuthentication = (CustomAuthentication) authentication;
-            return userService.getById(customAuthentication.getPrincipal()).orElseThrow();
-        } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-            return userService.getById((Long) token.getPrincipal()).orElseThrow();
-        }
-        throw new AuthenticationResolveException("Unknown Authentication " + authentication.getClass().getCanonicalName());
-    }
+	@Override
+	public User getUser(Authentication authentication) throws AuthenticationException {
+		if (authentication == null) {
+			throw new BadCredentialsException("No credentials presented");
+		}
+		if (authentication instanceof CustomAuthentication) {
+			CustomAuthentication customAuthentication = (CustomAuthentication) authentication;
+			return userService.getById(customAuthentication.getPrincipal()).orElseThrow();
+		} else if (authentication instanceof UsernamePasswordAuthenticationToken) {
+			UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+			return userService.getById((Long) token.getPrincipal()).orElseThrow();
+		}
+		throw new AuthenticationResolveException("Unknown Authentication " + authentication.getClass().getCanonicalName());
+	}
 }

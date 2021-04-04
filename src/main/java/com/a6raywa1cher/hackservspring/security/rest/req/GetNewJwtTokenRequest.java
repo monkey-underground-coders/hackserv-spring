@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 @Data
 public class GetNewJwtTokenRequest {
-    @NotNull
-    @Size(min = 36, max = 36)
-    private String refreshToken;
+	@NotNull
+	@Size(min = 36, max = 36)
+	private String refreshToken;
 }

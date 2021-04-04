@@ -8,7 +8,7 @@ import javax.validation.constraints.Positive;
 @Data
 public class EmailValidationTokenRequest {
 
-    @Positive
-    @Digits(integer = 6, fraction = 0)
-    private int token;
+	@Positive
+	@Digits(integer = 6, fraction = 0)
+	private int token;
 }

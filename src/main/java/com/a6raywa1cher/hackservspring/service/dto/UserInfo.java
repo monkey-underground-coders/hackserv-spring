@@ -7,15 +7,15 @@ import java.time.LocalDate;
 
 @Data
 public class UserInfo {
-    private String fullName;
+	private String fullName;
 
-    private String telegram;
+	private String telegram;
 
-    private LocalDate dateOfBirth;
+	private LocalDate dateOfBirth;
 
-    private String workPlace;
+	private String workPlace;
 
-    private String otherInfo;
+	private String otherInfo;
 
-    private String resume;
+	private String resume;
 }
