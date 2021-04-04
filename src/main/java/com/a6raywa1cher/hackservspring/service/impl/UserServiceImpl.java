@@ -166,7 +166,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(rollbackOn = Exception.class)
 	public void deleteUser(User user) {
-		discService.deleteResource(user.getDocumentResumePath());
+		if (user.getDocumentResumePath() != null) {
+			this.deleteResume(user);
+		}
 		refreshTokenService.invalidateAll(user);
 		repository.delete(user);
 	}
