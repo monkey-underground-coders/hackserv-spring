@@ -9,12 +9,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JacksonMapperConfig {
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        return mapper;
-    }
+	@Bean
+	public ObjectMapper objectMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
+		mapper.registerModule(new JavaTimeModule());
+		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		return mapper;
+	}
 }

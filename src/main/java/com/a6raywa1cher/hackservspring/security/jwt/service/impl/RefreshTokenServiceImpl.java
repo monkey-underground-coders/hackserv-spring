@@ -27,8 +27,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	private final Duration refreshTokenDuration;
 
 	public RefreshTokenServiceImpl(RefreshTokenRepository repository, BlockedRefreshTokensService service,
-								   @Value("${jwt.max-refresh-tokens-per-user}") Long maxTokensPerUser,
-								   @Value("${jwt.refresh-duration}") Duration refreshTokenDuration) {
+	                               @Value("${jwt.max-refresh-tokens-per-user}") Long maxTokensPerUser,
+	                               @Value("${jwt.refresh-duration}") Duration refreshTokenDuration) {
 		this.repository = repository;
 		this.service = service;
 		this.maxTokensPerUser = maxTokensPerUser;

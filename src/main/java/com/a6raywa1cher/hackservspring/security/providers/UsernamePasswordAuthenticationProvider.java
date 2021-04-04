@@ -28,32 +28,32 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if (!(authentication instanceof UsernamePasswordAuthenticationToken) ||
-                !(authentication.getPrincipal() instanceof String) ||
-                !(authentication.getCredentials() instanceof String)) {
-            return null;
-        }
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-        String email = (String) token.getPrincipal();
-        Optional<User> byUsername = userService.getByEmail(email);
-        String inputPassword = (String) authentication.getCredentials();
-        if (byUsername.isEmpty()) {
-            throw new BadCredentialsException("User not exists or incorrect password");
-        }
-        User user = byUsername.get();
-        if (user.getPassword() == null || "".equals(user.getPassword())) {
-            throw new DisabledException("User didn't set up password");
-        }
-        if (!passwordEncoder.matches(inputPassword, user.getPassword())) {
-            throw new BadCredentialsException("User not exists or incorrect password");
-        }
-        List<GrantedAuthority> authorityList = new ArrayList<>();
-        if (user.isEnabled())
-            authorityList.add(new SimpleGrantedAuthority("ENABLED"));
-        authorityList.add(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE));
-        return new UsernamePasswordAuthenticationToken(
-                user.getId(), token, authorityList);
-    }
+		if (!(authentication instanceof UsernamePasswordAuthenticationToken) ||
+				!(authentication.getPrincipal() instanceof String) ||
+				!(authentication.getCredentials() instanceof String)) {
+			return null;
+		}
+		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+		String email = (String) token.getPrincipal();
+		Optional<User> byUsername = userService.getByEmail(email);
+		String inputPassword = (String) authentication.getCredentials();
+		if (byUsername.isEmpty()) {
+			throw new BadCredentialsException("User not exists or incorrect password");
+		}
+		User user = byUsername.get();
+		if (user.getPassword() == null || "".equals(user.getPassword())) {
+			throw new DisabledException("User didn't set up password");
+		}
+		if (!passwordEncoder.matches(inputPassword, user.getPassword())) {
+			throw new BadCredentialsException("User not exists or incorrect password");
+		}
+		List<GrantedAuthority> authorityList = new ArrayList<>();
+		if (user.isEnabled())
+			authorityList.add(new SimpleGrantedAuthority("ENABLED"));
+		authorityList.add(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE));
+		return new UsernamePasswordAuthenticationToken(
+				user.getId(), token, authorityList);
+	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
