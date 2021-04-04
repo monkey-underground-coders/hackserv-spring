@@ -163,6 +163,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>**/application*.yml</include>
+                    <include>**/emails/**/*.html</include>
                 </includes>
             </resource>
         </resources>

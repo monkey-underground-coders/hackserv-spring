@@ -49,27 +49,35 @@ public class User {
 	@JsonView(Views.Internal.class)
 	private String githubId;
 
-	@Column(name = "email", nullable = false, length = 1024)
+	@Column(name = "email", nullable = false, length = 1024, unique = true)
 	@JsonView(Views.Internal.class)
-	private String email;
+    private String email;
 
-	@Column(length = 1024)
-	@JsonIgnore
-	private String password;
+    @Column(length = 1024)
+    @JsonIgnore
+    private String password;
 
-	@Column
-	@JsonView(Views.Public.class)
-	private UserRole userRole;
+    @Column
+    @JsonView(Views.Public.class)
+    private UserRole userRole;
 
-	@Column
-	@JsonView(Views.Internal.class)
-	private String fullName;
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private EmailValidationToken emailValidationToken;
 
-	@ManyToOne
-	@JsonView(Views.Public.class)
-	private Team team;
+    @Column
+    @JsonView(Views.Public.class)
+    private boolean emailValidated;
 
-	@OneToMany
+    @Column
+    @JsonView(Views.Internal.class)
+    private String fullName;
+
+    @ManyToOne
+    @JsonView(Views.Public.class)
+    private Team team;
+
+    @OneToMany
 	@JsonIgnore
 	private List<Vote> votings;
 
@@ -77,9 +85,10 @@ public class User {
 	@JsonView(Views.Internal.class)
 	private String telegram;
 
-	@Column
-	@JsonView(Views.Internal.class)
-	private LocalDate dateOfBirth;
+    @Column
+    @JsonView(Views.Internal.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private LocalDate dateOfBirth;
 
 	@Column
     @JsonView(Views.Internal.class)
@@ -111,6 +120,6 @@ public class User {
 	@Transient
 	@JsonView(Views.Public.class)
 	public boolean isEnabled() {
-		return true;
-	}
+        return emailValidated;
+    }
 }
