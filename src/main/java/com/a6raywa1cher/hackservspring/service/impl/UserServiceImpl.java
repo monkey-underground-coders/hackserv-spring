@@ -1,6 +1,5 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
-import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
@@ -121,12 +120,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User editEmailValidated(User user, boolean expr) {
         user.setEmailValidated(expr);
-        return repository.save(user);
-    }
-
-    @Override
-    public User editTeam(User user, Team team) {
-        user.setTeam(team);
         return repository.save(user);
     }
 
