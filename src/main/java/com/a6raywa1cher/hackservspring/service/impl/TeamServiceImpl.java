@@ -4,8 +4,8 @@ import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.repo.TeamRepository;
+import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.service.TeamService;
-import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,12 @@ import java.util.Optional;
 @Service
 public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public TeamServiceImpl(TeamRepository teamRepository, UserService userService) {
+
+    public TeamServiceImpl(TeamRepository teamRepository, UserRepository userRepository) {
         this.teamRepository = teamRepository;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -44,8 +45,8 @@ public class TeamServiceImpl implements TeamService {
         team.setRequests(requests);
         team.setCreatedAt(ZonedDateTime.now());
 
-        userService.editTeam(captain, team);
-
+        captain.setTeam(team);
+        userRepository.save(captain);
         return teamRepository.save(team);
     }
 
@@ -83,7 +84,8 @@ public class TeamServiceImpl implements TeamService {
         advancedMembers.add(user);
         team.setMembers(advancedMembers);
 
-        userService.editTeam(user, team);
+        user.setTeam(team);
+        userRepository.save(user);
 
         return teamRepository.save(team);
     }
@@ -124,7 +126,8 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void deleteMember(Team team, User user) {
-        userService.editTeam(user, null);
+        user.setTeam(null);
+        userRepository.save(user);
         List<User> advancedMembers = team.getMembers();
         advancedMembers.remove(user);
         team.setMembers(advancedMembers);
@@ -141,7 +144,8 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void deleteTeam(Team team) {
         for (User user : team.getMembers()) {
-            userService.editTeam(user, null);
+            user.setTeam(null);
+            userRepository.save(user);
         }
         teamRepository.delete(team);
     }
