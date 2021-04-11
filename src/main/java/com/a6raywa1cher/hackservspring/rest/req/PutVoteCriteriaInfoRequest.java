@@ -4,18 +4,17 @@ import com.a6raywa1cher.hackservspring.utils.jackson.HtmlEscape;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 @Data
 public class PutVoteCriteriaInfoRequest {
 	@NotBlank
-    @HtmlEscape
-    private String name;
+	@HtmlEscape
+	private String name;
 
-	@NotNull
+	@PositiveOrZero
 	private int maxValue;
 
+	@HtmlEscape
 	private String description;
-
-
 }
