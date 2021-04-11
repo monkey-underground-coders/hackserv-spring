@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class CreateVoteCriteriaRequest {
 
 	@NotBlank
-	@HtmlEscape
+    @HtmlEscape
     private String name;
 
 	@NotNull

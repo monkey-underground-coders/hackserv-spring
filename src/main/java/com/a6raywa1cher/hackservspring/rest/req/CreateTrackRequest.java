@@ -9,6 +9,6 @@ import javax.validation.constraints.NotBlank;
 public class CreateTrackRequest {
 
 	@NotBlank
-	@HtmlEscape
+    @HtmlEscape
     private String trackName;
 }
