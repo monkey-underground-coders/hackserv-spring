@@ -1,6 +1,5 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
-import com.a6raywa1cher.hackservspring.rest.exc.FileSizeLimitExceededException;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.utils.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,35 +17,36 @@ import java.util.UUID;
 @Service
 public class DiscServiceImpl implements DiscService {
 
-    @Value("${app.upload-dir}")
-    private String masterPath;
+	@Value("${app.upload-dir}")
+	private String masterPath;
 
-    @Autowired
-    public DiscServiceImpl(){};
+	@Autowired
+	public DiscServiceImpl() {
+	}
 
-    private Path getPath(String relativePath){
-        return Path.of(masterPath, relativePath);
-    }
+	private Path getPath(String relativePath) {
+		return Path.of(masterPath, relativePath);
+	}
 
-    @Override
-    public String create(MultipartFile file) throws IOException {
-        String uuid = UUID.randomUUID().toString();
-        String originalFilename = ServiceUtils.getFileExtension(file);
-        uuid = String.join("/", uuid.substring(0, 2), uuid.substring(2, 4), uuid.substring(4, 6),
-                uuid.substring(6)) + originalFilename.substring(originalFilename.lastIndexOf('.'));
-        Path filePathToTransferInto = getPath(uuid);
-        Files.createDirectories(getPath(uuid.substring(0, uuid.lastIndexOf('/'))));
-        file.transferTo(filePathToTransferInto);
-        return uuid;
-    }
-    
-    @Override
-    public void deleteResource(String relativePath) {
-        getPath(relativePath).toFile().delete();
-    }
+	@Override
+	public String create(MultipartFile file) throws IOException {
+		String uuid = UUID.randomUUID().toString();
+		String originalFilename = ServiceUtils.getFileExtension(file);
+		uuid = String.join("/", uuid.substring(0, 2), uuid.substring(2, 4), uuid.substring(4, 6),
+				uuid.substring(6)) + originalFilename.substring(originalFilename.lastIndexOf('.'));
+		Path filePathToTransferInto = getPath(uuid);
+		Files.createDirectories(getPath(uuid.substring(0, uuid.lastIndexOf('/'))));
+		file.transferTo(filePathToTransferInto);
+		return uuid;
+	}
 
-    @Override
-    public Resource getResource(String relativePath) {
-        return new PathResource(getPath(relativePath));
-    }
+	@Override
+	public void deleteResource(String relativePath) {
+		getPath(relativePath).toFile().delete();
+	}
+
+	@Override
+	public Resource getResource(String relativePath) {
+		return new PathResource(getPath(relativePath));
+	}
 }

@@ -12,29 +12,29 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private final UserHandlerMethodArgumentResolver userHandlerMethodArgumentResolver;
-    AppConfigProperties properties;
+	private final UserHandlerMethodArgumentResolver userHandlerMethodArgumentResolver;
+	AppConfigProperties properties;
 
-    @Autowired
-    public WebConfig(@Valid AppConfigProperties properties,
-                     UserHandlerMethodArgumentResolver userHandlerMethodArgumentResolver) {
-        this.properties = properties;
-        this.userHandlerMethodArgumentResolver = userHandlerMethodArgumentResolver;
-    }
-
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }
+	@Autowired
+	public WebConfig(@Valid AppConfigProperties properties,
+	                 UserHandlerMethodArgumentResolver userHandlerMethodArgumentResolver) {
+		this.properties = properties;
+		this.userHandlerMethodArgumentResolver = userHandlerMethodArgumentResolver;
+	}
 
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(userHandlerMethodArgumentResolver);
-    }
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("swagger-ui.html")
+				.addResourceLocations("classpath:/META-INF/resources/");
+
+		registry.addResourceHandler("/webjars/**")
+				.addResourceLocations("classpath:/META-INF/resources/webjars/");
+	}
+
+
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		resolvers.add(userHandlerMethodArgumentResolver);
+	}
 }

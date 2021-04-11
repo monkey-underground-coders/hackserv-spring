@@ -9,13 +9,13 @@ import java.time.OffsetDateTime;
 @Data
 @AllArgsConstructor
 public class JwtRefreshPair {
-    private String refreshToken;
+	private String refreshToken;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private OffsetDateTime refreshTokenExpiringAt;
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private OffsetDateTime refreshTokenExpiringAt;
 
-    private String accessToken;
+	private String accessToken;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private OffsetDateTime accessTokenExpiringAt;
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private OffsetDateTime accessTokenExpiringAt;
 }

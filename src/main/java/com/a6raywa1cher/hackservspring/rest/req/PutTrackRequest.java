@@ -9,10 +9,10 @@ import java.util.List;
 
 @Data
 public class PutTrackRequest {
-    @NotBlank
-    private String trackName;
+	@NotBlank
+	private String trackName;
 
-    private List<VoteCriteria> criteriaList;
+	private List<VoteCriteria> criteriaList;
 
-    private List<Team> teams;
+	private List<Team> teams;
 }

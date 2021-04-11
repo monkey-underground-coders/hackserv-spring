@@ -9,15 +9,15 @@ import java.util.List;
 
 @Data
 public class VoteCriteriaInfo {
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    @NotBlank
-    private int maxValue;
+	@NotBlank
+	private int maxValue;
 
-    private String description;
+	private String description;
 
-    private Track track;
+	private Track track;
 
-    private List<Vote> voteList;
+	private List<Vote> voteList;
 }

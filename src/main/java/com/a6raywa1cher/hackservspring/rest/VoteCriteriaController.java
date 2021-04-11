@@ -26,74 +26,74 @@ import java.util.stream.Collectors;
 @RequestMapping("/criteria")
 @Transactional(rollbackOn = Exception.class)
 public class VoteCriteriaController {
-    VoteCriteriaService criteriaService;
-    TrackService trackService;
+	VoteCriteriaService criteriaService;
+	TrackService trackService;
 
-    public VoteCriteriaController(VoteCriteriaService criteriaService, TrackService trackService) {
-        this.criteriaService = criteriaService;
-        this.trackService = trackService;
-    }
+	public VoteCriteriaController(VoteCriteriaService criteriaService, TrackService trackService) {
+		this.criteriaService = criteriaService;
+		this.trackService = trackService;
+	}
 
-    @GetMapping("/{criteriaid}")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.DetailedInternal.class)
-    public ResponseEntity<VoteCriteria> getCriteria(@PathVariable long criteriaid) throws VoteCriteriaNotExistsException {
-        Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
-        if (optionalVoteCriteria.isEmpty()) {
-            throw new VoteCriteriaNotExistsException();
-        }
-        VoteCriteria criteria = optionalVoteCriteria.get();
+	@GetMapping("/{criteriaid}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.DetailedInternal.class)
+	public ResponseEntity<VoteCriteria> getCriteria(@PathVariable long criteriaid) throws VoteCriteriaNotExistsException {
+		Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
+		if (optionalVoteCriteria.isEmpty()) {
+			throw new VoteCriteriaNotExistsException();
+		}
+		VoteCriteria criteria = optionalVoteCriteria.get();
 
-        return ResponseEntity.ok(criteria);
-    }
+		return ResponseEntity.ok(criteria);
+	}
 
-    @PutMapping(path="/{criteriaid}")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.DetailedInternal.class)
-    public ResponseEntity<VoteCriteria> editCriteriaInfo(@PathVariable Long criteriaid, @RequestBody PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
-        Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
-        if (optionalVoteCriteria.isEmpty()) {
-            throw new VoteCriteriaNotExistsException();
-        }
+	@PutMapping(path = "/{criteriaid}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.DetailedInternal.class)
+	public ResponseEntity<VoteCriteria> editCriteriaInfo(@PathVariable Long criteriaid, @RequestBody PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
+		Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
+		if (optionalVoteCriteria.isEmpty()) {
+			throw new VoteCriteriaNotExistsException();
+		}
 
-        VoteCriteriaInfo info = new VoteCriteriaInfo();
-        BeanUtils.copyProperties(request, info);
+		VoteCriteriaInfo info = new VoteCriteriaInfo();
+		BeanUtils.copyProperties(request, info);
 
-        VoteCriteria criteria = criteriaService.editCriteriaInfo(optionalVoteCriteria.get(), info);
+		VoteCriteria criteria = criteriaService.editCriteriaInfo(optionalVoteCriteria.get(), info);
 
-        return ResponseEntity.ok(criteria);
-    }
+		return ResponseEntity.ok(criteria);
+	}
 
-    @PostMapping(path="/create")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.DetailedInternal.class)
-    public ResponseEntity<VoteCriteria> createCriteria(@RequestBody CreateVoteCriteriaRequest request) throws TrackNotExistsException {
-        Optional<Track> optionalTrack = trackService.getById((request.getTrackId()));
-        if (optionalTrack.isEmpty()) {
-            throw new TrackNotExistsException();
-        }
-        VoteCriteria criteria = criteriaService.create(request.getName(), request.getMaxValue(), optionalTrack.get());
-        return ResponseEntity.ok(criteria);
-    }
+	@PostMapping(path = "/create")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.DetailedInternal.class)
+	public ResponseEntity<VoteCriteria> createCriteria(@RequestBody CreateVoteCriteriaRequest request) throws TrackNotExistsException {
+		Optional<Track> optionalTrack = trackService.getById((request.getTrackId()));
+		if (optionalTrack.isEmpty()) {
+			throw new TrackNotExistsException();
+		}
+		VoteCriteria criteria = criteriaService.create(request.getName(), request.getMaxValue(), optionalTrack.get());
+		return ResponseEntity.ok(criteria);
+	}
 
-    @DeleteMapping(path="/{criteriaid}")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.DetailedInternal.class)
-    public ResponseEntity<VoteCriteria> deleteCriteria(@PathVariable Long criteriaid) throws VoteCriteriaNotExistsException {
-        Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
-        if (optionalVoteCriteria.isEmpty()) {
-            throw new VoteCriteriaNotExistsException();
-        }
-        VoteCriteria criteria = optionalVoteCriteria.get();
-        criteriaService.deleteCriteria(criteria);
-        return ResponseEntity.ok().build();
-    }
+	@DeleteMapping(path = "/{criteriaid}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.DetailedInternal.class)
+	public ResponseEntity<VoteCriteria> deleteCriteria(@PathVariable Long criteriaid) throws VoteCriteriaNotExistsException {
+		Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
+		if (optionalVoteCriteria.isEmpty()) {
+			throw new VoteCriteriaNotExistsException();
+		}
+		VoteCriteria criteria = optionalVoteCriteria.get();
+		criteriaService.deleteCriteria(criteria);
+		return ResponseEntity.ok().build();
+	}
 
-    @GetMapping("/criteria")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Internal.class)
-    public ResponseEntity<List<VoteCriteria>> getAllCriteria() {
-        List<VoteCriteria> criteriaList = criteriaService.getAllCriteria().collect(Collectors.toList());
-        return ResponseEntity.ok(criteriaList);
-    }
+	@GetMapping("/criteria")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Internal.class)
+	public ResponseEntity<List<VoteCriteria>> getAllCriteria() {
+		List<VoteCriteria> criteriaList = criteriaService.getAllCriteria().collect(Collectors.toList());
+		return ResponseEntity.ok(criteriaList);
+	}
 }

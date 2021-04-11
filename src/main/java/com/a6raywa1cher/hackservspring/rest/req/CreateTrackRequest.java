@@ -7,6 +7,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CreateTrackRequest {
 
-    @NotBlank
-    private String trackName;
+	@NotBlank
+	private String trackName;
 }

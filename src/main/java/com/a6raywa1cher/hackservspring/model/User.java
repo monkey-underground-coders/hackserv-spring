@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.List;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "id")
+@ToString(exclude = {"votings"})
 public class User {
 	@Id
 	@GeneratedValue
@@ -51,33 +53,33 @@ public class User {
 
 	@Column(name = "email", nullable = false, length = 1024, unique = true)
 	@JsonView(Views.Internal.class)
-    private String email;
+	private String email;
 
-    @Column(length = 1024)
-    @JsonIgnore
-    private String password;
+	@Column(length = 1024)
+	@JsonIgnore
+	private String password;
 
-    @Column
-    @JsonView(Views.Public.class)
-    private UserRole userRole;
+	@Column
+	@JsonView(Views.Public.class)
+	private UserRole userRole;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JsonIgnore
-    private EmailValidationToken emailValidationToken;
+	@OneToOne(cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private EmailValidationToken emailValidationToken;
 
-    @Column
-    @JsonView(Views.Public.class)
-    private boolean emailValidated;
+	@Column
+	@JsonView(Views.Public.class)
+	private boolean emailValidated;
 
-    @Column
-    @JsonView(Views.Internal.class)
-    private String fullName;
+	@Column
+	@JsonView(Views.Internal.class)
+	private String fullName;
 
-    @ManyToOne
-    @JsonView(Views.Public.class)
-    private Team team;
+	@ManyToOne
+	@JsonView(Views.Public.class)
+	private Team team;
 
-    @OneToMany
+	@OneToMany(mappedBy = "judge")
 	@JsonIgnore
 	private List<Vote> votings;
 
@@ -85,28 +87,28 @@ public class User {
 	@JsonView(Views.Internal.class)
 	private String telegram;
 
-    @Column
-    @JsonView(Views.Internal.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private LocalDate dateOfBirth;
+	@Column
+	@JsonView(Views.Internal.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private LocalDate dateOfBirth;
 
 	@Column
-    @JsonView(Views.Internal.class)
-    private String workPlace;
+	@JsonView(Views.Internal.class)
+	private String workPlace;
 
-    @Column(length = 5000)
-    @JsonView(Views.Internal.class)
-    private String otherInfo;
+	@Column(length = 5000)
+	@JsonView(Views.Internal.class)
+	private String otherInfo;
 
-    @Column
-    @JsonView(Views.Internal.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private ZonedDateTime expiringAt;
+	@Column
+	@JsonView(Views.Internal.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private ZonedDateTime expiringAt;
 
-    @Column
-    @JsonView(Views.Public.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private ZonedDateTime createdAt;
+	@Column
+	@JsonView(Views.Public.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private ZonedDateTime createdAt;
 
 	@Column
 	@JsonView(Views.Internal.class)
@@ -120,6 +122,6 @@ public class User {
 	@Transient
 	@JsonView(Views.Public.class)
 	public boolean isEnabled() {
-        return emailValidated;
-    }
+		return emailValidated;
+	}
 }

@@ -12,33 +12,33 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"criteria_id", "judge_id", "team_id"})
+		@UniqueConstraint(columnNames = {"criteria_id", "judge_id", "team_id"})
 })
 @JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "id")
 public class Vote {
-    @Id
-    @GeneratedValue
-    @JsonView(Views.Public.class)
-    private Long id;
+	@Id
+	@GeneratedValue
+	@JsonView(Views.Public.class)
+	private Long id;
 
-    @ManyToOne(optional = false)
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private VoteCriteria criteria;
+	@ManyToOne(optional = false)
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private VoteCriteria criteria;
 
-    @ManyToOne(optional = false)
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private User judge;
+	@ManyToOne(optional = false)
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private User judge;
 
-    @ManyToOne(optional = false)
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private Team team;
+	@ManyToOne(optional = false)
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private Team team;
 
-    @Column(nullable = false)
-    @JsonView(Views.Public.class)
-    private int vote;
+	@Column(nullable = false)
+	@JsonView(Views.Public.class)
+	private int vote;
 }

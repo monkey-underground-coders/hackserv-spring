@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface EmailValidationTokenRepository extends PagingAndSortingRepository<EmailValidationToken, Long> {
 
-    Optional<EmailValidationToken> findByToken(int token);
+	Optional<EmailValidationToken> findByToken(int token);
 
 }

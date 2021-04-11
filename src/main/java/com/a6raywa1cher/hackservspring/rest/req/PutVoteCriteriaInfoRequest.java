@@ -9,15 +9,15 @@ import java.util.List;
 
 @Data
 public class PutVoteCriteriaInfoRequest {
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    @NotNull
-    private int maxValue;
+	@NotNull
+	private int maxValue;
 
-    private String description;
+	private String description;
 
-    private long trackId;
+	private long trackId;
 
-    private List<Vote> voteList;
+	private List<Vote> voteList;
 }

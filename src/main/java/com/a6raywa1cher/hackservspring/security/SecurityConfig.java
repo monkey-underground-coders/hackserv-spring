@@ -119,7 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/conf").hasRole("USER")
                 .antMatchers(HttpMethod.GET, "/criteria/**").hasRole("USER")
                 .antMatchers("/criteria/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET,"/track/**").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/track/**").hasRole("USER")
                 .antMatchers("/track/**").hasRole("ADMIN")
                 .anyRequest().access("hasRole('USER') && hasAuthority('ENABLED')");
         http.cors()

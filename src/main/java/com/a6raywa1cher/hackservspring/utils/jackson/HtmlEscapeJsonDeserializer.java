@@ -12,22 +12,22 @@ import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import java.io.IOException;
 
 public class HtmlEscapeJsonDeserializer extends StringDeserializer implements ContextualDeserializer {
-    private int maxLength;
+	private int maxLength;
 
-    @Override
-    public JsonDeserializer<?> createContextual(final DeserializationContext ctxt,
-                                                final BeanProperty property) throws JsonMappingException {
+	@Override
+	public JsonDeserializer<?> createContextual(final DeserializationContext ctxt,
+	                                            final BeanProperty property) throws JsonMappingException {
 
-        maxLength = property.getAnnotation(HtmlEscape.class).value();
+		maxLength = property.getAnnotation(HtmlEscape.class).value();
 
-        return this;
-    }
+		return this;
+	}
 
-    @Override
-    public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String extracted = super.deserialize(p, ctxt);
-        return maxLength > 0 ?
-                LocalHtmlUtils.htmlEscape(extracted, maxLength) :
-                LocalHtmlUtils.htmlEscape(extracted);
-    }
+	@Override
+	public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+		String extracted = super.deserialize(p, ctxt);
+		return maxLength > 0 ?
+				LocalHtmlUtils.htmlEscape(extracted, maxLength) :
+				LocalHtmlUtils.htmlEscape(extracted);
+	}
 }

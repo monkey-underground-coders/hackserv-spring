@@ -16,29 +16,29 @@ import org.springframework.stereotype.Component;
 // https://stackoverflow.com/questions/45405332/websocket-authentication-and-authorization-in-spring
 @Component
 public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
-    private final AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    public AuthChannelInterceptorAdapter(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
+	@Autowired
+	public AuthChannelInterceptorAdapter(AuthenticationManager authenticationManager) {
+		this.authenticationManager = authenticationManager;
+	}
 
-    @Override
-    public Message<?> preSend(final Message<?> message, final MessageChannel channel) throws AuthenticationException {
-        final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+	@Override
+	public Message<?> preSend(final Message<?> message, final MessageChannel channel) throws AuthenticationException {
+		final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (StompCommand.CONNECT == accessor.getCommand()) {
-            final String username = accessor.getLogin();
-            if (username == null) {
-                return message;
-            }
-            final String password = accessor.getPasscode();
+		if (StompCommand.CONNECT == accessor.getCommand()) {
+			final String username = accessor.getLogin();
+			if (username == null) {
+				return message;
+			}
+			final String password = accessor.getPasscode();
 
-            final UsernamePasswordAuthenticationToken raw = new UsernamePasswordAuthenticationToken(username, password);
-            final Authentication user = authenticationManager.authenticate(raw);
+			final UsernamePasswordAuthenticationToken raw = new UsernamePasswordAuthenticationToken(username, password);
+			final Authentication user = authenticationManager.authenticate(raw);
 
-            accessor.setUser(user);
-        }
-        return message;
-    }
+			accessor.setUser(user);
+		}
+		return message;
+	}
 }

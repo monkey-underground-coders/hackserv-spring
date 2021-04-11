@@ -9,23 +9,23 @@ import org.hibernate.type.Type;
 import java.util.List;
 
 public class BitwiseAndStandardSQLFunction extends StandardSQLFunction
-        implements SQLFunction {
+		implements SQLFunction {
 
-    public BitwiseAndStandardSQLFunction(String name) {
-        super(name);
-    }
+	public BitwiseAndStandardSQLFunction(String name) {
+		super(name);
+	}
 
-    public BitwiseAndStandardSQLFunction(String name, Type type) {
-        super(name, type);
-    }
+	public BitwiseAndStandardSQLFunction(String name, Type type) {
+		super(name, type);
+	}
 
-    public String render(List<?> args, SessionFactoryImplementor factory)
-            throws QueryException {
+	public String render(List<?> args, SessionFactoryImplementor factory)
+			throws QueryException {
 
-        if (args.size() != 2) {
-            throw new IllegalArgumentException("the function must be passed 2 arguments");
-        }
+		if (args.size() != 2) {
+			throw new IllegalArgumentException("the function must be passed 2 arguments");
+		}
 
-        return args.get(0).toString() + " & " + args.get(1);
-    }
+		return args.get(0).toString() + " & " + args.get(1);
+	}
 }

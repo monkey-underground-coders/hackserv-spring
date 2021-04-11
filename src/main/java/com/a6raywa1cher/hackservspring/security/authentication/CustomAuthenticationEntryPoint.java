@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 //		if (authException instanceof BadCredentialsException || authException instanceof DisabledException) {
-        response.sendError(HttpServletResponse.SC_FORBIDDEN, authException.getMessage());
+		response.sendError(HttpServletResponse.SC_FORBIDDEN, authException.getMessage());
 //		} else {
 //			response.setHeader("WWW-Authenticate", "FormBased");
 //			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 //		}
-    }
+	}
 }
