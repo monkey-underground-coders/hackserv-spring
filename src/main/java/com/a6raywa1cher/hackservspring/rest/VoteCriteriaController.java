@@ -55,7 +55,6 @@ public class VoteCriteriaController {
         if (optionalVoteCriteria.isEmpty()) {
             throw new VoteCriteriaNotExistsException();
         }
-
         VoteCriteriaInfo info = new VoteCriteriaInfo();
         BeanUtils.copyProperties(request, info);
 
@@ -87,13 +86,5 @@ public class VoteCriteriaController {
         VoteCriteria criteria = optionalVoteCriteria.get();
         criteriaService.deleteCriteria(criteria);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/criteria")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Internal.class)
-    public ResponseEntity<List<VoteCriteria>> getAllCriteria() {
-        List<VoteCriteria> criteriaList = criteriaService.getAllCriteria().collect(Collectors.toList());
-        return ResponseEntity.ok(criteriaList);
     }
 }

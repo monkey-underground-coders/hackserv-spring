@@ -9,10 +9,14 @@ import java.util.stream.Stream;
 
 public interface VoteCriteriaService {
     VoteCriteria create(String criteriaName, int maxValue, Track track);
+
     Optional<VoteCriteria> getById(Long id);
+
     Stream<VoteCriteria> getById(Collection<Long> ids);
-    Stream<VoteCriteria> getAllCriteria();
+
     VoteCriteria editCriteria(VoteCriteria criteria, String criteriaName, int maxValue);
+
     VoteCriteria editCriteriaInfo(VoteCriteria criteria, VoteCriteriaInfo criteriaInfo);
+
     void deleteCriteria(VoteCriteria criteria);
 }

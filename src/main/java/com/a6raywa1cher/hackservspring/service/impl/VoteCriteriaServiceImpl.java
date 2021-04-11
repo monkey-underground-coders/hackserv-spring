@@ -41,11 +41,6 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
     }
 
     @Override
-    public Stream<VoteCriteria> getAllCriteria() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false);
-    }
-
-    @Override
     public VoteCriteria editCriteria(VoteCriteria criteria, String criteriaName, int maxValue) {
         criteria.setName(criteriaName);
         criteria.setMaxValue(maxValue);
@@ -54,10 +49,7 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
 
     @Override
     public VoteCriteria editCriteriaInfo(VoteCriteria criteria, VoteCriteriaInfo criteriaInfo){
-        criteria.setTrack(criteriaInfo.getTrack());
-        criteria.setVoteList(criteriaInfo.getVoteList());
         criteria.setDescription(criteriaInfo.getDescription());
-        criteria.setVoteList(criteriaInfo.getVoteList());
         criteria.setName(criteriaInfo.getName());
         return repository.save(criteria);
     }

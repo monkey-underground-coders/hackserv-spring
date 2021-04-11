@@ -1,15 +1,12 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
-import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
-import com.a6raywa1cher.hackservspring.model.VoteCriteria;
 import com.a6raywa1cher.hackservspring.model.repo.TrackRepository;
 import com.a6raywa1cher.hackservspring.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -45,10 +42,8 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public Track editTrack(Track track, String trackName, List<VoteCriteria> criteriaList, List<Team> teams) {
+    public Track editTrack(Track track, String trackName) {
         track.setTrackName(trackName);
-        track.setCriteriaList(criteriaList);
-        track.setTeams(teams);
         return repository.save(track);
     }
 

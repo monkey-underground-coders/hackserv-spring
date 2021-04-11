@@ -7,6 +7,8 @@ import java.io.IOException;
 
 public interface DiscService {
     String create(MultipartFile file) throws IOException, FileSizeLimitExceededException;
+
     void deleteResource(String path);
+
     Resource getResource(String path);
 }

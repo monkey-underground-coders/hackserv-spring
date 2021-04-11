@@ -16,8 +16,4 @@ public class VoteCriteriaInfo {
     private int maxValue;
 
     private String description;
-
-    private Track track;
-
-    private List<Vote> voteList;
 }
