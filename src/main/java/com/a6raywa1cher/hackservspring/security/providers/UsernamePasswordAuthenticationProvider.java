@@ -2,6 +2,7 @@ package com.a6raywa1cher.hackservspring.security.providers;
 
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.security.SecurityConstants;
+import com.a6raywa1cher.hackservspring.security.component.UserEnabledChecker;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,10 +21,12 @@ import java.util.Optional;
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 	private final PasswordEncoder passwordEncoder;
 	private final UserService userService;
+	private final UserEnabledChecker userEnabledChecker;
 
-	public UsernamePasswordAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
+	public UsernamePasswordAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder, UserEnabledChecker userEnabledChecker) {
 		this.userService = userService;
 		this.passwordEncoder = passwordEncoder;
+		this.userEnabledChecker = userEnabledChecker;
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 			throw new BadCredentialsException("User not exists or incorrect password");
 		}
 		List<GrantedAuthority> authorityList = new ArrayList<>();
-		if (user.isEnabled())
+		if (userEnabledChecker.check(user))
 			authorityList.add(new SimpleGrantedAuthority("ENABLED"));
 		authorityList.add(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE));
 		return new UsernamePasswordAuthenticationToken(
