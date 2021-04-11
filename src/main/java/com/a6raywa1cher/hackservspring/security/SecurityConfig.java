@@ -65,30 +65,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final UserService userService;
 
-    private final AppConfigProperties appConfigProperties;
+	private final AppConfigProperties appConfigProperties;
 
-    private final JwtTokenService jwtTokenService;
+	private final JwtTokenService jwtTokenService;
 
-    private final AuthenticationResolver authenticationResolver;
+	private final AuthenticationResolver authenticationResolver;
 
-    private final PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
-    private final BlockedRefreshTokensService blockedRefreshTokensService;
+	private final BlockedRefreshTokensService blockedRefreshTokensService;
 
-    @Value("${app.email-verification:false}")
-    boolean emailVerification;
+	@Value("${app.email-verification:false}")
+	boolean emailVerification;
 
-    @Autowired
-    public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
-                          AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
-                          PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
-                          @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
-                          @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
-                          CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
-        this.userService = userService;
-        this.appConfigProperties = appConfigProperties;
-        this.jwtTokenService = jwtTokenService;
-        this.authenticationResolver = authenticationResolver;
+	@Autowired
+	public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
+	                      AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
+	                      PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
+	                      @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
+	                      @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
+	                      CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+		this.userService = userService;
+		this.appConfigProperties = appConfigProperties;
+		this.jwtTokenService = jwtTokenService;
+		this.authenticationResolver = authenticationResolver;
 		this.passwordEncoder = passwordEncoder;
 		this.blockedRefreshTokensService = blockedRefreshTokensService;
 		this.oidcUserService = oidcUserService;
@@ -98,9 +98,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) {
-        auth
-                .authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService, userEnabledChecker()))
-                .authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder, userEnabledChecker()));
+		auth
+				.authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService, userEnabledChecker()))
+				.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder, userEnabledChecker()));
 	}
 
 	@Override
@@ -186,23 +186,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-    CorsConfigurationSource corsConfigurationSource(AppConfigProperties appConfigProperties) {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(appConfigProperties.getCorsAllowedOrigins()));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "PUT", "HEAD", "OPTIONS"));
-        configuration.setAllowedHeaders(Collections.singletonList("*"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+	CorsConfigurationSource corsConfigurationSource(AppConfigProperties appConfigProperties) {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList(appConfigProperties.getCorsAllowedOrigins()));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "PUT", "HEAD", "OPTIONS"));
+		configuration.setAllowedHeaders(Collections.singletonList("*"));
+		configuration.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
-    @Bean
-    public UserEnabledChecker userEnabledChecker() {
-        if (emailVerification) {
-            return new EmailBasedUserEnabledChecker();
-        } else {
-            return new DefaultUserEnabledChecker();
-        }
-    }
+	@Bean
+	public UserEnabledChecker userEnabledChecker() {
+		if (emailVerification) {
+			return new EmailBasedUserEnabledChecker();
+		} else {
+			return new DefaultUserEnabledChecker();
+		}
+	}
 }
