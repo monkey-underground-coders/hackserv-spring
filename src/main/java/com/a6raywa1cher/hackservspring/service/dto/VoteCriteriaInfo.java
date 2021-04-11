@@ -17,7 +17,5 @@ public class VoteCriteriaInfo {
 
 	private String description;
 
-	private Track track;
 
-	private List<Vote> voteList;
 }

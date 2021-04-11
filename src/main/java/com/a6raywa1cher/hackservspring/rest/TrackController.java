@@ -57,7 +57,7 @@ public class TrackController {
 			throw new TrackNotExistsException();
 		}
 		Track track = optionalTrack.get();
-		trackService.editTrack(track, request.getTrackName(), request.getCriteriaList(), request.getTeams());
+		trackService.editTrack(track, request.getTrackName());
 		return ResponseEntity.ok(track);
 	}
 

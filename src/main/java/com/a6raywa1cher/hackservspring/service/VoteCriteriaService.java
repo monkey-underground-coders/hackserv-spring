@@ -15,7 +15,7 @@ public interface VoteCriteriaService {
 
 	Stream<VoteCriteria> getById(Collection<Long> ids);
 
-	Stream<VoteCriteria> getAllCriteria();
+
 
 	VoteCriteria editCriteria(VoteCriteria criteria, String criteriaName, int maxValue);
 

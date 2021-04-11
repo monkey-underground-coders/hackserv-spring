@@ -89,11 +89,5 @@ public class VoteCriteriaController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/criteria")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@JsonView(Views.Internal.class)
-	public ResponseEntity<List<VoteCriteria>> getAllCriteria() {
-		List<VoteCriteria> criteriaList = criteriaService.getAllCriteria().collect(Collectors.toList());
-		return ResponseEntity.ok(criteriaList);
-	}
+
 }
