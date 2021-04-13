@@ -24,8 +24,6 @@ public class DiscServiceImpl implements DiscService {
 	public DiscServiceImpl() {
 	}
 
-	;
-
 	private Path getPath(String relativePath) {
 		return Path.of(masterPath, relativePath);
 	}

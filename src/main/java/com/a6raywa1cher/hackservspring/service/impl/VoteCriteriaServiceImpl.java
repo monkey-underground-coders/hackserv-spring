@@ -49,6 +49,7 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
 	@Override
 	public VoteCriteria editCriteriaInfo(VoteCriteria criteria, VoteCriteriaInfo criteriaInfo) {
 		criteria.setDescription(criteriaInfo.getDescription());
+
 		criteria.setName(criteriaInfo.getName());
 		return repository.save(criteria);
 	}

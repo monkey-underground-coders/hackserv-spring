@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.List;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "id")
+@ToString(exclude = {"votings"})
 public class User {
 	@Id
 	@GeneratedValue
@@ -115,5 +117,11 @@ public class User {
 
 	public User() {
 
+	}
+
+	@Transient
+	@JsonView(Views.Public.class)
+	public boolean isEnabled() {
+		return emailValidated;
 	}
 }

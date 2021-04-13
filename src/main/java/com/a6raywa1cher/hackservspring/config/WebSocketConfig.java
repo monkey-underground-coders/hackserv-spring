@@ -13,8 +13,8 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+	private final AppConfigProperties properties;
 	private TaskScheduler messageBrokerTaskScheduler;
-	private AppConfigProperties properties;
 
 	@Autowired
 	public WebSocketConfig(AppConfigProperties properties) {
