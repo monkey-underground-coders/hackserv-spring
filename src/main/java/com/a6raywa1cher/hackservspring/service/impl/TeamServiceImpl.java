@@ -7,6 +7,8 @@ import com.a6raywa1cher.hackservspring.model.repo.TeamRepository;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -94,6 +96,11 @@ public class TeamServiceImpl implements TeamService {
     public Team changeCaptain(Team team, User user) {
         team.setCaptain(user);
         return teamRepository.save(team);
+    }
+
+    @Override
+    public Page<Team> getPage(String filter, Pageable pageable) {
+        return teamRepository.findAllByNameContainsIgnoreCase(filter, pageable);
     }
 
     @Override

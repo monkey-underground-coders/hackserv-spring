@@ -16,7 +16,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +72,14 @@ public class TeamController {
         Team team = optionalTeam.get();
 
         return ResponseEntity.ok(team);
+    }
+
+    @GetMapping("/")
+    @Operation(security = @SecurityRequirement(name = "jwt"))
+    @JsonView(Views.Internal.class)
+    @PageableAsQueryParam
+    public ResponseEntity<Page<Team>> getPage(@RequestParam(required = false) String with, @Parameter(hidden = true) Pageable pageable) {
+        return ResponseEntity.ok(teamService.getPage(with, pageable));
     }
 
     @PutMapping("/{teamid:[0-9]+}")
