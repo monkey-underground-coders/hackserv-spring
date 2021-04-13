@@ -7,15 +7,15 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface TrackService {
-    Track create(String trackName);
+	Track create(String trackName);
 
-    Optional<Track> getById(Long id);
+	Optional<Track> getById(Long id);
 
-    Stream<Track> getById(Collection<Long> ids);
+	Stream<Track> getById(Collection<Long> ids);
 
-    Track editTrack(Track track, String trackName);
+	Track editTrack(Track track, String trackName);
 
-    Stream<Track> getAllTracks();
+	Stream<Track> getAllTracks();
 
-    void delete(Track track);
+	void delete(Track track);
 }

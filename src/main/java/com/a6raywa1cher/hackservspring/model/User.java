@@ -77,7 +77,7 @@ public class User {
 	@JsonView(Views.Public.class)
 	private Team team;
 
-	@OneToMany
+	@OneToMany(mappedBy = "judge")
 	@JsonIgnore
 	private List<Vote> votings;
 

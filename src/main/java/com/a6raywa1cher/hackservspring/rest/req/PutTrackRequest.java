@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class PutTrackRequest {
-    @NotBlank
-    @HtmlEscape
-    private String trackName;
+	@NotBlank
+	@HtmlEscape
+	private String trackName;
 }

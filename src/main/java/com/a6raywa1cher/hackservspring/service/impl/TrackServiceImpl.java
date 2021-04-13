@@ -13,43 +13,43 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class TrackServiceImpl implements TrackService {
-    private final TrackRepository repository;
+	private final TrackRepository repository;
 
-    @Autowired
-    public TrackServiceImpl(TrackRepository trackRepository){
-        this.repository = trackRepository;
-    }
+	@Autowired
+	public TrackServiceImpl(TrackRepository trackRepository) {
+		this.repository = trackRepository;
+	}
 
-    public Track create(String trackName){
-        Track track = new Track();
-        track.setTrackName(trackName);
-        return repository.save(track);
-    }
+	public Track create(String trackName) {
+		Track track = new Track();
+		track.setTrackName(trackName);
+		return repository.save(track);
+	}
 
-    @Override
-    public Optional<Track> getById(Long id) {
-        return repository.findById(id);
-    }
+	@Override
+	public Optional<Track> getById(Long id) {
+		return repository.findById(id);
+	}
 
-    @Override
-    public Stream<Track> getById(Collection<Long> ids) {
-        return StreamSupport.stream(repository.findAllById(ids).spliterator(), false);
-    }
+	@Override
+	public Stream<Track> getById(Collection<Long> ids) {
+		return StreamSupport.stream(repository.findAllById(ids).spliterator(), false);
+	}
 
-    @Override
-    public Stream<Track> getAllTracks() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false);
-    }
+	@Override
+	public Stream<Track> getAllTracks() {
+		return StreamSupport.stream(repository.findAll().spliterator(), false);
+	}
 
-    @Override
-    public Track editTrack(Track track, String trackName) {
-        track.setTrackName(trackName);
-        return repository.save(track);
-    }
+	@Override
+	public Track editTrack(Track track, String trackName) {
+		track.setTrackName(trackName);
+		return repository.save(track);
+	}
 
-    @Override
-    public void delete(Track track) {
-        track.getTeams().forEach(team -> team.setTrack(null));
-        repository.delete(track);
-    }
+	@Override
+	public void delete(Track track) {
+		track.getTeams().forEach(team -> team.setTrack(null));
+		repository.delete(track);
+	}
 }

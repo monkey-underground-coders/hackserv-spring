@@ -25,11 +25,11 @@ public class Track {
 	@JsonView(Views.Public.class)
 	private String trackName;
 
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true, mappedBy = "track")
 	@JsonView(Views.Public.class)
 	private List<VoteCriteria> criteriaList;
 
-	@OneToMany
+	@OneToMany(mappedBy = "track")
 	@JsonView(Views.Public.class)
 	@JsonIdentityReference(alwaysAsId = true)
 	private List<Team> teams;

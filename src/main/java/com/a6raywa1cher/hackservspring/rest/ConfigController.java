@@ -31,6 +31,6 @@ public class ConfigController {
 		response.setMinEmailReq(minEmailReq.toSeconds());
 		response.setMaxEmailDuration(maxEmailDuration.toSeconds());
 
-        return ResponseEntity.ok(response);
-    }
+		return ResponseEntity.ok(response);
+	}
 }

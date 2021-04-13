@@ -9,13 +9,13 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CreateVoteCriteriaRequest {
 
-    @NotBlank
-    @HtmlEscape
-    private String name;
+	@NotBlank
+	@HtmlEscape
+	private String name;
 
-    @NotNull
-    private int maxValue;
+	@NotNull
+	private int maxValue;
 
-    @NotNull
-    private long trackId;
+	@NotNull
+	private long trackId;
 }

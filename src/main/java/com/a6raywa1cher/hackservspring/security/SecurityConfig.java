@@ -103,48 +103,48 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder, userEnabledChecker()));
 	}
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests()
-                .antMatchers("/oauth2/**", "/error", "/login").permitAll()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/").permitAll()
-                .antMatchers("/user/create").permitAll()
-                .antMatchers("/v3/api-docs/**", "/webjars/**", "/swagger-resources", "/swagger-resources/**",
-                        "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                .antMatchers("/csrf").permitAll()
-                .antMatchers("/ws-entry").permitAll()
-                .antMatchers("/auth/convert").hasAuthority(SecurityConstants.CONVERTIBLE)
-                .antMatchers("/auth/get_access").permitAll()
-                .antMatchers("/auth/**").authenticated()
-                .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/user/{uid:[0-9]+}/email/req").hasRole("USER")
-                .antMatchers("/user/{uid:[0-9]+}/email/validate").hasRole("USER")
-                .antMatchers(HttpMethod.GET, "/conf").hasRole("USER")
-                .antMatchers(HttpMethod.GET, "/criteria/**").hasRole("USER")
-                .antMatchers("/criteria/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET,"/track/**").hasRole("USER")
-                .antMatchers("/track/**").hasRole("ADMIN")
-                .anyRequest().access("hasRole('USER') && hasAuthority('ENABLED')");
-        http.cors()
-                .configurationSource(corsConfigurationSource(appConfigProperties));
-        http.httpBasic()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
-        http.formLogin();
-        http.oauth2Login()
-                .successHandler(customAuthenticationSuccessHandler)
-                .userInfoEndpoint()
-                .oidcUserService(oidcUserService)
-                .userService(oAuth2UserService)
-                .and()
-                .tokenEndpoint()
-                .accessTokenResponseClient(accessTokenResponseClient());
-        http.oauth2Client();
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenService, authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(new LastVisitFilter(userService, authenticationResolver), SecurityContextHolderAwareRequestFilter.class);
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable();
+		http.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.authorizeRequests()
+				.antMatchers("/oauth2/**", "/error", "/login").permitAll()
+				.antMatchers(HttpMethod.OPTIONS).permitAll()
+				.antMatchers("/").permitAll()
+				.antMatchers("/user/create").permitAll()
+				.antMatchers("/v3/api-docs/**", "/webjars/**", "/swagger-resources", "/swagger-resources/**",
+						"/swagger-ui.html", "/swagger-ui/**").permitAll()
+				.antMatchers("/csrf").permitAll()
+				.antMatchers("/ws-entry").permitAll()
+				.antMatchers("/auth/convert").hasAuthority(SecurityConstants.CONVERTIBLE)
+				.antMatchers("/auth/get_access").permitAll()
+				.antMatchers("/auth/**").authenticated()
+				.antMatchers("/favicon.ico").permitAll()
+				.antMatchers("/user/{uid:[0-9]+}/email/req").hasRole("USER")
+				.antMatchers("/user/{uid:[0-9]+}/email/validate").hasRole("USER")
+				.antMatchers(HttpMethod.GET, "/conf").hasRole("USER")
+				.antMatchers(HttpMethod.GET, "/criteria/**").hasRole("USER")
+				.antMatchers("/criteria/**").hasRole("ADMIN")
+				.antMatchers(HttpMethod.GET, "/track/**").hasRole("USER")
+				.antMatchers("/track/**").hasRole("ADMIN")
+				.anyRequest().access("hasRole('USER') && hasAuthority('ENABLED')");
+		http.cors()
+				.configurationSource(corsConfigurationSource(appConfigProperties));
+		http.httpBasic()
+				.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+		http.formLogin();
+		http.oauth2Login()
+				.successHandler(customAuthenticationSuccessHandler)
+				.userInfoEndpoint()
+				.oidcUserService(oidcUserService)
+				.userService(oAuth2UserService)
+				.and()
+				.tokenEndpoint()
+				.accessTokenResponseClient(accessTokenResponseClient());
+		http.oauth2Client();
+		http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenService, authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterAfter(new LastVisitFilter(userService, authenticationResolver), SecurityContextHolderAwareRequestFilter.class);
 //		http.addFilterBefore(new CriticalActionLimiterFilter(criticalActionLimiterService), JwtAuthenticationFilter.class);
 	}
 

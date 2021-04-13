@@ -19,7 +19,7 @@ public class Team {
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@OneToMany
+	@OneToMany(mappedBy = "team")
 	@JsonView(Views.Internal.class)
 	@JsonIdentityReference(alwaysAsId = true)
 	private List<User> members;
