@@ -12,32 +12,32 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateFirstAdminApplicationListener implements ApplicationListener<ApplicationReadyEvent> {
-    private static final Logger logger = LoggerFactory.getLogger(CreateFirstAdminApplicationListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateFirstAdminApplicationListener.class);
 
-    private final String email;
+	private final String email;
 
-    private final String fullName;
+	private final String fullName;
 
-    private final String password;
+	private final String password;
 
-    private final UserService userService;
+	private final UserService userService;
 
-    public CreateFirstAdminApplicationListener(@Value("${app.first-admin.email}") String email,
-                                               @Value("${app.first-admin.full-name}") String fullName,
-                                               @Value("${app.first-admin.password}") String password,
-                                               UserService userService) {
-        this.email = email;
-        this.fullName = fullName;
-        this.password = password;
-        this.userService = userService;
-    }
+	public CreateFirstAdminApplicationListener(@Value("${app.first-admin.email}") String email,
+	                                           @Value("${app.first-admin.full-name}") String fullName,
+	                                           @Value("${app.first-admin.password}") String password,
+	                                           UserService userService) {
+		this.email = email;
+		this.fullName = fullName;
+		this.password = password;
+		this.userService = userService;
+	}
 
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        if (userService.findFirstByUserRole(UserRole.ADMIN).isEmpty()) {
-            User user = userService.create(UserRole.ADMIN, email, password, fullName);
-            userService.editEmailValidated(user, true);
-            logger.info("Created admin-user");
-        }
-    }
+	@Override
+	public void onApplicationEvent(ApplicationReadyEvent event) {
+		if (userService.findFirstByUserRole(UserRole.ADMIN).isEmpty()) {
+			User user = userService.create(UserRole.ADMIN, email, password, fullName);
+			userService.editEmailValidated(user, true);
+			logger.info("Created admin-user");
+		}
+	}
 }

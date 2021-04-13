@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
 @JacksonAnnotationsInside
 @JsonDeserialize(using = HtmlEscapeJsonDeserializer.class)
 public @interface HtmlEscape {
-    int UNLIMITED = -1;
-    int DEFAULT_LENGTH = 250;
+	int UNLIMITED = -1;
+	int DEFAULT_LENGTH = 250;
 
-    int value() default DEFAULT_LENGTH;
+	int value() default DEFAULT_LENGTH;
 }

@@ -12,12 +12,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class ResourceReader {
 
-    public static String asString(Resource resource) {
-        try (Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)) {
-            return FileCopyUtils.copyToString(reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+	public static String asString(Resource resource) {
+		try (Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)) {
+			return FileCopyUtils.copyToString(reader);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
 
 }

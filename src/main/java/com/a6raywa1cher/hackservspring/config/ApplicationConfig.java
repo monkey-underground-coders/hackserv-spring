@@ -13,8 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableScheduling
 @Slf4j
 public class ApplicationConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder,
-						   RefreshTokenService refreshTokenService, DiscService discService) {
+	                       RefreshTokenService refreshTokenService, DiscService discService) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.refreshTokenService = refreshTokenService;
@@ -90,28 +90,28 @@ public class UserServiceImpl implements UserService {
 			case VK -> repository.findByVkId(vendorSub);
 			case GOOGLE -> repository.findByGoogleId(vendorSub);
 			case GITHUB -> repository.findByGithubId(vendorSub);
-        };
-    }
+		};
+	}
 
 
-    @Override
-    public User editUser(User user, UserRole userRole, String email, String fullName) {
-        user.setFullName(fullName);
-        user.setEmail(email);
-        user.setUserRole(userRole);
-        return repository.save(user);
-    }
+	@Override
+	public User editUser(User user, UserRole userRole, String email, String fullName) {
+		user.setFullName(fullName);
+		user.setEmail(email);
+		user.setUserRole(userRole);
+		return repository.save(user);
+	}
 
-    @Override
-    public User editUserInfo(User user, UserInfo userInfo) {
-        user.setFullName(userInfo.getFullName());
-        user.setTelegram(userInfo.getTelegram());
-        user.setDateOfBirth(userInfo.getDateOfBirth());
-        user.setWorkPlace(userInfo.getWorkPlace());
-        user.setOtherInfo(userInfo.getOtherInfo());
+	@Override
+	public User editUserInfo(User user, UserInfo userInfo) {
+		user.setFullName(userInfo.getFullName());
+		user.setTelegram(userInfo.getTelegram());
+		user.setDateOfBirth(userInfo.getDateOfBirth());
+		user.setWorkPlace(userInfo.getWorkPlace());
+		user.setOtherInfo(userInfo.getOtherInfo());
 		user.setResume(userInfo.getResume());
-        return repository.save(user);
-    }
+		return repository.save(user);
+	}
 
 	@Override
 	public User editPassword(User user, String password) {
@@ -166,7 +166,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(rollbackOn = Exception.class)
 	public void deleteUser(User user) {
-		discService.deleteResource(user.getDocumentResumePath());
+		if (user.getDocumentResumePath() != null) {
+			this.deleteResume(user);
+		}
 		refreshTokenService.invalidateAll(user);
 		repository.delete(user);
 	}

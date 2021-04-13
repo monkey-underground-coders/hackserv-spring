@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class GetConfigResponse {
 
-    private String maxFileSize;
+	private String maxFileSize;
 
-    private Long minEmailReq;
+	private Long minEmailReq;
 
-    private Long maxEmailDuration;
+	private Long maxEmailDuration;
 }

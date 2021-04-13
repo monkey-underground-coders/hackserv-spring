@@ -4,6 +4,7 @@ import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.security.authentication.CustomAuthentication;
 import com.a6raywa1cher.hackservspring.security.authentication.JwtAuthentication;
+import com.a6raywa1cher.hackservspring.security.component.UserEnabledChecker;
 import com.a6raywa1cher.hackservspring.security.jwt.JwtToken;
 import com.a6raywa1cher.hackservspring.security.jwt.service.BlockedRefreshTokensService;
 import com.a6raywa1cher.hackservspring.service.UserService;
@@ -25,10 +26,12 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 	private final UserService userService;
 	private final BlockedRefreshTokensService service;
+	private final UserEnabledChecker userEnabledChecker;
 
-	public JwtAuthenticationProvider(UserService userService, BlockedRefreshTokensService service) {
+	public JwtAuthenticationProvider(UserService userService, BlockedRefreshTokensService service, UserEnabledChecker userEnabledChecker) {
 		this.userService = userService;
 		this.service = service;
+		this.userEnabledChecker = userEnabledChecker;
 	}
 
 	@Override
@@ -58,7 +61,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				.collect(Collectors.toSet());
 		authoritySet.add(new SimpleGrantedAuthority("ROLE_USER"));
 		authoritySet.add(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
-		if (user.isEnabled())
+		if (userEnabledChecker.check(user))
 			authoritySet.add(new SimpleGrantedAuthority("ENABLED"));
 		return new CustomAuthentication(authoritySet, jwtToken);
 	}

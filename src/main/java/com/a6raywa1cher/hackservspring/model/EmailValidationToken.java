@@ -13,15 +13,15 @@ import java.time.ZonedDateTime;
 @Data
 public class EmailValidationToken {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    @Column
-    private int token;
+	@Column
+	private int token;
 
-    @Column
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private ZonedDateTime createdAt;
+	@Column
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private ZonedDateTime createdAt;
 
 }

@@ -13,36 +13,36 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    private TaskScheduler messageBrokerTaskScheduler;
-    private AppConfigProperties properties;
+	private TaskScheduler messageBrokerTaskScheduler;
+	private AppConfigProperties properties;
 
-    @Autowired
-    public WebSocketConfig(AppConfigProperties properties) {
-        this.properties = properties;
-    }
+	@Autowired
+	public WebSocketConfig(AppConfigProperties properties) {
+		this.properties = properties;
+	}
 
-    @Autowired
-    public void setMessageBrokerTaskScheduler(TaskScheduler taskScheduler) {
-        this.messageBrokerTaskScheduler = taskScheduler;
-    }
+	@Autowired
+	public void setMessageBrokerTaskScheduler(TaskScheduler taskScheduler) {
+		this.messageBrokerTaskScheduler = taskScheduler;
+	}
 
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/poll")
-                .setAllowedOrigins(properties.getCorsAllowedOrigins())
-                .addInterceptors(new HttpSessionHandshakeInterceptor());
-    }
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint("/poll")
+				.setAllowedOrigins(properties.getCorsAllowedOrigins())
+				.addInterceptors(new HttpSessionHandshakeInterceptor());
+	}
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app");
-        registry.enableSimpleBroker("/topic")
-                .setHeartbeatValue(new long[]{10000, 20000})
-                .setTaskScheduler(this.messageBrokerTaskScheduler);
-    }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		registry.setApplicationDestinationPrefixes("/app");
+		registry.enableSimpleBroker("/topic")
+				.setHeartbeatValue(new long[]{10000, 20000})
+				.setTaskScheduler(this.messageBrokerTaskScheduler);
+	}
 
-    @Override
-    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
-        registry.setMessageSizeLimit(128 * 1024);
-    }
+	@Override
+	public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+		registry.setMessageSizeLimit(128 * 1024);
+	}
 }
