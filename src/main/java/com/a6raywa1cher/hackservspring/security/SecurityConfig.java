@@ -3,7 +3,10 @@ package com.a6raywa1cher.hackservspring.security;
 import com.a6raywa1cher.hackservspring.config.AppConfigProperties;
 import com.a6raywa1cher.hackservspring.security.authentication.CustomAuthenticationEntryPoint;
 import com.a6raywa1cher.hackservspring.security.authentication.CustomAuthenticationSuccessHandler;
+import com.a6raywa1cher.hackservspring.security.component.DefaultUserEnabledChecker;
+import com.a6raywa1cher.hackservspring.security.component.EmailBasedUserEnabledChecker;
 import com.a6raywa1cher.hackservspring.security.component.LastVisitFilter;
+import com.a6raywa1cher.hackservspring.security.component.UserEnabledChecker;
 import com.a6raywa1cher.hackservspring.security.jwt.JwtAuthenticationFilter;
 import com.a6raywa1cher.hackservspring.security.jwt.service.BlockedRefreshTokensService;
 import com.a6raywa1cher.hackservspring.security.jwt.service.JwtTokenService;
@@ -13,6 +16,7 @@ import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.utils.AuthenticationResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -71,6 +75,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final BlockedRefreshTokensService blockedRefreshTokensService;
 
+	@Value("${app.email-verification:false}")
+	boolean emailVerification;
+
 	@Autowired
 	public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
 	                      AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
@@ -92,8 +99,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) {
 		auth
-				.authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService))
-				.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder));
+				.authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService, userEnabledChecker()))
+				.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder, userEnabledChecker()));
 	}
 
 	@Override
@@ -188,5 +195,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
+	}
+
+	@Bean
+	public UserEnabledChecker userEnabledChecker() {
+		if (emailVerification) {
+			return new EmailBasedUserEnabledChecker();
+		} else {
+			return new DefaultUserEnabledChecker();
+		}
 	}
 }
