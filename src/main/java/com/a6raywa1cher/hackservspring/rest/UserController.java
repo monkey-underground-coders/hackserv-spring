@@ -114,6 +114,28 @@ public class UserController {
 		return ResponseEntity.ok(user);
 	}
 
+	@GetMapping("/user/{uid}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Public.class)
+	public ResponseEntity<User> getUserPublic(@PathVariable long uid) throws UserNotExistsException {
+		Optional<User> optionalUser = userService.getById(uid);
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		return ResponseEntity.ok(optionalUser.get());
+	}
+
+	@GetMapping("/user/{uid}/internal")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Internal.class)
+	public ResponseEntity<User> getUserInternal(@PathVariable long uid) throws UserNotExistsException {
+		Optional<User> optionalUser = userService.getById(uid);
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		return ResponseEntity.ok(optionalUser.get());
+	}
+
 	@PutMapping("/{uid:[0-9]+}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
