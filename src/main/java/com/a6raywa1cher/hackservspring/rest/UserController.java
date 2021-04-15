@@ -30,6 +30,7 @@ import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -54,7 +55,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<Resource> getResume(@PathVariable Long uid) throws UserNotExistsException {
+	public ResponseEntity<Resource> getResume(@PathVariable long uid) throws UserNotExistsException {
 		Optional<User> optionalUser = userService.getById(uid);
 		if (optionalUser.isEmpty()) {
 			throw new UserNotExistsException();
@@ -64,14 +65,14 @@ public class UserController {
 
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
 				"attachment; filename=" + user.getFullName() + user.getDateOfBirth() +
-						file.getFilename().substring(file.getFilename().lastIndexOf('.'))).body(file);
+						Objects.requireNonNull(file.getFilename()).substring(file.getFilename().lastIndexOf('.'))).body(file);
 	}
 
 	@PostMapping(path = "/{uid}/cv/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<User> createResume(@PathVariable Long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
+	public ResponseEntity<User> createResume(@PathVariable long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
 		Optional<User> optionalUser = userService.getById(uid);
 		if (optionalUser.isEmpty()) {
 			throw new UserNotExistsException();
@@ -91,7 +92,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<User> deleteResumeDocument(@PathVariable Long uid) throws UserNotExistsException {
+	public ResponseEntity<User> deleteResumeDocument(@PathVariable long uid) throws UserNotExistsException {
 		Optional<User> optionalUser = userService.getById(uid);
 		if (optionalUser.isEmpty()) {
 			throw new UserNotExistsException();
@@ -111,6 +112,28 @@ public class UserController {
 		emailValidationService.createToken(user);
 		emailValidationService.sendMassage(user);
 		return ResponseEntity.ok(user);
+	}
+
+	@GetMapping("/user/{uid}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Public.class)
+	public ResponseEntity<User> getUserPublic(@PathVariable long uid) throws UserNotExistsException {
+		Optional<User> optionalUser = userService.getById(uid);
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		return ResponseEntity.ok(optionalUser.get());
+	}
+
+	@GetMapping("/user/{uid}/internal")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Internal.class)
+	public ResponseEntity<User> getUserInternal(@PathVariable long uid) throws UserNotExistsException {
+		Optional<User> optionalUser = userService.getById(uid);
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		return ResponseEntity.ok(optionalUser.get());
 	}
 
 	@PutMapping("/{uid:[0-9]+}")

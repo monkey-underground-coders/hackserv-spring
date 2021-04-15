@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Data
 public class PutUserInfoRequest {
 	@NotBlank
-	@Size(max = 250)
 	@HtmlEscape
 	private String fullName;
 
@@ -23,7 +22,6 @@ public class PutUserInfoRequest {
 	private LocalDate dateOfBirth;
 
 	@NotBlank
-	@Size(max = 250)
 	@HtmlEscape
 	private String workPlace;
 

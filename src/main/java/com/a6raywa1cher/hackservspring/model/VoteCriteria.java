@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring.model;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "id")
+@ToString(exclude = {"voteList"})
 public class VoteCriteria {
 	@Id
 	@GeneratedValue
@@ -35,7 +37,7 @@ public class VoteCriteria {
 	@JsonIdentityReference(alwaysAsId = true)
 	private Track track;
 
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE, mappedBy = "criteria")
 	@JsonView(Views.Public.class)
 	@JsonIgnore
 	private List<Vote> voteList;

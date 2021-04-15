@@ -9,12 +9,10 @@ import javax.validation.constraints.Size;
 
 @Data
 public class CreateUserRequest {
-
 	@Email
 	@NotBlank
 	private String email;
 
 	@Size(min = 3, max = 128)
 	private String password;
-
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.List;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "id")
+@ToString(exclude = {"votings"})
 public class User {
 	@Id
 	@GeneratedValue
@@ -77,7 +79,7 @@ public class User {
 	@JsonView(Views.Public.class)
 	private Team team;
 
-	@OneToMany
+	@OneToMany(mappedBy = "judge")
 	@JsonIgnore
 	private List<Vote> votings;
 

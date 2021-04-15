@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "id")
+@ToString(exclude = {"criteriaList", "teams"})
 public class Track {
 	@Id
 	@GeneratedValue
@@ -25,11 +27,11 @@ public class Track {
 	@JsonView(Views.Public.class)
 	private String trackName;
 
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true, mappedBy = "track")
 	@JsonView(Views.Public.class)
 	private List<VoteCriteria> criteriaList;
 
-	@OneToMany
+	@OneToMany(mappedBy = "track")
 	@JsonView(Views.Public.class)
 	@JsonIdentityReference(alwaysAsId = true)
 	private List<Team> teams;
