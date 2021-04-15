@@ -55,7 +55,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<Resource> getResume(@PathVariable Long uid) throws UserNotExistsException {
+	public ResponseEntity<Resource> getResume(@PathVariable long uid) throws UserNotExistsException {
 		Optional<User> optionalUser = userService.getById(uid);
 		if (optionalUser.isEmpty()) {
 			throw new UserNotExistsException();
@@ -72,7 +72,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<User> createResume(@PathVariable Long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
+	public ResponseEntity<User> createResume(@PathVariable long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
 		Optional<User> optionalUser = userService.getById(uid);
 		if (optionalUser.isEmpty()) {
 			throw new UserNotExistsException();
@@ -92,7 +92,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<User> deleteResumeDocument(@PathVariable Long uid) throws UserNotExistsException {
+	public ResponseEntity<User> deleteResumeDocument(@PathVariable long uid) throws UserNotExistsException {
 		Optional<User> optionalUser = userService.getById(uid);
 		if (optionalUser.isEmpty()) {
 			throw new UserNotExistsException();

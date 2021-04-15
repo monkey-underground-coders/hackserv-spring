@@ -31,7 +31,7 @@ public class TrackController {
 	@GetMapping("/{trackid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
-	public ResponseEntity<Track> getTrack(@PathVariable Long trackid) throws TrackNotExistsException {
+	public ResponseEntity<Track> getTrack(@PathVariable long trackid) throws TrackNotExistsException {
 		Optional<Track> optionalTrack = trackService.getById(trackid);
 		if (optionalTrack.isEmpty()) {
 			throw new TrackNotExistsException();
@@ -64,7 +64,7 @@ public class TrackController {
 
 	@DeleteMapping("/{trackid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	public ResponseEntity<Void> deleteTrack(@PathVariable Long trackid) throws TrackNotExistsException {
+	public ResponseEntity<Void> deleteTrack(@PathVariable long trackid) throws TrackNotExistsException {
 		Optional<Track> optionalTrack = trackService.getById(trackid);
 		if (optionalTrack.isEmpty()) {
 			throw new TrackNotExistsException();
