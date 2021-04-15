@@ -40,16 +40,9 @@ public class VoteCriteriaServiceImpl implements VoteCriteriaService {
 	}
 
 	@Override
-	public VoteCriteria editCriteria(VoteCriteria criteria, String criteriaName, int maxValue) {
-		criteria.setName(criteriaName);
-		criteria.setMaxValue(maxValue);
-		return repository.save(criteria);
-	}
-
-	@Override
 	public VoteCriteria editCriteriaInfo(VoteCriteria criteria, VoteCriteriaInfo criteriaInfo) {
 		criteria.setDescription(criteriaInfo.getDescription());
-
+		criteria.setMaxValue(criteriaInfo.getMaxValue());
 		criteria.setName(criteriaInfo.getName());
 		return repository.save(criteria);
 	}

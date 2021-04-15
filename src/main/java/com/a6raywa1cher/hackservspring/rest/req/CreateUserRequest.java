@@ -12,10 +12,8 @@ import javax.validation.constraints.Size;
 public class CreateUserRequest {
 	@Email
     @NotBlank
-    @HtmlEscape
     private String email;
 
     @Size(min = 3, max = 128)
-    @HtmlEscape
     private String password;
 }

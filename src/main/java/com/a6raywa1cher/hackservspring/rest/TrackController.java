@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class TrackController {
 
 	@GetMapping("/{trackid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@JsonView(Views.DetailedInternal.class)
+	@JsonView(Views.Public.class)
 	public ResponseEntity<Track> getTrack(@PathVariable Long trackid) throws TrackNotExistsException {
 		Optional<Track> optionalTrack = trackService.getById(trackid);
 		if (optionalTrack.isEmpty()) {
@@ -43,7 +44,7 @@ public class TrackController {
 	@PostMapping("/create")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Internal.class)
-	public ResponseEntity<Track> createTrack(@RequestBody CreateTrackRequest request) {
+	public ResponseEntity<Track> createTrack(@RequestBody @Valid CreateTrackRequest request) {
 		Track track = trackService.create(request.getTrackName());
 		return ResponseEntity.ok(track);
 	}
@@ -51,7 +52,7 @@ public class TrackController {
 	@PutMapping("/{trackid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Internal.class)
-	public ResponseEntity<Track> editTrack(@RequestBody PutTrackRequest request, @PathVariable Long trackid) throws TrackNotExistsException {
+	public ResponseEntity<Track> editTrack(@RequestBody @Valid PutTrackRequest request, @PathVariable long trackid) throws TrackNotExistsException {
 		Optional<Track> optionalTrack = trackService.getById(trackid);
 		if (optionalTrack.isEmpty()) {
 			throw new TrackNotExistsException();
@@ -63,8 +64,7 @@ public class TrackController {
 
 	@DeleteMapping("/{trackid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@JsonView(Views.Internal.class)
-	public ResponseEntity<Track> deleteTrack(@PathVariable Long trackid) throws TrackNotExistsException {
+	public ResponseEntity<Void> deleteTrack(@PathVariable Long trackid) throws TrackNotExistsException {
 		Optional<Track> optionalTrack = trackService.getById(trackid);
 		if (optionalTrack.isEmpty()) {
 			throw new TrackNotExistsException();
@@ -74,9 +74,9 @@ public class TrackController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/track")
+	@GetMapping("/")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@JsonView(Views.Internal.class)
+	@JsonView(Views.Public.class)
 	public ResponseEntity<List<Track>> getAllTracks() {
 		List<Track> tracks = trackService.getAllTracks().collect(Collectors.toList());
 		return ResponseEntity.ok(tracks);

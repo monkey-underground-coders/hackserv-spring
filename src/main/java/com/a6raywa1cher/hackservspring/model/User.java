@@ -118,10 +118,4 @@ public class User {
 	public User() {
 
 	}
-
-	@Transient
-	@JsonView(Views.Public.class)
-	public boolean isEnabled() {
-		return emailValidated;
-	}
 }

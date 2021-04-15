@@ -18,14 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/criteria")
 @Transactional(rollbackOn = Exception.class)
 public class VoteCriteriaController {
-	VoteCriteriaService criteriaService;
-	TrackService trackService;
+	private final VoteCriteriaService criteriaService;
+	private final TrackService trackService;
 
 	public VoteCriteriaController(VoteCriteriaService criteriaService, TrackService trackService) {
 		this.criteriaService = criteriaService;
@@ -34,7 +35,7 @@ public class VoteCriteriaController {
 
 	@GetMapping("/{criteriaid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@JsonView(Views.DetailedInternal.class)
+	@JsonView(Views.Public.class)
 	public ResponseEntity<VoteCriteria> getCriteria(@PathVariable long criteriaid) throws VoteCriteriaNotExistsException {
 		Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
 		if (optionalVoteCriteria.isEmpty()) {
@@ -48,7 +49,7 @@ public class VoteCriteriaController {
 	@PutMapping(path = "/{criteriaid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<VoteCriteria> editCriteriaInfo(@PathVariable Long criteriaid, @RequestBody PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
+	public ResponseEntity<VoteCriteria> editCriteria(@PathVariable long criteriaid, @RequestBody @Valid PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
 		Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
 		if (optionalVoteCriteria.isEmpty()) {
 			throw new VoteCriteriaNotExistsException();
@@ -64,7 +65,7 @@ public class VoteCriteriaController {
 	@PostMapping(path = "/create")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<VoteCriteria> createCriteria(@RequestBody CreateVoteCriteriaRequest request) throws TrackNotExistsException {
+	public ResponseEntity<VoteCriteria> createCriteria(@RequestBody @Valid CreateVoteCriteriaRequest request) throws TrackNotExistsException {
 		Optional<Track> optionalTrack = trackService.getById((request.getTrackId()));
 		if (optionalTrack.isEmpty()) {
 			throw new TrackNotExistsException();
@@ -75,8 +76,7 @@ public class VoteCriteriaController {
 
 	@DeleteMapping(path = "/{criteriaid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@JsonView(Views.DetailedInternal.class)
-	public ResponseEntity<VoteCriteria> deleteCriteria(@PathVariable Long criteriaid) throws VoteCriteriaNotExistsException {
+	public ResponseEntity<Void> deleteCriteria(@PathVariable long criteriaid) throws VoteCriteriaNotExistsException {
 		Optional<VoteCriteria> optionalVoteCriteria = criteriaService.getById(criteriaid);
 		if (optionalVoteCriteria.isEmpty()) {
 			throw new VoteCriteriaNotExistsException();
