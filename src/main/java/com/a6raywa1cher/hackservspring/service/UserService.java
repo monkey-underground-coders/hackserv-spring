@@ -11,33 +11,37 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface UserService {
-    User create(UserRole userRole, VendorId vendorId, String vendorSub, String email);
+	User create(UserRole userRole, VendorId vendorId, String vendorSub, String email);
 
 	User create(UserRole userRole, String email, String password);
 
 	User create(UserRole userRole, String email, String password, String fullName);
 
-    Optional<User> getById(Long id);
+	Optional<User> getById(Long id);
 
-    Stream<User> getById(Collection<Long> ids);
+	Stream<User> getById(Collection<Long> ids);
 
-    Optional<User> getByEmail(String email);
+	Optional<User> getByEmail(String email);
 
-    Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
+	Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
 
-    User editUser(User user, UserRole userRole, String email, String fullName);
+	User editUser(User user, UserRole userRole, String email, String fullName);
 
-    User editUserInfo(User user, UserInfo userInfo);
+	User editUserInfo(User user, UserInfo userInfo);
 
-    User editPassword(User user, String password);
+	User editPassword(User user, String password);
 
-    User editEmailValidated(User user, boolean expr);
+	User editEmailValidated(User user, boolean expr);
 
-    User setLastVisitAt(User user, ZonedDateTime at);
+	User setLastVisitAt(User user, ZonedDateTime at);
 
-    User setVendorSub(User user, VendorId vendorId, String vendorSub);
+	User setVendorSub(User user, VendorId vendorId, String vendorSub);
 
-    Optional<User> findFirstByUserRole(UserRole role);
+	Optional<User> findFirstByUserRole(UserRole role);
 
-    void deleteUser(User user);
+	User setDocumentResumePath(User user, String path);
+
+	User deleteResume(User user);
+
+	void deleteUser(User user);
 }

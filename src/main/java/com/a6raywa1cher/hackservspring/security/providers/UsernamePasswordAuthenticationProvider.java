@@ -2,6 +2,7 @@ package com.a6raywa1cher.hackservspring.security.providers;
 
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.security.SecurityConstants;
+import com.a6raywa1cher.hackservspring.security.component.UserEnabledChecker;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,40 +21,42 @@ import java.util.Optional;
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 	private final PasswordEncoder passwordEncoder;
 	private final UserService userService;
+	private final UserEnabledChecker userEnabledChecker;
 
-	public UsernamePasswordAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
+	public UsernamePasswordAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder, UserEnabledChecker userEnabledChecker) {
 		this.userService = userService;
 		this.passwordEncoder = passwordEncoder;
+		this.userEnabledChecker = userEnabledChecker;
 	}
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if (!(authentication instanceof UsernamePasswordAuthenticationToken) ||
-                !(authentication.getPrincipal() instanceof String) ||
-                !(authentication.getCredentials() instanceof String)) {
-            return null;
-        }
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-        String email = (String) token.getPrincipal();
-        Optional<User> byUsername = userService.getByEmail(email);
-        String inputPassword = (String) authentication.getCredentials();
-        if (byUsername.isEmpty()) {
-            throw new BadCredentialsException("User not exists or incorrect password");
-        }
-        User user = byUsername.get();
-        if (user.getPassword() == null || "".equals(user.getPassword())) {
-            throw new DisabledException("User didn't set up password");
-        }
-        if (!passwordEncoder.matches(inputPassword, user.getPassword())) {
-            throw new BadCredentialsException("User not exists or incorrect password");
-        }
-        List<GrantedAuthority> authorityList = new ArrayList<>();
-        if (user.isEnabled())
-            authorityList.add(new SimpleGrantedAuthority("ENABLED"));
-        authorityList.add(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE));
-        return new UsernamePasswordAuthenticationToken(
-                user.getId(), token, authorityList);
-    }
+		if (!(authentication instanceof UsernamePasswordAuthenticationToken) ||
+				!(authentication.getPrincipal() instanceof String) ||
+				!(authentication.getCredentials() instanceof String)) {
+			return null;
+		}
+		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+		String email = (String) token.getPrincipal();
+		Optional<User> byUsername = userService.getByEmail(email);
+		String inputPassword = (String) authentication.getCredentials();
+		if (byUsername.isEmpty()) {
+			throw new BadCredentialsException("User not exists or incorrect password");
+		}
+		User user = byUsername.get();
+		if (user.getPassword() == null || "".equals(user.getPassword())) {
+			throw new DisabledException("User didn't set up password");
+		}
+		if (!passwordEncoder.matches(inputPassword, user.getPassword())) {
+			throw new BadCredentialsException("User not exists or incorrect password");
+		}
+		List<GrantedAuthority> authorityList = new ArrayList<>();
+		if (userEnabledChecker.check(user))
+			authorityList.add(new SimpleGrantedAuthority("ENABLED"));
+		authorityList.add(new SimpleGrantedAuthority(SecurityConstants.CONVERTIBLE));
+		return new UsernamePasswordAuthenticationToken(
+				user.getId(), token, authorityList);
+	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {

@@ -1,11 +1,13 @@
 #app:
 app:
+  upload-dir: # REQUIRED absolute path to upload dir
   version: '@project.version@ c:@git.commit.id.abbrev@_@git.build.time@ b:@maven.build.timestamp@'
   cors-allowed-origins: [ "*" ]
   first-admin:
     email: # REQUIRED first admin email
     fullName: # REQUIRED first admin name
     password: # REQUIRED first admin password
+  email-verification: false
   redirect: http://localhost:8080/ls
   min-email-req: PT1M
   max-email-duration: P1D

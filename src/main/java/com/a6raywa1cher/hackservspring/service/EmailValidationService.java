@@ -7,17 +7,17 @@ import javax.mail.MessagingException;
 import java.util.Optional;
 
 public interface EmailValidationService {
-    Optional<EmailValidationToken> getById(Long id);
+	Optional<EmailValidationToken> getById(Long id);
 
-    void createToken(User user);
+	void createToken(User user);
 
-    void sendMassage(User user) throws MessagingException;
+	void sendMassage(User user) throws MessagingException;
 
-    boolean checkToken(User user, int token);
+	boolean checkToken(User user, int token);
 
-    boolean isLastSendWasRecently(User user);
+	boolean isLastSendWasRecently(User user);
 
-    boolean isTokenEnable(User user);
+	boolean isTokenEnable(User user);
 
-    void delete(User user);
+	void delete(User user);
 }

@@ -13,24 +13,24 @@ import java.time.Duration;
 @RestController
 public class ConfigController {
 
-    @Value("${spring.servlet.multipart.max-file-size}")
-    private String maxFileSize;
+	@Value("${spring.servlet.multipart.max-file-size}")
+	private String maxFileSize;
 
-    @Value("${app.min-email-req}")
-    private Duration minEmailReq;
+	@Value("${app.min-email-req}")
+	private Duration minEmailReq;
 
-    @Value("${app.max-email-duration}")
-    private Duration maxEmailDuration;
+	@Value("${app.max-email-duration}")
+	private Duration maxEmailDuration;
 
-    @GetMapping("/conf")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    public ResponseEntity<GetConfigResponse> getConfig() {
+	@GetMapping("/conf")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	public ResponseEntity<GetConfigResponse> getConfig() {
 
-        GetConfigResponse response = new GetConfigResponse();
-        response.setMaxFileSize(maxFileSize);
-        response.setMinEmailReq(minEmailReq.toSeconds());
-        response.setMaxEmailDuration(maxEmailDuration.toSeconds());
+		GetConfigResponse response = new GetConfigResponse();
+		response.setMaxFileSize(maxFileSize);
+		response.setMinEmailReq(minEmailReq.toSeconds());
+		response.setMaxEmailDuration(maxEmailDuration.toSeconds());
 
-        return ResponseEntity.ok(response);
-    }
+		return ResponseEntity.ok(response);
+	}
 }

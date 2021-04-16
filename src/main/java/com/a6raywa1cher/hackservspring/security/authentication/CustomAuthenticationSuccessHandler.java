@@ -31,8 +31,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private final String oAuthRedirectUrl;
 
 	public CustomAuthenticationSuccessHandler(UserService userService, UserRepository userRepository,
-											  JwtRefreshPairService jwtTokenService,
-											  @Value("${app.redirect}") String oAuthRedirectUrl) {
+	                                          JwtRefreshPairService jwtTokenService,
+	                                          @Value("${app.redirect}") String oAuthRedirectUrl) {
 		this.userService = userService;
 		this.userRepository = userRepository;
 		this.jwtTokenService = jwtTokenService;

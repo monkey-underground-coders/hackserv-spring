@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class JwtToken {
-    private String token;
+	private String token;
 
-    private LocalDateTime expiringAt;
+	private LocalDateTime expiringAt;
 
-    private long uid;
+	private long uid;
 
-    private long refreshId;
+	private long refreshId;
 
-    private VendorId vendorId;
+	private VendorId vendorId;
 
-    private String vendorSub;
+	private String vendorSub;
 }
