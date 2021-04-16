@@ -114,7 +114,7 @@ public class UserController {
 		return ResponseEntity.ok(user);
 	}
 
-	@GetMapping("/user/{uid}")
+	@GetMapping("/{uid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
 	public ResponseEntity<User> getUserPublic(@PathVariable long uid) throws UserNotExistsException {
@@ -125,8 +125,9 @@ public class UserController {
 		return ResponseEntity.ok(optionalUser.get());
 	}
 
-	@GetMapping("/user/{uid}/internal")
+	@GetMapping("/{uid}/internal")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.Internal.class)
 	public ResponseEntity<User> getUserInternal(@PathVariable long uid) throws UserNotExistsException {
 		Optional<User> optionalUser = userService.getById(uid);
