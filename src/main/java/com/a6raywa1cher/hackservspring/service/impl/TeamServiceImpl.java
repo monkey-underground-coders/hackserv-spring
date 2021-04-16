@@ -65,6 +65,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team editTeam(Team team, TeamInfo teamInfo) {
         team.setName(teamInfo.getName());
+        team.setTrack(teamInfo.getTrack());
         return teamRepository.save(team);
     }
 

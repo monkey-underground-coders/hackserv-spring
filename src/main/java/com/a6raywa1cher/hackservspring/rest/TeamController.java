@@ -2,6 +2,7 @@ package com.a6raywa1cher.hackservspring.rest;
 
 
 import com.a6raywa1cher.hackservspring.model.Team;
+import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
@@ -9,6 +10,7 @@ import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
 import com.a6raywa1cher.hackservspring.rest.req.UserIdRequest;
 import com.a6raywa1cher.hackservspring.service.TeamService;
+import com.a6raywa1cher.hackservspring.service.TrackService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
@@ -35,10 +37,12 @@ public class TeamController {
 
     private final TeamService teamService;
     private final UserService userService;
+    private final TrackService trackService;
 
-    public TeamController(TeamService teamService, UserService userService) {
+    public TeamController(TeamService teamService, UserService userService, TrackService trackService) {
         this.teamService = teamService;
         this.userService = userService;
+        this.trackService = trackService;
     }
 
     @PostMapping("/create")
@@ -91,9 +95,14 @@ public class TeamController {
         if (optionalTeam.isEmpty()) {
             throw new TeamNotExistsException();
         }
+        Optional<Track> optionalTrack = trackService.getById(request.getTrackId());
+        if (optionalTrack.isEmpty()) {
+            throw new TrackNotExistsException();
+        }
 
         TeamInfo teamInfo = new TeamInfo();
         BeanUtils.copyProperties(request, teamInfo);
+        teamInfo.setTrack(optionalTrack.get());
 
         Team team = teamService.editTeam(optionalTeam.get(), teamInfo);
 
@@ -104,7 +113,6 @@ public class TeamController {
     @DeleteMapping("/{teamid:[0-9]+}")
     @Operation(security = @SecurityRequirement(name = "jwt"))
     @PreAuthorize("@mvcAccessChecker.checkTeamCaptainWithCurrentUser(#teamid)")
-    @JsonView(Views.Internal.class)
     public ResponseEntity<Void> deleteTeam(@PathVariable long teamid) throws TeamNotExistsException {
         Optional<Team> optionalTeam = teamService.getById(teamid);
         if (optionalTeam.isEmpty()) {
@@ -193,7 +201,6 @@ public class TeamController {
 
     @DeleteMapping("/{teamid:[0-9]+}/del_member")
     @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Internal.class)
     @PreAuthorize("@mvcAccessChecker.checkTeamCaptainOrInternalWithCurrentUser(#teamid)")
     public ResponseEntity<Void> deleteMember(@RequestBody UserIdRequest request, @PathVariable long teamid, @Parameter(hidden = true) User requester) {
         Optional<User> optionalUser = userService.getById(request.getUserId());
