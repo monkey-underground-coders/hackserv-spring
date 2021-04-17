@@ -18,4 +18,7 @@ public class PutTeamInfoRequest {
     @NotNull
     private long trackId;
 
+    @NotBlank
+    @HtmlEscape
+    private String projectDescription;
 }

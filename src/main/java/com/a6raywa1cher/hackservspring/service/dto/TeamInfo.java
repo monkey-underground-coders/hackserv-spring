@@ -10,4 +10,6 @@ public class TeamInfo {
 
     private Track track;
 
+    private String projectDescription;
+
 }

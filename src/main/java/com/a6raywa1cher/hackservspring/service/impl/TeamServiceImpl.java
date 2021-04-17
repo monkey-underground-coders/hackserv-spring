@@ -66,6 +66,7 @@ public class TeamServiceImpl implements TeamService {
     public Team editTeam(Team team, TeamInfo teamInfo) {
         team.setName(teamInfo.getName());
         team.setTrack(teamInfo.getTrack());
+        team.setProjectDescription(teamInfo.getProjectDescription());
         return teamRepository.save(team);
     }
 

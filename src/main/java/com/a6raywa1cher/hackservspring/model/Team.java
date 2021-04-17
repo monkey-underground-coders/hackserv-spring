@@ -35,15 +35,19 @@ public class Team {
     @JsonIdentityReference(alwaysAsId = true)
     private List<User> requests;
 
-    @OneToOne
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private User captain;
+	@OneToOne
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private User captain;
 
 	@ManyToOne
 	@JsonView(Views.Public.class)
 	@JsonIdentityReference(alwaysAsId = true)
 	private Track track;
+
+	@Column
+	@JsonView(Views.Public.class)
+	private String projectDescription;
 
 	@Column
 	@JsonView(Views.Public.class)
