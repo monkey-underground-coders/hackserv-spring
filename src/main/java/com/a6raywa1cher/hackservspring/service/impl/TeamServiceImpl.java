@@ -101,6 +101,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Page<Team> getPage(String filter, Pageable pageable) {
+        if (filter == null) filter = "";
         return teamRepository.findAllByNameContainsIgnoreCase(filter, pageable);
     }
 
