@@ -79,13 +79,13 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team acceptInTeam(Team team, User user) {
-        List<User> advancedRequests = team.getRequests();
-        advancedRequests.remove(user);
-        team.setRequests(advancedRequests);
+        List<User> editedRequests = team.getRequests();
+        editedRequests.remove(user);
+        team.setRequests(editedRequests);
 
-        List<User> advancedMembers = team.getMembers();
-        advancedMembers.add(user);
-        team.setMembers(advancedMembers);
+        List<User> editedMembers = team.getMembers();
+        editedMembers.add(user);
+        team.setMembers(editedMembers);
 
         user.setTeam(team);
         userRepository.save(user);
@@ -126,11 +126,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void deleteRequest(Team team, User user) {
+    public Team deleteRequest(Team team, User user) {
         List<User> advancedRequests = team.getRequests();
         advancedRequests.remove(user);
         team.setRequests(advancedRequests);
-        teamRepository.save(team);
+        return teamRepository.save(team);
     }
 
     @Override

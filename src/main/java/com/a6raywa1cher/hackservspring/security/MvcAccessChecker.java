@@ -37,31 +37,32 @@ public class MvcAccessChecker {
         return this.checkUserInternalInfoAccess(id, getCurrentUser());
     }
 
-    public boolean checkTeamCaptainWithCurrentUser(Long teamId, User requester) {
+    public boolean checkUserIsOwnerOfTeam(Long teamId, User requester) {
         Optional<Team> optionalTeam = teamService.getById(teamId);
         if (optionalTeam.isEmpty()) {
             return true; // 404 error will be thrown by the controller
         }
-        if (requester.getId().equals(optionalTeam.get().getCaptain().getId())) {
+        Team team = optionalTeam.get();
+        if (requester.getId().equals(team.getCaptain().getId())) {
             return true;
         }
         return requester.getUserRole() == UserRole.ADMIN;
     }
 
-    public boolean checkTeamCaptainWithCurrentUser(Long teamId) {
-        return this.checkTeamCaptainWithCurrentUser(teamId, getCurrentUser());
+    public boolean checkUserIsOwnerOfTeam(Long teamId) {
+        return this.checkUserIsOwnerOfTeam(teamId, getCurrentUser());
     }
 
-    public boolean checkTeamCaptainOrInternalWithCurrentUser(Long teamId, User requester) {
-        if (checkTeamCaptainWithCurrentUser(teamId)) {
+    public boolean checkMemberOfTeamOrRequested(Long teamId, User requester) {
+        if (checkUserIsOwnerOfTeam(teamId)) {
             return true;
         }
         Optional<Team> optionalTeam = teamService.getById(teamId);
         return teamService.isUserInRequestList(optionalTeam.get(), requester) || requester.getTeam().getId().equals(teamId);
     }
 
-    public boolean checkTeamCaptainOrInternalWithCurrentUser(Long teamId) {
-        return checkTeamCaptainOrInternalWithCurrentUser(teamId, getCurrentUser());
+    public boolean checkMemberOfTeamOrRequested(Long teamId) {
+        return checkMemberOfTeamOrRequested(teamId, getCurrentUser());
     }
 
     // ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------

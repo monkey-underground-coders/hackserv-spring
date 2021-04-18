@@ -34,7 +34,7 @@ public interface TeamService {
 
     boolean isUserInTeam(Team team, User user);
 
-    void deleteRequest(Team team, User user);
+    Team deleteRequest(Team team, User user);
 
     void deleteMember(Team team, User user);
 
