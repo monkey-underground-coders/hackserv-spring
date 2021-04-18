@@ -167,6 +167,9 @@ public class TeamController {
             throw new TeamNotExistsException();
         }
         Team team = optionalTeam.get();
+        if (!teamService.isMembersLessThenMax(team)) {
+            throw new MaxMembersInTeamException();
+        }
         if (!teamService.isUserInRequestList(team, user)) {
             throw new UserNotInRequestListException();
         }

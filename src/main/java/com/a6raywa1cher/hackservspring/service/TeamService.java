@@ -34,6 +34,8 @@ public interface TeamService {
 
     boolean isUserInTeam(Team team, User user);
 
+    boolean isMembersLessThenMax(Team team);
+
     Team deleteRequest(Team team, User user);
 
     void deleteMember(Team team, User user);

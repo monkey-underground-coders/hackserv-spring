@@ -16,64 +16,64 @@ import java.util.Optional;
 @Slf4j
 @Transactional
 public class MvcAccessChecker {
-    private final AuthenticationResolver resolver;
-    private final UserService userService;
-    private final TeamService teamService;
+	private final AuthenticationResolver resolver;
+	private final UserService userService;
+	private final TeamService teamService;
 
-    public MvcAccessChecker(AuthenticationResolver resolver, UserService userService, TeamService teamService) {
-        this.resolver = resolver;
-        this.userService = userService;
-        this.teamService = teamService;
-    }
+	public MvcAccessChecker(AuthenticationResolver resolver, UserService userService, TeamService teamService) {
+		this.resolver = resolver;
+		this.userService = userService;
+		this.teamService = teamService;
+	}
 
-    public boolean checkUserInternalInfoAccess(Long id, User requester) {
-        if (requester.getId().equals(id)) {
-            return true;
-        }
-        return requester.getUserRole() == UserRole.ADMIN;
-    }
+	public boolean checkUserInternalInfoAccess(Long id, User requester) {
+		if (requester.getId().equals(id)) {
+			return true;
+		}
+		return requester.getUserRole() == UserRole.ADMIN;
+	}
 
-    public boolean checkUserInternalInfoAccess(Long id) {
-        return this.checkUserInternalInfoAccess(id, getCurrentUser());
-    }
+	public boolean checkUserInternalInfoAccess(Long id) {
+		return this.checkUserInternalInfoAccess(id, getCurrentUser());
+	}
 
-    public boolean checkUserIsOwnerOfTeam(Long teamId, User requester) {
-        Optional<Team> optionalTeam = teamService.getById(teamId);
-        if (optionalTeam.isEmpty()) {
-            return true; // 404 error will be thrown by the controller
-        }
-        Team team = optionalTeam.get();
-        if (requester.getId().equals(team.getCaptain().getId())) {
-            return true;
-        }
-        return requester.getUserRole() == UserRole.ADMIN;
-    }
+	public boolean checkUserIsOwnerOfTeam(Long teamId, User requester) {
+		Optional<Team> optionalTeam = teamService.getById(teamId);
+		if (optionalTeam.isEmpty()) {
+			return true; // 404 error will be thrown by the controller
+		}
+		Team team = optionalTeam.get();
+		if (requester.getId().equals(team.getCaptain().getId())) {
+			return true;
+		}
+		return requester.getUserRole() == UserRole.ADMIN;
+	}
 
-    public boolean checkUserIsOwnerOfTeam(Long teamId) {
-        return this.checkUserIsOwnerOfTeam(teamId, getCurrentUser());
-    }
+	public boolean checkUserIsOwnerOfTeam(Long teamId) {
+		return this.checkUserIsOwnerOfTeam(teamId, getCurrentUser());
+	}
 
-    public boolean checkMemberOfTeamOrRequested(Long teamId, User requester) {
-        if (checkUserIsOwnerOfTeam(teamId)) {
-            return true;
-        }
-        Optional<Team> optionalTeam = teamService.getById(teamId);
-        return teamService.isUserInRequestList(optionalTeam.get(), requester) || requester.getTeam().getId().equals(teamId);
-    }
+	public boolean checkMemberOfTeamOrRequested(Long teamId, User requester) {
+		if (checkUserIsOwnerOfTeam(teamId)) {
+			return true;
+		}
+		Optional<Team> optionalTeam = teamService.getById(teamId);
+		return teamService.isUserInRequestList(optionalTeam.get(), requester) || requester.getTeam().getId().equals(teamId);
+	}
 
-    public boolean checkMemberOfTeamOrRequested(Long teamId) {
-        return checkMemberOfTeamOrRequested(teamId, getCurrentUser());
-    }
+	public boolean checkMemberOfTeamOrRequested(Long teamId) {
+		return checkMemberOfTeamOrRequested(teamId, getCurrentUser());
+	}
 
-    // ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------
+	// ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------
 
-    public boolean checkUserPasswordChangeAccess(Long id, User requester) {
-        Optional<User> optionalUser = userService.getById(id);
-        if (optionalUser.isEmpty()) {
-            return true; // 404 error will be thrown by the controller
-        }
-        if (requester.getId().equals(id)) {
-            return true;
+	public boolean checkUserPasswordChangeAccess(Long id, User requester) {
+		Optional<User> optionalUser = userService.getById(id);
+		if (optionalUser.isEmpty()) {
+			return true; // 404 error will be thrown by the controller
+		}
+		if (requester.getId().equals(id)) {
+			return true;
 		}
 		return requester.getUserRole() == UserRole.ADMIN;
 	}

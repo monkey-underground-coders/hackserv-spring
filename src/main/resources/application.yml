@@ -11,6 +11,7 @@ app:
   redirect: http://localhost:8080/ls
   min-email-req: PT1M
   max-email-duration: P1D
+  max-members-in-team: 5
 jwt:
   max-refresh-tokens-per-user: 10
   secret: fill-me-later
