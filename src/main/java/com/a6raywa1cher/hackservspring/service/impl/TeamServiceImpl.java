@@ -139,9 +139,9 @@ public class TeamServiceImpl implements TeamService {
 	public Team deleteRequest(Team team, User user) {
 		user.setRequest(null);
 		userRepository.save(user);
-		List<User> advancedRequests = team.getRequests();
-		advancedRequests.remove(user);
-		team.setRequests(advancedRequests);
+		List<User> editedRequests = team.getRequests();
+		editedRequests.remove(user);
+		team.setRequests(editedRequests);
 		return teamRepository.save(team);
 	}
 
@@ -149,9 +149,9 @@ public class TeamServiceImpl implements TeamService {
 	public void deleteMember(Team team, User user) {
 		user.setTeam(null);
 		userRepository.save(user);
-		List<User> advancedMembers = team.getMembers();
-		advancedMembers.remove(user);
-		team.setMembers(advancedMembers);
+		List<User> editedMembers = team.getMembers();
+		editedMembers.remove(user);
+		team.setMembers(editedMembers);
 		if (team.getMembers().size() == 0) {
 			this.deleteTeam(team);
 			return;

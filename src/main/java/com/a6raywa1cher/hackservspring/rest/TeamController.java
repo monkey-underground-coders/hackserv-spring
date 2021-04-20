@@ -48,6 +48,7 @@ public class TeamController {
 
     @PostMapping("/create")
     @Operation(security = @SecurityRequirement(name = "jwt"))
+    @PreAuthorize("@mvcAccessChecker.checkCaptainWithRequester(#request)")
     @JsonView(Views.Internal.class)
     public ResponseEntity<Team> createTeam(@RequestBody @Valid CreateTeamRequest request) throws UserNotExistsException, UserAlreadyInTeam {
         Optional<User> optionalCaptain = userService.getById(request.getCaptainId());

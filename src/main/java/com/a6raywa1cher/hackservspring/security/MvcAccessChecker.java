@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring.security;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
+import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.utils.AuthenticationResolver;
@@ -26,6 +27,8 @@ public class MvcAccessChecker {
 		this.teamService = teamService;
 	}
 
+	// ----------------------------------------- checkUserInternalInfoAccess -------------------------------------------
+
 	public boolean checkUserInternalInfoAccess(Long id, User requester) {
 		if (requester.getId().equals(id)) {
 			return true;
@@ -36,6 +39,8 @@ public class MvcAccessChecker {
 	public boolean checkUserInternalInfoAccess(Long id) {
 		return this.checkUserInternalInfoAccess(id, getCurrentUser());
 	}
+
+	// ----------------------------------------- checkUserIsOwnerOfTeam ------------------------------------------------
 
 	public boolean checkUserIsOwnerOfTeam(Long teamId, User requester) {
 		Optional<Team> optionalTeam = teamService.getById(teamId);
@@ -53,6 +58,8 @@ public class MvcAccessChecker {
 		return this.checkUserIsOwnerOfTeam(teamId, getCurrentUser());
 	}
 
+	// ----------------------------------------- checkMemberOfTeamOrRequested ------------------------------------------
+
 	public boolean checkMemberOfTeamOrRequested(Long teamId, User requester) {
 		if (checkUserIsOwnerOfTeam(teamId)) {
 			return true;
@@ -63,6 +70,19 @@ public class MvcAccessChecker {
 
 	public boolean checkMemberOfTeamOrRequested(Long teamId) {
 		return checkMemberOfTeamOrRequested(teamId, getCurrentUser());
+	}
+
+	// ----------------------------------------- checkCaptainWithRequester ---------------------------------------------
+
+	public boolean checkCaptainWithRequester(CreateTeamRequest request, User requester) {
+		if (requester.getId().equals(request.getCaptainId())) {
+			return true;
+		}
+		return requester.getUserRole() == UserRole.ADMIN;
+	}
+
+	public boolean checkCaptainWithRequester(CreateTeamRequest request) {
+		return checkCaptainWithRequester(request, getCurrentUser());
 	}
 
 	// ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------
