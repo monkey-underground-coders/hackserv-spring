@@ -21,24 +21,24 @@ public class Team {
 	@JsonView(Views.Public.class)
 	private Long id;
 
-    @Column
-    @JsonView(Views.Public.class)
-    private String name;
+	@Column
+	@JsonView(Views.Public.class)
+	private String name;
 
-    @OneToMany
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private List<User> members;
+	@OneToMany(mappedBy = "team")
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private List<User> members;
 
-    @OneToMany
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private List<User> requests;
+	@OneToMany(mappedBy = "team")
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private List<User> requests;
 
-    @OneToOne
-    @JsonView(Views.Public.class)
-    @JsonIdentityReference(alwaysAsId = true)
-    private User captain;
+	@OneToOne
+	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	private User captain;
 
 	@ManyToOne
 	@JsonView(Views.Public.class)

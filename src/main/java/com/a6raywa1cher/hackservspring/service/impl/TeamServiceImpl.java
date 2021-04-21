@@ -114,6 +114,7 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public boolean isUserInRequestList(Team team, User user) {
+
 		if (user.getRequest() == null) {
 			return false;
 		}

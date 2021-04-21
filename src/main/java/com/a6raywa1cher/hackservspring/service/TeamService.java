@@ -10,35 +10,35 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface TeamService {
-    Team createTeam(String name, User captain);
+	Team createTeam(String name, User captain);
 
-    Team createTeam(String name, User captain, Track track);
+	Team createTeam(String name, User captain, Track track);
 
-    Optional<Team> getById(long id);
+	Optional<Team> getById(long id);
 
-    Optional<Team> getTeamRequestForUser(User user);
+	Optional<Team> getTeamRequestForUser(User user);
 
-    Team editTeam(Team team, TeamInfo teamInfo);
+	Team editTeam(Team team, TeamInfo teamInfo);
 
-    Team requestInTeam(Team team, User user);
+	Team requestInTeam(Team team, User user);
 
-    Team acceptInTeam(Team team, User user);
+	Team acceptInTeam(Team team, User user);
 
-    Team changeCaptain(Team team, User user);
+	Team changeCaptain(Team team, User user);
 
-    Page<Team> getPage(String filter, Pageable pageable);
+	Page<Team> getPage(String filter, Pageable pageable);
 
-    boolean isUserInRequestList(Team team, User user);
+	boolean isUserInRequestList(Team team, User user);
 
-    boolean isUserCaptain(Team team, User user);
+	boolean isUserCaptain(Team team, User user);
 
-    boolean isUserInTeam(Team team, User user);
+	boolean isUserInTeam(Team team, User user);
 
-    boolean isMembersLessThenMax(Team team);
+	boolean isMembersLessThenMax(Team team);
 
-    Team deleteRequest(Team team, User user);
+	Team deleteRequest(Team team, User user);
 
-    void deleteMember(Team team, User user);
+	void deleteMember(Team team, User user);
 
-    void deleteTeam(Team team);
+	void deleteTeam(Team team);
 }

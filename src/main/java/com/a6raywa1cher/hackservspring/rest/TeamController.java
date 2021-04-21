@@ -36,207 +36,207 @@ import java.util.Optional;
 @Transactional(rollbackOn = Exception.class)
 public class TeamController {
 
-    private final TeamService teamService;
-    private final UserService userService;
-    private final TrackService trackService;
+	private final TeamService teamService;
+	private final UserService userService;
+	private final TrackService trackService;
 
-    public TeamController(TeamService teamService, UserService userService, TrackService trackService) {
-        this.teamService = teamService;
-        this.userService = userService;
-        this.trackService = trackService;
-    }
+	public TeamController(TeamService teamService, UserService userService, TrackService trackService) {
+		this.teamService = teamService;
+		this.userService = userService;
+		this.trackService = trackService;
+	}
 
-    @PostMapping("/create")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkCaptainWithRequester(#request)")
-    @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> createTeam(@RequestBody @Valid CreateTeamRequest request) throws UserNotExistsException, UserAlreadyInTeam {
-        Optional<User> optionalCaptain = userService.getById(request.getCaptainId());
-        if (optionalCaptain.isEmpty()) {
-            throw new UserNotExistsException();
-        }
-        User captain = optionalCaptain.get();
-        if (captain.getTeam() != null) {
-            throw new UserAlreadyInTeam();
-        }
-        if (teamService.getTeamRequestForUser(captain).isPresent()) {
-            throw new UserAlreadyMadeRequest();
-        }
-        Team team = teamService.createTeam(request.getName(), captain);
+	@PostMapping("/create")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PreAuthorize("@mvcAccessChecker.checkCaptainWithRequester(#request.captainId)")
+	@JsonView(Views.Internal.class)
+	public ResponseEntity<Team> createTeam(@RequestBody @Valid CreateTeamRequest request) throws UserNotExistsException, UserAlreadyInTeam {
+		Optional<User> optionalCaptain = userService.getById(request.getCaptainId());
+		if (optionalCaptain.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		User captain = optionalCaptain.get();
+		if (captain.getTeam() != null) {
+			throw new UserAlreadyInTeam();
+		}
+		if (teamService.getTeamRequestForUser(captain).isPresent()) {
+			throw new UserAlreadyMadeRequest();
+		}
+		Team team = teamService.createTeam(request.getName(), captain);
 
-        return ResponseEntity.ok(team);
-    }
+		return ResponseEntity.ok(team);
+	}
 
-    @GetMapping("/{teamid:[0-9]+}")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Public.class)
-    public ResponseEntity<Team> getTeam(@PathVariable long teamid) throws TeamNotExistsException {
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
-        Team team = optionalTeam.get();
+	@GetMapping("/{teamid:[0-9]+}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Public.class)
+	public ResponseEntity<Team> getTeam(@PathVariable long teamid) throws TeamNotExistsException {
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
+		Team team = optionalTeam.get();
 
-        return ResponseEntity.ok(team);
-    }
+		return ResponseEntity.ok(team);
+	}
 
-    @GetMapping("/")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Public.class)
-    @PageableAsQueryParam
-    public ResponseEntity<Page<Team>> getPage(@RequestParam(required = false) String with, @Parameter(hidden = true) Pageable pageable) {
-        return ResponseEntity.ok(teamService.getPage(with, pageable));
-    }
+	@GetMapping("/")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Public.class)
+	@PageableAsQueryParam
+	public ResponseEntity<Page<Team>> getPage(@RequestParam(required = false) String with, @Parameter(hidden = true) Pageable pageable) {
+		return ResponseEntity.ok(teamService.getPage(with, pageable));
+	}
 
-    @PutMapping("/{teamid:[0-9]+}")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
-    @JsonView(Views.Internal.class)
-    public ResponseEntity<Team> editTeamInfo(@RequestBody @Valid PutTeamInfoRequest request, @PathVariable long teamid) throws TeamNotExistsException {
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
-        Optional<Track> optionalTrack = trackService.getById(request.getTrackId());
-        if (optionalTrack.isEmpty()) {
-            throw new TrackNotExistsException();
-        }
+	@PutMapping("/{teamid:[0-9]+}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
+	@JsonView(Views.Internal.class)
+	public ResponseEntity<Team> editTeamInfo(@RequestBody @Valid PutTeamInfoRequest request, @PathVariable long teamid) throws TeamNotExistsException {
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
+		Optional<Track> optionalTrack = trackService.getById(request.getTrackId());
+		if (optionalTrack.isEmpty()) {
+			throw new TrackNotExistsException();
+		}
 
-        TeamInfo teamInfo = new TeamInfo();
-        BeanUtils.copyProperties(request, teamInfo);
-        teamInfo.setTrack(optionalTrack.get());
+		TeamInfo teamInfo = new TeamInfo();
+		BeanUtils.copyProperties(request, teamInfo);
+		teamInfo.setTrack(optionalTrack.get());
 
-        Team team = teamService.editTeam(optionalTeam.get(), teamInfo);
+		Team team = teamService.editTeam(optionalTeam.get(), teamInfo);
 
-        return ResponseEntity.ok(team);
-    }
-
-
-    @DeleteMapping("/{teamid:[0-9]+}")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
-    public ResponseEntity<Void> deleteTeam(@PathVariable long teamid) throws TeamNotExistsException {
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
-        Team team = optionalTeam.get();
-        teamService.deleteTeam(team);
-
-        return ResponseEntity.ok().build();
-    }
+		return ResponseEntity.ok(team);
+	}
 
 
-    @PostMapping("/{teamid:[0-9]+}/req")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Public.class)
-    public ResponseEntity<Team> requestInTeam(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
-        Optional<User> optionalUser = userService.getById(request.getUserId());
-        if (optionalUser.isEmpty()) {
-            throw new UserNotExistsException();
-        }
-        User user = optionalUser.get();
-        if (user.getTeam() != null) {
-            throw new UserAlreadyInTeam();
-        }
-        if (teamService.getTeamRequestForUser(user).isPresent()) {
-            throw new UserAlreadyMadeRequest();
-        }
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
+	@DeleteMapping("/{teamid:[0-9]+}")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
 
-        Team team = teamService.requestInTeam(optionalTeam.get(), user);
+	public ResponseEntity<Void> deleteTeam(@PathVariable long teamid) throws TeamNotExistsException {
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
+		Team team = optionalTeam.get();
+		teamService.deleteTeam(team);
 
-        return ResponseEntity.ok(team);
-    }
+		return ResponseEntity.ok().build();
+	}
 
 
-    @PostMapping("/{teamid:[0-9]+}/accept")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Internal.class)
-    @PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
-    public ResponseEntity<Team> acceptUser(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) {
-        Optional<User> optionalUser = userService.getById(request.getUserId());
-        if (optionalUser.isEmpty()) {
-            throw new UserNotExistsException();
-        }
-        User user = optionalUser.get();
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
-        Team team = optionalTeam.get();
-        if (!teamService.isMembersLessThenMax(team)) {
-            throw new MaxMembersInTeamException();
-        }
-        if (!teamService.isUserInRequestList(team, user)) {
-            throw new UserNotInRequestListException();
-        }
+	@PostMapping("/{teamid:[0-9]+}/req")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Public.class)
+	public ResponseEntity<Team> requestInTeam(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
+		Optional<User> optionalUser = userService.getById(request.getUserId());
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		User user = optionalUser.get();
+		if (user.getTeam() != null) {
+			throw new UserAlreadyInTeam();
+		}
+		if (teamService.getTeamRequestForUser(user).isPresent()) {
+			throw new UserAlreadyMadeRequest();
+		}
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
 
-        Team advancedTeam = teamService.acceptInTeam(team, user);
+		Team team = teamService.requestInTeam(optionalTeam.get(), user);
 
-        return ResponseEntity.ok(advancedTeam);
-    }
+		return ResponseEntity.ok(team);
+	}
 
 
-    @PostMapping("/{teamid:[0-9]+}/change_captain")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @JsonView(Views.Internal.class)
-    @PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
-    public ResponseEntity<Team> changeCaptain(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) {
-        Optional<User> optionalUser = userService.getById(request.getUserId());
-        if (optionalUser.isEmpty()) {
-            throw new UserNotExistsException();
-        }
-        User user = optionalUser.get();
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
+	@PostMapping("/{teamid:[0-9]+}/accept")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Internal.class)
+	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
+	public ResponseEntity<Team> acceptUser(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) {
+		Optional<User> optionalUser = userService.getById(request.getUserId());
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		User user = optionalUser.get();
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
+		Team team = optionalTeam.get();
+		if (!teamService.isMembersLessThenMax(team)) {
+			throw new MaxMembersInTeamException();
+		}
+		if (!teamService.isUserInRequestList(team, user)) {
+			throw new UserNotInRequestListException();
+		}
 
-        if (!teamService.isUserInTeam(optionalTeam.get(), user)) {
-            throw new UserNotInTeamException();
-        }
+		Team advancedTeam = teamService.acceptInTeam(team, user);
 
-        Team team = teamService.changeCaptain(optionalTeam.get(), user);
-        return ResponseEntity.ok(team);
-    }
+		return ResponseEntity.ok(advancedTeam);
+	}
 
-    @DeleteMapping("/{teamid:[0-9]+}/del_member")
-    @Operation(security = @SecurityRequirement(name = "jwt"))
-    @PreAuthorize("@mvcAccessChecker.checkMemberOfTeamOrRequested(#teamid)")
-    public ResponseEntity<Team> deleteMember(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid, @Parameter(hidden = true) User requester) {
-        Optional<User> optionalUser = userService.getById(request.getUserId());
-        if (optionalUser.isEmpty()) {
-            throw new UserNotExistsException();
-        }
-        User user = optionalUser.get();
-        Optional<Team> optionalTeam = teamService.getById(teamid);
-        if (optionalTeam.isEmpty()) {
-            throw new TeamNotExistsException();
-        }
-        Team team = optionalTeam.get();
 
-        if (!requester.getId().equals(user.getId()) && !teamService.isUserCaptain(team, requester) && !requester.getUserRole().equals(UserRole.ADMIN)) {
-            throw new NotCaptainTryingDeleteAnotherUserException();
-        }
+	@PostMapping("/{teamid:[0-9]+}/change_captain")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@JsonView(Views.Internal.class)
+	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
+	public ResponseEntity<Team> changeCaptain(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) {
+		Optional<User> optionalUser = userService.getById(request.getUserId());
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		User user = optionalUser.get();
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
 
-        if (teamService.isUserInTeam(team, user)) {
-            teamService.deleteMember(team, user);
-            optionalTeam = teamService.getById(teamid);
-            if (optionalTeam.isEmpty()) {
-                return ResponseEntity.ok().build();
-            }
+		if (!teamService.isUserInTeam(optionalTeam.get(), user)) {
+			throw new UserNotInTeamException();
+		}
 
-        } else if (teamService.isUserInRequestList(team, user)) {
-            team = teamService.deleteRequest(team, user);
-        } else {
-            throw new UserNotInTeamOrRequestsListException();
-        }
+		Team team = teamService.changeCaptain(optionalTeam.get(), user);
+		return ResponseEntity.ok(team);
+	}
 
-        return ResponseEntity.ok(team);
-    }
+	@DeleteMapping("/{teamid:[0-9]+}/del_member")
+	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PreAuthorize("@mvcAccessChecker.checkMemberOfTeamOrRequested(#teamid)")
+	public ResponseEntity<Team> deleteMember(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid, @Parameter(hidden = true) User requester) {
+		Optional<User> optionalUser = userService.getById(request.getUserId());
+		if (optionalUser.isEmpty()) {
+			throw new UserNotExistsException();
+		}
+		User user = optionalUser.get();
+		Optional<Team> optionalTeam = teamService.getById(teamid);
+		if (optionalTeam.isEmpty()) {
+			throw new TeamNotExistsException();
+		}
+		Team team = optionalTeam.get();
+
+		if (!requester.getId().equals(user.getId()) && !teamService.isUserCaptain(team, requester) && !requester.getUserRole().equals(UserRole.ADMIN)) {
+			throw new NotCaptainTryingDeleteAnotherUserException();
+		}
+
+		if (teamService.isUserInTeam(team, user)) {
+			teamService.deleteMember(team, user);
+			optionalTeam = teamService.getById(teamid);
+			if (optionalTeam.isEmpty()) {
+				return ResponseEntity.ok().build();
+			}
+		} else if (teamService.isUserInRequestList(team, user)) {
+			team = teamService.deleteRequest(team, user);
+		} else {
+			throw new UserNotInTeamOrRequestsListException();
+		}
+
+		return ResponseEntity.ok(team);
+	}
 
 }

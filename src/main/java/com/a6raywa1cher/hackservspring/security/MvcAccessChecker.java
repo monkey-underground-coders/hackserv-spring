@@ -3,7 +3,6 @@ package com.a6raywa1cher.hackservspring.security;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
-import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.utils.AuthenticationResolver;
@@ -74,15 +73,15 @@ public class MvcAccessChecker {
 
 	// ----------------------------------------- checkCaptainWithRequester ---------------------------------------------
 
-	public boolean checkCaptainWithRequester(CreateTeamRequest request, User requester) {
-		if (requester.getId().equals(request.getCaptainId())) {
+	public boolean checkCaptainWithRequester(Long captainId, User requester) {
+		if (requester.getId().equals(captainId)) {
 			return true;
 		}
 		return requester.getUserRole() == UserRole.ADMIN;
 	}
 
-	public boolean checkCaptainWithRequester(CreateTeamRequest request) {
-		return checkCaptainWithRequester(request, getCurrentUser());
+	public boolean checkCaptainWithRequester(Long captainId) {
+		return checkCaptainWithRequester(captainId, getCurrentUser());
 	}
 
 	// ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------
