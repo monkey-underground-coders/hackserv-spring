@@ -15,8 +15,6 @@ public interface UserService {
 
 	User create(UserRole userRole, String email, String password);
 
-	User create(UserRole userRole, String email, String password, String fullName);
-
 	Optional<User> getById(Long id);
 
 	Stream<User> getById(Collection<Long> ids);
@@ -25,7 +23,7 @@ public interface UserService {
 
 	Optional<User> getByVendorId(VendorId vendorId, String vendorSub);
 
-	User editUser(User user, UserRole userRole, String email, String fullName);
+	User editUser(User user, UserRole userRole, String email);
 
 	User editUserInfo(User user, UserInfo userInfo);
 

@@ -9,7 +9,7 @@ public abstract class LocalHtmlUtils {
 	}
 
 	public static String htmlEscape(String input, int maxLength) {
-		String out = htmlEscape(input);
+		String out = htmlEscape(input.strip());
 		if (out == null) {
 			return null;
 		} else if (out.length() > maxLength) {

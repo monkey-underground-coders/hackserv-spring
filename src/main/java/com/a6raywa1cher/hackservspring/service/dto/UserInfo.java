@@ -7,7 +7,12 @@ import java.time.LocalDate;
 
 @Data
 public class UserInfo {
-	private String fullName;
+
+	private String firstName;
+
+	private String middleName;
+
+	private String lastName;
 
 	private String telegram;
 

@@ -16,18 +16,14 @@ public class CreateFirstAdminApplicationListener implements ApplicationListener<
 
 	private final String email;
 
-	private final String fullName;
-
 	private final String password;
 
 	private final UserService userService;
 
 	public CreateFirstAdminApplicationListener(@Value("${app.first-admin.email}") String email,
-	                                           @Value("${app.first-admin.full-name}") String fullName,
 	                                           @Value("${app.first-admin.password}") String password,
 	                                           UserService userService) {
 		this.email = email;
-		this.fullName = fullName;
 		this.password = password;
 		this.userService = userService;
 	}
@@ -35,7 +31,7 @@ public class CreateFirstAdminApplicationListener implements ApplicationListener<
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
 		if (userService.findFirstByUserRole(UserRole.ADMIN).isEmpty()) {
-			User user = userService.create(UserRole.ADMIN, email, password, fullName);
+			User user = userService.create(UserRole.ADMIN, email, password);
 			userService.editEmailValidated(user, true);
 			logger.info("Created admin-user");
 		}
