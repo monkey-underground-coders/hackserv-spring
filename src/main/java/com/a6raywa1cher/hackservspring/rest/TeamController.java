@@ -82,14 +82,11 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	public Team editTeamInfo(@RequestBody @Valid PutTeamInfoRequest request, @PathVariable long teamid) throws TeamNotExistsException {
 		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
-		Optional<Track> optionalTrack = trackService.getById(request.getTrackId());
-		if (optionalTrack.isEmpty()) {
-			throw new TrackNotExistsException();
-		}
+		Track track = trackService.getById(request.getTrackId()).orElseThrow(TrackNotExistsException::new);
 
 		TeamInfo teamInfo = new TeamInfo();
 		BeanUtils.copyProperties(request, teamInfo);
-		teamInfo.setTrack(optionalTrack.get());
+		teamInfo.setTrack(track);
 
 		return teamService.editTeam(team, teamInfo);
 	}
