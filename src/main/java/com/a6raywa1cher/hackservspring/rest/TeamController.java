@@ -50,11 +50,7 @@ public class TeamController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#request.captainId)")
 	@JsonView(Views.Internal.class)
 	public Team createTeam(@RequestBody @Valid CreateTeamRequest request) throws UserNotExistsException, UserAlreadyInTeam {
-		Optional<User> optionalCaptain = userService.getById(request.getCaptainId());
-		if (optionalCaptain.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User captain = optionalCaptain.get();
+		User captain = userService.getById(request.getCaptainId()).orElseThrow(UserNotExistsException::new);
 		if (captain.getTeam() != null) {
 			throw new UserAlreadyInTeam();
 		}
@@ -69,12 +65,7 @@ public class TeamController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
 	public Team getTeam(@PathVariable long teamid) throws TeamNotExistsException {
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
-
-		return optionalTeam.get();
+		return teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 	}
 
 	@GetMapping("/")
@@ -90,10 +81,7 @@ public class TeamController {
 	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
 	@JsonView(Views.Internal.class)
 	public Team editTeamInfo(@RequestBody @Valid PutTeamInfoRequest request, @PathVariable long teamid) throws TeamNotExistsException {
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
+		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 		Optional<Track> optionalTrack = trackService.getById(request.getTrackId());
 		if (optionalTrack.isEmpty()) {
 			throw new TrackNotExistsException();
@@ -103,7 +91,7 @@ public class TeamController {
 		BeanUtils.copyProperties(request, teamInfo);
 		teamInfo.setTrack(optionalTrack.get());
 
-		return teamService.editTeam(optionalTeam.get(), teamInfo);
+		return teamService.editTeam(team, teamInfo);
 	}
 
 
@@ -112,11 +100,7 @@ public class TeamController {
 	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
 
 	public void deleteTeam(@PathVariable long teamid) throws TeamNotExistsException {
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
-		Team team = optionalTeam.get();
+		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 		teamService.deleteTeam(team);
 	}
 
@@ -126,23 +110,16 @@ public class TeamController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#request.userId)")
 	@JsonView(Views.Public.class)
 	public Team requestInTeam(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
-		Optional<User> optionalUser = userService.getById(request.getUserId());
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
+		User user = userService.getById(request.getUserId()).orElseThrow(UserNotExistsException::new);
 		if (user.getTeam() != null) {
 			throw new UserAlreadyInTeam();
 		}
 		if (teamService.getTeamRequestForUser(user).isPresent()) {
 			throw new UserAlreadyMadeRequest();
 		}
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
+		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 
-		return teamService.requestInTeam(optionalTeam.get(), user);
+		return teamService.requestInTeam(team, user);
 	}
 
 
@@ -151,16 +128,8 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
 	public Team acceptUser(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) {
-		Optional<User> optionalUser = userService.getById(request.getUserId());
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
-		Team team = optionalTeam.get();
+		User user = userService.getById(request.getUserId()).orElseThrow(UserNotExistsException::new);
+		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 		if (!teamService.isMembersLessThenMax(team)) {
 			throw new MaxMembersInTeamException();
 		}
@@ -177,37 +146,22 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamid)")
 	public Team changeCaptain(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) {
-		Optional<User> optionalUser = userService.getById(request.getUserId());
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
+		User user = userService.getById(request.getUserId()).orElseThrow(UserNotExistsException::new);
+		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 
-		if (!teamService.isUserInTeam(optionalTeam.get(), user)) {
+		if (!teamService.isUserInTeam(team, user)) {
 			throw new UserNotInTeamException();
 		}
 
-		return teamService.changeCaptain(optionalTeam.get(), user);
+		return teamService.changeCaptain(team, user);
 	}
 
 	@DeleteMapping("/{teamid:[0-9]+}/del_member")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkMemberOfTeamOrRequested(#teamid)")
 	public Team deleteMember(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid, @Parameter(hidden = true) User requester) {
-		Optional<User> optionalUser = userService.getById(request.getUserId());
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
-		Optional<Team> optionalTeam = teamService.getById(teamid);
-		if (optionalTeam.isEmpty()) {
-			throw new TeamNotExistsException();
-		}
-		Team team = optionalTeam.get();
+		User user = userService.getById(request.getUserId()).orElseThrow(UserNotExistsException::new);
+		Team team = teamService.getById(teamid).orElseThrow(TeamNotExistsException::new);
 
 		if (!requester.getId().equals(user.getId()) && !teamService.isUserCaptain(team, requester) && !requester.getUserRole().equals(UserRole.ADMIN)) {
 			throw new NotCaptainTryingDeleteAnotherUserException();
@@ -215,7 +169,7 @@ public class TeamController {
 
 		if (teamService.isUserInTeam(team, user)) {
 			teamService.deleteMember(team, user);
-			optionalTeam = teamService.getById(teamid);
+			Optional<Team> optionalTeam = teamService.getById(teamid);
 			if (optionalTeam.isEmpty()) {
 				return null;
 			}

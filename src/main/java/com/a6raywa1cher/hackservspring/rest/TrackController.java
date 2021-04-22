@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,12 +30,7 @@ public class TrackController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
 	public Track getTrack(@PathVariable long trackid) throws TrackNotExistsException {
-		Optional<Track> optionalTrack = trackService.getById(trackid);
-		if (optionalTrack.isEmpty()) {
-			throw new TrackNotExistsException();
-		}
-
-		return optionalTrack.get();
+		return trackService.getById(trackid).orElseThrow(TrackNotExistsException::new);
 	}
 
 	@PostMapping("/create")
@@ -50,23 +44,14 @@ public class TrackController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Internal.class)
 	public Track editTrack(@RequestBody @Valid PutTrackRequest request, @PathVariable long trackid) throws TrackNotExistsException {
-		Optional<Track> optionalTrack = trackService.getById(trackid);
-		if (optionalTrack.isEmpty()) {
-			throw new TrackNotExistsException();
-		}
-		Track track = optionalTrack.get();
-		trackService.editTrack(track, request.getTrackName());
-		return track;
+		Track track = trackService.getById(trackid).orElseThrow(TrackNotExistsException::new);
+		return trackService.editTrack(track, request.getTrackName());
 	}
 
 	@DeleteMapping("/{trackid}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	public void deleteTrack(@PathVariable long trackid) throws TrackNotExistsException {
-		Optional<Track> optionalTrack = trackService.getById(trackid);
-		if (optionalTrack.isEmpty()) {
-			throw new TrackNotExistsException();
-		}
-		Track track = optionalTrack.get();
+		Track track = trackService.getById(trackid).orElseThrow(TrackNotExistsException::new);
 		trackService.delete(track);
 	}
 

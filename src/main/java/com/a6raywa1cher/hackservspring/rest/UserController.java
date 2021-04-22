@@ -56,11 +56,8 @@ public class UserController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public ResponseEntity<Resource> getResume(@PathVariable long uid) throws UserNotExistsException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
+
 		Resource file = discService.getResource(user.getDocumentResumePath());
 
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
@@ -74,18 +71,15 @@ public class UserController {
 	@JsonView(Views.DetailedInternal.class)
 	public User createResume(@PathVariable long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
 		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 		if (maxFileSize.toBytes() < file.getSize()) {
 			throw new FileSizeLimitExceededException();
 		}
-		User user = optionalUser.get();
 		if (user.getDocumentResumePath() != null) {
 			deleteResumeDocument(uid);
 		}
-		user = userService.setDocumentResumePath(user, discService.create(file));
-		return user;
+
+		return userService.setDocumentResumePath(user, discService.create(file));
 	}
 
 	@DeleteMapping(value = "/{uid}/cv/")
@@ -93,13 +87,8 @@ public class UserController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public User deleteResumeDocument(@PathVariable long uid) throws UserNotExistsException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
-		user = userService.deleteResume(user);
-		return user;
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
+		return userService.deleteResume(user);
 	}
 
 	@PostMapping("/create")
@@ -118,11 +107,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
 	public User getUserPublic(@PathVariable long uid) throws UserNotExistsException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		return optionalUser.get();
+		return userService.getById(uid).orElseThrow(UserNotExistsException::new);
 	}
 
 	@GetMapping("/{uid}/internal")
@@ -130,11 +115,7 @@ public class UserController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.Internal.class)
 	public User getUserInternal(@PathVariable long uid) throws UserNotExistsException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		return optionalUser.get();
+		return userService.getById(uid).orElseThrow(UserNotExistsException::new);
 	}
 
 	@PutMapping("/{uid:[0-9]+}")
@@ -142,14 +123,11 @@ public class UserController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public User editUserInfo(@RequestBody @Valid PutUserInfoRequest request, @PathVariable long uid) throws UserNotExistsException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 		UserInfo userInfo = new UserInfo();
 		BeanUtils.copyProperties(request, userInfo);
 
-		return userService.editUserInfo(optionalUser.get(), userInfo);
+		return userService.editUserInfo(user, userInfo);
 	}
 
 
@@ -158,12 +136,7 @@ public class UserController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.Internal.class)
 	public EmailValidationToken sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException, TooManyValidationRequestsExсeption {
-
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 		if (emailValidationService.isLastSendWasRecently(user)) {
 			throw new TooManyValidationRequestsExсeption();
 		}
@@ -178,11 +151,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	public void validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnabledException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 
 		if (user.getEmailValidationToken() == null) {
 			throw new TokenNotExistsException();
@@ -200,11 +169,7 @@ public class UserController {
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	public void delete(@PathVariable long uid) throws UserNotExistsException {
-		Optional<User> optionalUser = userService.getById(uid);
-		if (optionalUser.isEmpty()) {
-			throw new UserNotExistsException();
-		}
-		User user = optionalUser.get();
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 
 		userService.deleteUser(user);
 	}
