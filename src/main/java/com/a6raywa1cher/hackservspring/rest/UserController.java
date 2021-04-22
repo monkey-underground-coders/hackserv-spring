@@ -31,7 +31,6 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 
 @RestController
@@ -51,10 +50,9 @@ public class UserController {
 		this.discService = discService;
 	}
 
-	@GetMapping(value = "/{uid}/cv/")
+	@GetMapping(value = "/{uid}/cv/", produces = "application/octet-stream")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
-	@JsonView(Views.DetailedInternal.class)
 	public ResponseEntity<Resource> getResume(@PathVariable long uid) throws UserNotExistsException {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 
@@ -70,7 +68,6 @@ public class UserController {
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public User createResume(@PathVariable long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
-		Optional<User> optionalUser = userService.getById(uid);
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 		if (maxFileSize.toBytes() < file.getSize()) {
 			throw new FileSizeLimitExceededException();
