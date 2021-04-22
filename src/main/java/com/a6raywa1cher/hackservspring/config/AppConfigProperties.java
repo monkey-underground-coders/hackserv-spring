@@ -27,9 +27,6 @@ public class AppConfigProperties {
 		private String email;
 
 		@NotBlank
-		private String fullName;
-
-		@NotBlank
 		private String password;
 	}
 }

@@ -5,7 +5,6 @@ app:
   cors-allowed-origins: [ "*" ]
   first-admin:
     email: # REQUIRED first admin email
-    fullName: # REQUIRED first admin name
     password: # REQUIRED first admin password
   email-verification: false
   redirect: http://localhost:8080/ls

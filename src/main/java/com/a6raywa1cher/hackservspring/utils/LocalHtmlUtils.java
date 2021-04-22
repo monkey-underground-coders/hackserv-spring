@@ -5,7 +5,7 @@ import org.springframework.web.util.HtmlUtils;
 
 public abstract class LocalHtmlUtils {
 	public static String htmlEscape(String input) {
-		return input == null ? null : HtmlUtils.htmlEscape(input);
+		return input == null ? null : HtmlUtils.htmlEscape(input.strip());
 	}
 
 	public static String htmlEscape(String input, int maxLength) {

@@ -10,6 +10,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -73,7 +74,15 @@ public class User {
 
 	@Column
 	@JsonView(Views.Internal.class)
-	private String fullName;
+	private String firstName;
+
+	@Column
+	@JsonView(Views.Internal.class)
+	private String middleName;
+
+	@Column
+	@JsonView(Views.Internal.class)
+	private String lastName;
 
 	@ManyToOne
 	@JsonView(Views.Public.class)
@@ -121,5 +130,16 @@ public class User {
 
 	public User() {
 
+	}
+
+	public String getFullName() {
+		List<String> segments = new ArrayList<>(3);
+		if (lastName != null) segments.add(lastName);
+		if (firstName != null) segments.add(firstName);
+		if (middleName != null && !middleName.equals("")) segments.add(middleName);
+		if (segments.size() == 0) {
+			return "";
+		}
+		return String.join(" ", segments);
 	}
 }

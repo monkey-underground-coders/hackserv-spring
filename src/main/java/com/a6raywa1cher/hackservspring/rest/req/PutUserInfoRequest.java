@@ -8,9 +8,17 @@ import java.time.LocalDate;
 
 @Data
 public class PutUserInfoRequest {
+
 	@NotBlank
 	@HtmlEscape
-	private String fullName;
+	private String firstName;
+
+	@HtmlEscape
+	private String middleName;
+
+	@NotBlank
+	@HtmlEscape
+	private String lastName;
 
 	@NotBlank
 	@Pattern(regexp = "^@(?=\\w{5,64}\\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$")

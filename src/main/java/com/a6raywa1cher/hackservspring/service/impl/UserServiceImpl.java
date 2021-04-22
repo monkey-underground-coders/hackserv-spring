@@ -5,8 +5,8 @@ import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
-import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.DiscService;
+import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,24 +40,19 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User create(UserRole userRole, VendorId vendorId, String vendorSub, String email) {
-		return create(userRole, email, null, null, vendorId, vendorSub);
+		return create(userRole, email, null, vendorId, vendorSub);
 	}
 
 	@Override
 	public User create(UserRole userRole, String email, String password) {
-		return create(userRole, email, password, null);
+		return create(userRole, email, password, null, null);
 	}
 
-	@Override
-	public User create(UserRole userRole, String email, String password, String fullName) {
-		return create(userRole, email, password, fullName, null, null);
-	}
-
-	private User create(UserRole userRole, String email, String password, String fullName, VendorId vendorId, String vendorSub) {
+	private User create(UserRole userRole, String email, String password, VendorId vendorId, String vendorSub) {
 		User user = new User();
 		user.setEmail(email);
 		user.setPassword(password != null ? passwordEncoder.encode(password) : null);
-		user.setFullName(fullName);
+
 		user.setUserRole(userRole);
 		user.setCreatedAt(ZonedDateTime.now());
 		user.setLastVisitAt(ZonedDateTime.now());
@@ -98,8 +93,7 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public User editUser(User user, UserRole userRole, String email, String fullName) {
-		user.setFullName(fullName);
+	public User editUser(User user, UserRole userRole, String email) {
 		user.setEmail(email);
 		user.setUserRole(userRole);
 		return repository.save(user);
@@ -107,7 +101,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User editUserInfo(User user, UserInfo userInfo) {
-		user.setFullName(userInfo.getFullName());
+		user.setFirstName(userInfo.getFirstName());
+		user.setLastName(userInfo.getLastName());
+		user.setMiddleName(userInfo.getMiddleName());
 		user.setTelegram(userInfo.getTelegram());
 		user.setDateOfBirth(userInfo.getDateOfBirth());
 		user.setWorkPlace(userInfo.getWorkPlace());
