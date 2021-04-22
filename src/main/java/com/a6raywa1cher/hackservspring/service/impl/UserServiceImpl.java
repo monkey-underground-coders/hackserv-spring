@@ -5,6 +5,7 @@ import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
+import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
@@ -21,14 +22,16 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
+	private final TeamService teamService;
 	private final UserRepository repository;
 	private final PasswordEncoder passwordEncoder;
 	private final RefreshTokenService refreshTokenService;
 	private final DiscService discService;
 
 	@Autowired
-	public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder,
+	public UserServiceImpl(TeamService teamService, UserRepository repository, PasswordEncoder passwordEncoder,
 	                       RefreshTokenService refreshTokenService, DiscService discService) {
+		this.teamService = teamService;
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.refreshTokenService = refreshTokenService;
@@ -114,26 +117,26 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User editPassword(User user, String password) {
-		user.setPassword(passwordEncoder.encode(password));
-		return repository.save(user);
-	}
+    public User editPassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        return repository.save(user);
+    }
 
-	@Override
-	public User editEmailValidated(User user, boolean expr) {
-		user.setEmailValidated(expr);
-		return repository.save(user);
-	}
+    @Override
+    public User editEmailValidated(User user, boolean expr) {
+        user.setEmailValidated(expr);
+        return repository.save(user);
+    }
 
-	@Override
-	public User setLastVisitAt(User user, ZonedDateTime at) {
-		user.setLastVisitAt(at);
-		return repository.save(user);
-	}
+    @Override
+    public User setLastVisitAt(User user, ZonedDateTime at) {
+        user.setLastVisitAt(at);
+        return repository.save(user);
+    }
 
-	@Override
-	public User setVendorSub(User user, VendorId vendorId, String vendorSub) {
-		if (this.getByVendorId(vendorId, vendorSub).isPresent()) {
+    @Override
+    public User setVendorSub(User user, VendorId vendorId, String vendorSub) {
+        if (this.getByVendorId(vendorId, vendorSub).isPresent()) {
 			throw new IllegalArgumentException();
 		}
 		switch (vendorId) {
@@ -170,6 +173,12 @@ public class UserServiceImpl implements UserService {
 			this.deleteResume(user);
 		}
 		refreshTokenService.invalidateAll(user);
+		if (user.getTeam() != null) {
+			teamService.deleteMember(user.getTeam(), user);
+		}
+		if (teamService.getTeamRequestForUser(user).isPresent()) {
+			teamService.deleteRequest(teamService.getTeamRequestForUser(user).get(), user);
+		}
 		repository.delete(user);
 	}
 }
