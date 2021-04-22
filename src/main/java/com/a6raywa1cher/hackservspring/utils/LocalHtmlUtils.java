@@ -5,11 +5,11 @@ import org.springframework.web.util.HtmlUtils;
 
 public abstract class LocalHtmlUtils {
 	public static String htmlEscape(String input) {
-		return input == null ? null : HtmlUtils.htmlEscape(input);
+		return input == null ? null : HtmlUtils.htmlEscape(input.strip());
 	}
 
 	public static String htmlEscape(String input, int maxLength) {
-		String out = htmlEscape(input.strip());
+		String out = htmlEscape(input);
 		if (out == null) {
 			return null;
 		} else if (out.length() > maxLength) {
