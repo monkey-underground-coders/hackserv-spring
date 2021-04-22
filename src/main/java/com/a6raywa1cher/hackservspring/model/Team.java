@@ -30,8 +30,9 @@ public class Team {
 	@JsonIdentityReference(alwaysAsId = true)
 	private List<User> members;
 
-	@OneToMany(mappedBy = "team")
-	@JsonView(Views.Public.class)
+
+	@OneToMany(mappedBy = "request")
+	@JsonView(Views.Internal.class)
 	@JsonIdentityReference(alwaysAsId = true)
 	private List<User> requests;
 

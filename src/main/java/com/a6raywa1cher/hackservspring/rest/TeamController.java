@@ -48,7 +48,7 @@ public class TeamController {
 
 	@PostMapping("/create")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	@PreAuthorize("@mvcAccessChecker.checkCaptainWithRequester(#request.captainId)")
+	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#request.captainId)")
 	@JsonView(Views.Internal.class)
 	public ResponseEntity<Team> createTeam(@RequestBody @Valid CreateTeamRequest request) throws UserNotExistsException, UserAlreadyInTeam {
 		Optional<User> optionalCaptain = userService.getById(request.getCaptainId());
@@ -130,6 +130,7 @@ public class TeamController {
 
 	@PostMapping("/{teamid:[0-9]+}/req")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#request.userId)")
 	@JsonView(Views.Public.class)
 	public ResponseEntity<Team> requestInTeam(@RequestBody @Valid UserIdRequest request, @PathVariable long teamid) throws UserNotExistsException, TeamNotExistsException, UserAlreadyInTeam, UserAlreadyMadeRequest {
 		Optional<User> optionalUser = userService.getById(request.getUserId());

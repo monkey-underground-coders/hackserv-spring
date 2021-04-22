@@ -71,18 +71,6 @@ public class MvcAccessChecker {
 		return checkMemberOfTeamOrRequested(teamId, getCurrentUser());
 	}
 
-	// ----------------------------------------- checkCaptainWithRequester ---------------------------------------------
-
-	public boolean checkCaptainWithRequester(Long captainId, User requester) {
-		if (requester.getId().equals(captainId)) {
-			return true;
-		}
-		return requester.getUserRole() == UserRole.ADMIN;
-	}
-
-	public boolean checkCaptainWithRequester(Long captainId) {
-		return checkCaptainWithRequester(captainId, getCurrentUser());
-	}
 
 	// ----------------------------------------- checkUserPasswordChangeAccess -----------------------------------------
 
