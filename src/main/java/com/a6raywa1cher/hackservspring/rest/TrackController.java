@@ -7,8 +7,6 @@ import com.a6raywa1cher.hackservspring.rest.req.PutTrackRequest;
 import com.a6raywa1cher.hackservspring.service.TrackService;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -26,37 +24,32 @@ public class TrackController {
 		this.trackService = trackService;
 	}
 
-	@GetMapping("/{trackid}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@GetMapping("/{trackId}")
 	@JsonView(Views.Public.class)
-	public Track getTrack(@PathVariable long trackid) throws TrackNotExistsException {
-		return trackService.getById(trackid).orElseThrow(TrackNotExistsException::new);
+	public Track getTrack(@PathVariable long trackId) throws TrackNotExistsException {
+		return trackService.getById(trackId).orElseThrow(TrackNotExistsException::new);
 	}
 
 	@PostMapping("/create")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Internal.class)
 	public Track createTrack(@RequestBody @Valid CreateTrackRequest request) {
 		return trackService.create(request.getTrackName());
 	}
 
-	@PutMapping("/{trackid}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PutMapping("/{trackId}")
 	@JsonView(Views.Internal.class)
-	public Track editTrack(@RequestBody @Valid PutTrackRequest request, @PathVariable long trackid) throws TrackNotExistsException {
-		Track track = trackService.getById(trackid).orElseThrow(TrackNotExistsException::new);
+	public Track editTrack(@RequestBody @Valid PutTrackRequest request, @PathVariable long trackId) throws TrackNotExistsException {
+		Track track = trackService.getById(trackId).orElseThrow(TrackNotExistsException::new);
 		return trackService.editTrack(track, request.getTrackName());
 	}
 
-	@DeleteMapping("/{trackid}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
-	public void deleteTrack(@PathVariable long trackid) throws TrackNotExistsException {
-		Track track = trackService.getById(trackid).orElseThrow(TrackNotExistsException::new);
+	@DeleteMapping("/{trackId}")
+	public void deleteTrack(@PathVariable long trackId) throws TrackNotExistsException {
+		Track track = trackService.getById(trackId).orElseThrow(TrackNotExistsException::new);
 		trackService.delete(track);
 	}
 
 	@GetMapping("/")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
 	public List<Track> getAllTracks() {
 		return trackService.getAllTracks().collect(Collectors.toList());

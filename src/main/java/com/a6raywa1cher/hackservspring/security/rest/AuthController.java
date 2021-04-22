@@ -15,9 +15,9 @@ import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.utils.AuthenticationResolver;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -54,13 +54,12 @@ public class AuthController {
 
 	@GetMapping("/user")
 	@JsonView(Views.DetailedInternal.class)
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	public ResponseEntity<User> getCurrentUser(@Parameter(hidden = true) User user) {
 		return ResponseEntity.ok(user);
 	}
 
 	@PostMapping("/convert")
-	@Operation(security = @SecurityRequirement(name = "basic"))
+	@SecurityRequirements({@SecurityRequirement(name = "basic")})
 	public ResponseEntity<JwtRefreshPair> convertToJwt(HttpServletRequest request, Authentication authentication) {
 		if (authentication instanceof UsernamePasswordAuthenticationToken) {
 			User user = authenticationResolver.getUser();
@@ -74,6 +73,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/get_access")
+	@SecurityRequirements // erase jwt login
 	public ResponseEntity<JwtRefreshPair> getNewJwtToken(@RequestBody @Valid GetNewJwtTokenRequest request) {
 		Optional<RefreshToken> optional = refreshTokenService.getByToken(request.getRefreshToken());
 		if (optional.isEmpty()) {
@@ -85,7 +85,6 @@ public class AuthController {
 	}
 
 	@DeleteMapping("/invalidate")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	public ResponseEntity<Void> invalidateToken(@RequestBody @Valid InvalidateTokenRequest request) {
 		User user = authenticationResolver.getUser();
 		Optional<RefreshToken> optional = refreshTokenService.getByToken(request.getRefreshToken());
@@ -99,7 +98,6 @@ public class AuthController {
 	}
 
 	@DeleteMapping("/invalidate_all")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	public ResponseEntity<Void> invalidateAllTokens() {
 		User user = authenticationResolver.getUser();
 		refreshTokenService.invalidateAll(user);
@@ -107,11 +105,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/link_social")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@Transactional
 	public ResponseEntity<JwtRefreshPair> linkSocialAccounts(@RequestBody LinkSocialAccountsRequest request) {
 		Optional<User> primaryUser = refreshTokenService.getByToken(request.getPrimaryRefreshToken())
-				.flatMap(rt -> Optional.of(rt.getUser()));
+			.flatMap(rt -> Optional.of(rt.getUser()));
 		Optional<JwtToken> optionalJwtToken = jwtTokenService.decode(request.getSecondaryAccessToken());
 		Optional<User> secondaryUser = optionalJwtToken.flatMap(jt -> userService.getById(jt.getUid()));
 		if (primaryUser.isEmpty() || secondaryUser.isEmpty()) {

@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class UserIdRequest {
-
     @NotNull
     private long userId;
-
 }

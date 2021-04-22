@@ -8,7 +8,6 @@ import java.time.LocalDate;
 
 @Data
 public class PutUserInfoRequest {
-
 	@NotBlank
 	@HtmlEscape
 	private String firstName;

@@ -2,7 +2,6 @@ package com.a6raywa1cher.hackservspring.service.impl;
 
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.utils.ServiceUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
@@ -16,13 +15,8 @@ import java.util.UUID;
 
 @Service
 public class DiscServiceImpl implements DiscService {
-
 	@Value("${app.upload-dir}")
 	private String masterPath;
-
-	@Autowired
-	public DiscServiceImpl() {
-	}
 
 	private Path getPath(String relativePath) {
 		return Path.of(masterPath, relativePath);

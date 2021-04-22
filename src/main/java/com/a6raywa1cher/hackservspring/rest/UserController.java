@@ -13,8 +13,7 @@ import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -37,12 +36,12 @@ import java.util.Objects;
 @RequestMapping("/user")
 @Transactional(rollbackOn = Exception.class)
 public class UserController {
-
 	private final UserService userService;
 	private final EmailValidationService emailValidationService;
 	private final DiscService discService;
+
 	@Value("${spring.servlet.multipart.max-file-size}")
-	DataSize maxFileSize;
+	private DataSize maxFileSize;
 
 	public UserController(UserService userService, DiscService discService, EmailValidationService emailValidationService) {
 		this.userService = userService;
@@ -51,7 +50,6 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/{uid}/cv/", produces = "application/octet-stream")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	public ResponseEntity<Resource> getResume(@PathVariable long uid) throws UserNotExistsException {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
@@ -64,7 +62,6 @@ public class UserController {
 	}
 
 	@PostMapping(path = "/{uid}/cv/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public User createResume(@PathVariable long uid, @RequestParam("file") MultipartFile file) throws UserNotExistsException, IOException, FileSizeLimitExceededException {
@@ -80,7 +77,6 @@ public class UserController {
 	}
 
 	@DeleteMapping(value = "/{uid}/cv/")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public User deleteResumeDocument(@PathVariable long uid) throws UserNotExistsException {
@@ -89,6 +85,7 @@ public class UserController {
 	}
 
 	@PostMapping("/create")
+	@SecurityRequirements // erase jwt login
 	@JsonView(Views.DetailedInternal.class)
 	public User createUser(@RequestBody @Valid CreateUserRequest request) throws EmailAlreadyExistsException, MessagingException {
 		if (userService.getByEmail(request.getEmail()).isPresent()) {
@@ -101,14 +98,12 @@ public class UserController {
 	}
 
 	@GetMapping("/{uid}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.Public.class)
 	public User getUserPublic(@PathVariable long uid) throws UserNotExistsException {
 		return userService.getById(uid).orElseThrow(UserNotExistsException::new);
 	}
 
 	@GetMapping("/{uid}/internal")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.Internal.class)
 	public User getUserInternal(@PathVariable long uid) throws UserNotExistsException {
@@ -116,7 +111,6 @@ public class UserController {
 	}
 
 	@PutMapping("/{uid:[0-9]+}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.DetailedInternal.class)
 	public User editUserInfo(@RequestBody @Valid PutUserInfoRequest request, @PathVariable long uid) throws UserNotExistsException {
@@ -129,7 +123,6 @@ public class UserController {
 
 
 	@PostMapping("/{uid:[0-9]+}/email/req")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	@JsonView(Views.Internal.class)
 	public EmailValidationToken sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException, TooManyValidationRequestsExсeption {
@@ -145,7 +138,6 @@ public class UserController {
 
 
 	@PostMapping("/{uid:[0-9]+}/email/validate")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	public void validate(@RequestBody @Valid EmailValidationTokenRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnabledException {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
@@ -163,7 +155,6 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{uid:[0-9]+}/delete")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
 	public void delete(@PathVariable long uid) throws UserNotExistsException {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);

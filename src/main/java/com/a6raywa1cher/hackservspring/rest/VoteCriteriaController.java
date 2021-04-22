@@ -31,18 +31,16 @@ public class VoteCriteriaController {
 		this.trackService = trackService;
 	}
 
-	@GetMapping("/{criteriaid}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@GetMapping("/{criteriaId}")
 	@JsonView(Views.Public.class)
-	public VoteCriteria getCriteria(@PathVariable long criteriaid) throws VoteCriteriaNotExistsException {
-		return criteriaService.getById(criteriaid).orElseThrow(VoteCriteriaNotExistsException::new);
+	public VoteCriteria getCriteria(@PathVariable long criteriaId) throws VoteCriteriaNotExistsException {
+		return criteriaService.getById(criteriaId).orElseThrow(VoteCriteriaNotExistsException::new);
 	}
 
-	@PutMapping(path = "/{criteriaid}")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@PutMapping(path = "/{criteriaId}")
 	@JsonView(Views.DetailedInternal.class)
-	public VoteCriteria editCriteria(@PathVariable long criteriaid, @RequestBody @Valid PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
-		VoteCriteria voteCriteria = criteriaService.getById(criteriaid).orElseThrow(VoteCriteriaNotExistsException::new);
+	public VoteCriteria editCriteria(@PathVariable long criteriaId, @RequestBody @Valid PutVoteCriteriaInfoRequest request) throws VoteCriteriaNotExistsException {
+		VoteCriteria voteCriteria = criteriaService.getById(criteriaId).orElseThrow(VoteCriteriaNotExistsException::new);
 		VoteCriteriaInfo info = new VoteCriteriaInfo();
 		BeanUtils.copyProperties(request, info);
 
@@ -50,17 +48,16 @@ public class VoteCriteriaController {
 	}
 
 	@PostMapping(path = "/create")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
 	@JsonView(Views.DetailedInternal.class)
 	public VoteCriteria createCriteria(@RequestBody @Valid CreateVoteCriteriaRequest request) throws TrackNotExistsException {
 		Track track = trackService.getById(request.getTrackId()).orElseThrow(TrackNotExistsException::new);
 		return criteriaService.create(request.getName(), request.getMaxValue(), track);
 	}
 
-	@DeleteMapping(path = "/{criteriaid}")
+	@DeleteMapping(path = "/{criteriaId}")
 	@Operation(security = @SecurityRequirement(name = "jwt"))
-	public void deleteCriteria(@PathVariable long criteriaid) throws VoteCriteriaNotExistsException {
-		VoteCriteria voteCriteria = criteriaService.getById(criteriaid).orElseThrow(VoteCriteriaNotExistsException::new);
+	public void deleteCriteria(@PathVariable long criteriaId) throws VoteCriteriaNotExistsException {
+		VoteCriteria voteCriteria = criteriaService.getById(criteriaId).orElseThrow(VoteCriteriaNotExistsException::new);
 		criteriaService.deleteCriteria(voteCriteria);
 	}
 }

@@ -1,9 +1,9 @@
 package com.a6raywa1cher.hackservspring.rest;
 
 import com.a6raywa1cher.hackservspring.rest.res.GetConfigResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,9 +11,8 @@ import java.time.Duration;
 
 @RestController
 public class ConfigController {
-
 	@Value("${spring.servlet.multipart.max-file-size}")
-	private String maxFileSize;
+	private DataSize maxFileSize;
 
 	@Value("${app.min-email-req}")
 	private Duration minEmailReq;
@@ -22,11 +21,11 @@ public class ConfigController {
 	private Duration maxEmailDuration;
 
 	@GetMapping("/conf")
-	@Operation(security = @SecurityRequirement(name = "jwt"))
+	@SecurityRequirements // erase jwt login
 	public GetConfigResponse getConfig() {
-
 		GetConfigResponse response = new GetConfigResponse();
-		response.setMaxFileSize(maxFileSize);
+
+		response.setMaxFileSize(maxFileSize.toBytes() + "B");
 		response.setMinEmailReq(minEmailReq.toSeconds());
 		response.setMaxEmailDuration(maxEmailDuration.toSeconds());
 

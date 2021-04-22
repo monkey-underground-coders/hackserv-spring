@@ -8,12 +8,10 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class PutTeamInfoRequest {
-
     @NotBlank
     @HtmlEscape
     private String name;
 
     @NotNull
     private long trackId;
-
 }

@@ -9,12 +9,10 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateTeamRequest {
-
     @NotBlank
     @HtmlEscape
     private String name;
 
     @NotNull
     private long captainId;
-
 }
