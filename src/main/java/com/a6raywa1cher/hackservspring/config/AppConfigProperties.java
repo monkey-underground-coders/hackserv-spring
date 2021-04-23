@@ -28,6 +28,8 @@ public class AppConfigProperties {
 
 	private Boolean emailVerification;
 
+	private Boolean oauthSupport;
+
 	private String redirect;
 
 	@NotNull
@@ -37,6 +39,8 @@ public class AppConfigProperties {
 	private Duration maxEmailDuration;
 
 	private int maxMembersInTeam;
+
+	private String apiEndpoint;
 
 	@Data
 	public static final class FirstAdmin {

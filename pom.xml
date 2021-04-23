@@ -157,6 +157,11 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -167,6 +172,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>**/application*.yml</include>
+                    <include>**/test-application*.yml</include>
                     <include>**/emails/**/*.html</include>
                 </includes>
             </resource>

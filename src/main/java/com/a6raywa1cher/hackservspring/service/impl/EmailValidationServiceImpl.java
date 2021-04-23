@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Service
 public class EmailValidationServiceImpl implements EmailValidationService {
 	private final EmailValidationTokenRepository tokenRepository;
@@ -30,7 +32,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 	@Value("classpath:emails/EmailValidationTemplate.html")
 	private Resource mailHtml;
 
-	@Value("${spring.mail.username}")
+	@Value("${spring.mail.username:}")
 	private String from;
 
 	@Value("${app.min-email-req}")
@@ -75,7 +77,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 		helper.setText(editedMessage, true);
 		helper.setTo(user.getEmail());
 		helper.setSubject("Открой");
-		helper.setFrom(from);
+		if (isNotBlank(from)) helper.setFrom(from);
 		emailSender.send(mimeMessage);
 	}
 

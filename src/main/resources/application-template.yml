@@ -1,0 +1,85 @@
+#app:
+app:
+  upload-dir: /container # absolute path to upload dir
+  version: '@project.version@ c:@git.commit.id.abbrev@_@git.build.time@ b:@maven.build.timestamp@'
+  cors-allowed-origins: [ "*" ]
+  first-admin:
+    email: # REQUIRED first admin email
+    password: # REQUIRED first admin password
+  email-verification: false
+  redirect: http://localhost:8080/ls
+  min-email-req: PT1M
+  max-email-duration: P1D
+  max-members-in-team: 5
+#  api-endpoint: optional field for springdoc
+jwt:
+  max-refresh-tokens-per-user: 10
+  secret: fill-me-later
+  access-duration: PT5M
+  refresh-duration: P90D
+spring:
+  mail:
+    host: # REQUIRED
+    port: # REQUIRED
+    username: # REQUIRED
+    password: # REQUIRED
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  jmx:
+    default-domain: com.a6raywa1cher.hackservspring
+    unique-names: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: # REQUIRED Google OAuth2 clientId
+            clientSecret: # REQUIRED Google OAuth2 clientSecret
+            scope:
+              - openid
+              - email
+              - profile
+          vk:
+            clientId: # REQUIRED VK OAuth2 clientId
+            clientSecret: # REQUIRED VK OAuth2 clientSecret (protected key)
+            scope: 4194304  # email only
+            clientAuthenticationMethod: post
+            authorizationGrantType: authorization_code
+            redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            clientName: vk.com
+          github:
+            clientId: # REQUIRED GitHub OAuth2 clientId
+            clientSecret: # REQUIRED GitHub OAuth2 clientSecret
+            scope:
+              - user:email
+        provider:
+          vk:
+            authorizationUri: https://oauth.vk.com/authorize?v=5.95
+            tokenUri: https://oauth.vk.com/access_token
+            userInfoUri: https://api.vk.com/method/users.get
+            userInfoAuthenticationMethod: form
+            userNameAttribute: user_id
+spring.jackson.mapper.DEFAULT_VIEW_INCLUSION: true
+spring.servlet.multipart.max-file-size: 100MB
+spring.servlet.multipart.max-request-size: 100MB
+# ===============================
+# DB CONNECTION
+# ===============================
+spring.datasource.url: # REQUIRED database jdbc url
+spring.datasource.username: # REQUIRED database username
+spring.datasource.password: # REQUIRED database password
+# ===============================
+# JPA / HIBERNATE
+# ===============================
+spring.jpa.show-sql: false
+spring.jpa.hibernate.ddl-auto: update
+spring.jpa.properties.hibernate.default_schema: public
+spring.jpa.properties.hibernate.dialect: com.a6raywa1cher.hackservspring.utils.hibernate.PostgreSqlDialectFixed
+spring.jpa.properties.hibernate.current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults: false
+springdoc.swagger-ui.path: "/swagger-ui.html"

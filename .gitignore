@@ -131,4 +131,5 @@ fabric.properties
 
 ### PROJECT SPECIFIC ###
 application-*.yml
+!application-template.yml
 container

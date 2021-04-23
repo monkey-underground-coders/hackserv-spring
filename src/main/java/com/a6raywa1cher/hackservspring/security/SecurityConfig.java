@@ -17,6 +17,7 @@ import com.a6raywa1cher.hackservspring.utils.AuthenticationResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -78,6 +79,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${app.email-verification:false}")
 	boolean emailVerification;
 
+	@Value("${app.oauth-support}")
+	boolean oauthSupport;
+
 	@Autowired
 	public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
 	                      AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
@@ -126,17 +130,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/conf").permitAll()
 				.antMatchers(HttpMethod.POST, "/criteria/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.PUT, "/criteria/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.DELETE, "/criteria/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.POST, "/track/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.PUT, "/track/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.DELETE, "/track/**").hasRole("ADMIN")
-				.anyRequest().access("hasRole('USER') && hasAuthority('ENABLED')");
+			.antMatchers(HttpMethod.DELETE, "/criteria/**").hasRole("ADMIN")
+			.antMatchers(HttpMethod.POST, "/track/**").hasRole("ADMIN")
+			.antMatchers(HttpMethod.PUT, "/track/**").hasRole("ADMIN")
+			.antMatchers(HttpMethod.DELETE, "/track/**").hasRole("ADMIN")
+			.anyRequest().access("hasRole('USER') && hasAuthority('ENABLED')");
 		http.cors()
-				.configurationSource(corsConfigurationSource(appConfigProperties));
+			.configurationSource(corsConfigurationSource(appConfigProperties));
 		http.httpBasic()
-				.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+			.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 		http.formLogin();
-		http.oauth2Login()
+		if (oauthSupport) {
+			http.oauth2Login()
 				.successHandler(customAuthenticationSuccessHandler)
 				.userInfoEndpoint()
 				.oidcUserService(oidcUserService)
@@ -144,7 +149,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.tokenEndpoint()
 				.accessTokenResponseClient(accessTokenResponseClient());
-		http.oauth2Client();
+			http.oauth2Client();
+		}
 		http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenService, authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
 		http.addFilterAfter(new LastVisitFilter(userService, authenticationResolver), SecurityContextHolderAwareRequestFilter.class);
 //		http.addFilterBefore(new CriticalActionLimiterFilter(criticalActionLimiterService), JwtAuthenticationFilter.class);
@@ -157,6 +163,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
+	@ConditionalOnProperty(prefix = "app", name = "oauth-support", havingValue = "true")
 	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
 		DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient =
 				new DefaultAuthorizationCodeTokenResponseClient();
