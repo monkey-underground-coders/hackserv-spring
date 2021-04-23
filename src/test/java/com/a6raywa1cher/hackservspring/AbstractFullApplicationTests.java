@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @AutoConfigureMockMvc
 @SpringBootTest
-public abstract class AbstractFullApplicationTest {
+public abstract class AbstractFullApplicationTests {
 	public static final String AUTHORIZATION = "Authorization";
 
 	@Autowired
@@ -122,6 +122,13 @@ public abstract class AbstractFullApplicationTest {
 			.content(
 				objectMapper.writeValueAsString(body)
 			));
+	}
+
+	protected void register(String email, String password) throws Exception {
+		userCreate(new CreateUserRequest(email, password))
+			.andExpect(status().isOk());
+
+		login(email, password);
 	}
 
 	// ================================================================================================
