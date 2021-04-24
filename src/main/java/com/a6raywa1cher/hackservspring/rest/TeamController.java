@@ -1,6 +1,7 @@
 package com.a6raywa1cher.hackservspring.rest;
 
 
+import com.a6raywa1cher.hackservspring.aspects.annotations.OnlyOnRegistration;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
@@ -65,6 +66,7 @@ public class TeamController {
 
 	@GetMapping("/")
 	@JsonView(Views.Public.class)
+	@OnlyOnRegistration
 	@PageableAsQueryParam
 	public Page<Team> getPage(@RequestParam(required = false) String with, @Parameter(hidden = true) Pageable pageable) {
 		return teamService.getPage(with, pageable);
