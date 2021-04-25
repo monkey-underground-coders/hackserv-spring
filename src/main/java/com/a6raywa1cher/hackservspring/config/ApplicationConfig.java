@@ -1,7 +1,7 @@
 package com.a6raywa1cher.hackservspring.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -22,8 +22,8 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-//	@ConditionalOnProperty(prefix = "app", name = "email-verification", havingValue = "false")
-	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = "app", name = "email-verification", havingValue = "false")
+//	@ConditionalOnMissingBean
 	public JavaMailSender javaMailSender() {
 		return new JavaMailSenderImpl();
 	}
