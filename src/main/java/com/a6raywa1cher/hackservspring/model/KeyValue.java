@@ -9,11 +9,11 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class Configuration {
+public class KeyValue {
 
 	@Id
 	private String key;
 
-	@Column
+	@Column(nullable = false)
 	private String value;
 }
