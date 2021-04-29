@@ -47,8 +47,8 @@ public class ConfigController {
 		return response;
 	}
 
-	@PutMapping
-	public GetConfigResponse SetHackState(@RequestBody @Valid PutHackStateRequest request) {
+	@PutMapping("/conf/hack_state")
+	public GetConfigResponse setHackState(@RequestBody @Valid PutHackStateRequest request) {
 		hackStateService.set(request.getHackState());
 		return this.getConfig();
 	}

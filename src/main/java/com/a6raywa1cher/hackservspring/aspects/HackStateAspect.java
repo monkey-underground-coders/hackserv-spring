@@ -16,11 +16,11 @@ import java.util.Set;
 
 @Aspect
 @Component
-public class StateAspect {
+public class HackStateAspect {
 
 	private final HackStateService hackStateService;
 
-	public StateAspect(HackStateService hackStateService) {
+	public HackStateAspect(HackStateService hackStateService) {
 		this.hackStateService = hackStateService;
 	}
 
