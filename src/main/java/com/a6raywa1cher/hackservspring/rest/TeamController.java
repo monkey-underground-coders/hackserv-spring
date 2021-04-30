@@ -1,6 +1,5 @@
 package com.a6raywa1cher.hackservspring.rest;
 
-
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;

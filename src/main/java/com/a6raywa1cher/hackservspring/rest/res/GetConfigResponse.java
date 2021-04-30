@@ -10,4 +10,6 @@ public class GetConfigResponse {
 	private Long minEmailReq;
 
 	private Long maxEmailDuration;
+
+	private String currentHackState;
 }
