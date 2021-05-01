@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 		user.setEmail(email);
 		user.setPassword(password != null ? passwordEncoder.encode(password) : null);
+		user.setUserState(UserState.REGISTERED);
 
 		user.setUserRole(userRole);
 		user.setCreatedAt(ZonedDateTime.now());

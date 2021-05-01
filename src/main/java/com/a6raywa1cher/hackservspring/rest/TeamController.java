@@ -86,7 +86,7 @@ public class TeamController {
 	public Team submitTeam(@PathVariable long teamId) {
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
 		for (User user : team.getMembers()) {
-			if (!user.getUserState().equals(UserState.REGISTERED)) {
+			if (!user.getUserState().equals(UserState.FILLED_FORM)) {
 				throw new UserNotFilledFormException();
 			}
 			userService.editUserStare(user, UserState.SUBMITTED);
@@ -100,9 +100,6 @@ public class TeamController {
 	public Team approveTeam(@PathVariable long teamId) {
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
 		for (User user : team.getMembers()) {
-			if (!user.getUserState().equals(UserState.SUBMITTED)) {
-				throw new UserNotSubmittedException();
-			}
 			userService.editUserStare(user, UserState.APPROVED);
 		}
 		return team;
