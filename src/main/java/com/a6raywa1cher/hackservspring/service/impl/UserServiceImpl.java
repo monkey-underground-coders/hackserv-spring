@@ -2,6 +2,7 @@ package com.a6raywa1cher.hackservspring.service.impl;
 
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
+import com.a6raywa1cher.hackservspring.model.UserState;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
@@ -141,6 +142,12 @@ public class UserServiceImpl implements UserService {
 			case GITHUB -> user.setGithubId(vendorSub);
 			default -> throw new RuntimeException();
 		}
+		return repository.save(user);
+	}
+
+	@Override
+	public User editUserStare(User user, UserState userState) {
+		user.setUserState(userState);
 		return repository.save(user);
 	}
 

@@ -25,6 +25,15 @@ public class MvcAccessChecker {
 		this.userService = userService;
 		this.teamService = teamService;
 	}
+	// ----------------------------------------- checkUserIsAdmin-------------------------------------------------------
+
+	public boolean checkUserIsAdmin(User requester) {
+		return requester.getUserRole() == UserRole.ADMIN;
+	}
+
+	public boolean checkUserIsAdmin() {
+		return checkUserIsAdmin(getCurrentUser());
+	}
 
 	// ----------------------------------------- checkUserInternalInfoAccess -------------------------------------------
 

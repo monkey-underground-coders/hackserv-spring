@@ -64,6 +64,10 @@ public class User {
 	@JsonView(Views.Public.class)
 	private UserRole userRole;
 
+	@Column
+	@JsonView(Views.Public.class)
+	private UserState userState;
+
 	@OneToOne(cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private EmailValidationToken emailValidationToken;
