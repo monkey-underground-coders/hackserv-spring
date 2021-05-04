@@ -164,7 +164,7 @@ public class UserController {
 		if (!user.getUserState().equals(UserState.REGISTERED)) {
 			throw new UserIsNotRegisteredException();
 		}
-		return userService.editUserStare(user, UserState.FILLED_FORM);
+		return userService.editUserState(user, UserState.FILLED_FORM);
 	}
 
 	@PostMapping("/{uid:[0-9]+}/change_state")
@@ -172,7 +172,7 @@ public class UserController {
 	@JsonView(Views.Internal.class)
 	public User changeUserSate(@RequestBody @Valid UserStateRequest request, @PathVariable long uid) {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
-		return userService.editUserStare(user, request.getUserState());
+		return userService.editUserState(user, request.getUserState());
 	}
 
 	@DeleteMapping("/{uid:[0-9]+}/delete")

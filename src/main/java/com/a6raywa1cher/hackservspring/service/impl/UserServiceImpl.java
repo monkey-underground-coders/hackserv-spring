@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User editUserStare(User user, UserState userState) {
+	public User editUserState(User user, UserState userState) {
 		user.setUserState(userState);
 		return repository.save(user);
 	}

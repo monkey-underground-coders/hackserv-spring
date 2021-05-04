@@ -1,6 +1,9 @@
 package com.a6raywa1cher.hackservspring.rest;
 
-import com.a6raywa1cher.hackservspring.model.*;
+import com.a6raywa1cher.hackservspring.model.Team;
+import com.a6raywa1cher.hackservspring.model.Track;
+import com.a6raywa1cher.hackservspring.model.User;
+import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
@@ -85,13 +88,8 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	public Team submitTeam(@PathVariable long teamId) {
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
-		for (User user : team.getMembers()) {
-			if (!user.getUserState().equals(UserState.FILLED_FORM)) {
-				throw new UserNotFilledFormException();
-			}
-			userService.editUserStare(user, UserState.SUBMITTED);
-		}
-		return team;
+		teamService.submitTeamMembers(team).orElseThrow(UserNotFilledFormException::new);
+		return teamService.submitTeamMembers(team).orElseThrow(UserNotFilledFormException::new);
 	}
 
 	@PostMapping("/{teamId:[0-9]+}/approve")
@@ -99,10 +97,7 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	public Team approveTeam(@PathVariable long teamId) {
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
-		for (User user : team.getMembers()) {
-			userService.editUserStare(user, UserState.APPROVED);
-		}
-		return team;
+		return teamService.approveTeamMembers(team);
 	}
 
 

@@ -36,7 +36,7 @@ public interface UserService {
 
 	User setVendorSub(User user, VendorId vendorId, String vendorSub);
 
-	User editUserStare(User user, UserState userState);
+	User editUserState(User user, UserState userState);
 
 	Optional<User> findFirstByUserRole(UserRole role);
 
