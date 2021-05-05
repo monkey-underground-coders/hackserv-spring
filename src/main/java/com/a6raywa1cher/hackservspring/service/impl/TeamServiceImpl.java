@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring.service.impl;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
+import com.a6raywa1cher.hackservspring.model.UserState;
 import com.a6raywa1cher.hackservspring.model.repo.TeamRepository;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.service.TeamService;
@@ -64,6 +65,28 @@ public class TeamServiceImpl implements TeamService {
 	@Override
 	public Optional<Team> getTeamRequestForUser(User user) {
 		return teamRepository.findTeamRequestForUser(user);
+	}
+
+	@Override
+	public Team submitTeamMembers(Team team) {
+		for (User user : team.getMembers()) {
+			if (user.getUserState().equals(UserState.FILLED_FORM)) {
+				user.setUserState(UserState.SUBMITTED);
+				userRepository.save(user);
+			}
+		}
+		return team;
+	}
+
+	@Override
+	public Team approveTeamMembers(Team team) {
+		for (User user : team.getMembers()) {
+			if (user.getUserState().equals(UserState.SUBMITTED)) {
+				user.setUserState(UserState.APPROVED);
+				userRepository.save(user);
+			}
+		}
+		return team;
 	}
 
 	@Override

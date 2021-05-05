@@ -2,6 +2,7 @@ package com.a6raywa1cher.hackservspring.service;
 
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
+import com.a6raywa1cher.hackservspring.model.UserState;
 import com.a6raywa1cher.hackservspring.model.VendorId;
 import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 
@@ -36,6 +37,8 @@ public interface UserService {
 	User setLastVisitAt(User user, ZonedDateTime at);
 
 	User setVendorSub(User user, VendorId vendorId, String vendorSub);
+
+	User editUserState(User user, UserState userState);
 
 	Optional<User> findFirstByUserRole(UserRole role);
 

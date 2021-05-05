@@ -61,8 +61,14 @@ public class User {
 	private String password;
 
 	@Column
+	@Enumerated(EnumType.STRING)
 	@JsonView(Views.Public.class)
 	private UserRole userRole;
+
+	@Column
+	@Enumerated(EnumType.STRING)
+	@JsonView(Views.Public.class)
+	private UserState userState;
 
 	@OneToOne(cascade = CascadeType.REMOVE)
 	@JsonIgnore
