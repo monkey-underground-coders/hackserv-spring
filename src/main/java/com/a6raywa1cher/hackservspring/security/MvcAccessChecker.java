@@ -73,6 +73,9 @@ public class MvcAccessChecker {
 			return true;
 		}
 		Optional<Team> optionalTeam = teamService.getById(teamId);
+		if (optionalTeam.isEmpty()) {
+			return true; // 404 error will be thrown by the controller
+		}
 		return teamService.isUserInRequestList(optionalTeam.get(), requester) || requester.getTeam().getId().equals(teamId);
 	}
 

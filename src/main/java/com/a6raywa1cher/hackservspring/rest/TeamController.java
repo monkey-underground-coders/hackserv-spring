@@ -85,10 +85,8 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	public Team submitTeam(@PathVariable long teamId) {
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
-		for (User user : team.getMembers()) {
-			if (!user.getUserState().equals(UserState.FILLED_FORM)) {
-				throw new UserNotFilledFormException();
-			}
+		if (team.getMembers().stream().noneMatch(u -> u.getUserState().equals(UserState.FILLED_FORM))) {
+			throw new UserNotFilledFormException();
 		}
 		return teamService.submitTeamMembers(team);
 	}

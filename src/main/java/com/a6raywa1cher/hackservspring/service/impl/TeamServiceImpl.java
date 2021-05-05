@@ -70,8 +70,10 @@ public class TeamServiceImpl implements TeamService {
 	@Override
 	public Team submitTeamMembers(Team team) {
 		for (User user : team.getMembers()) {
-			user.setUserState(UserState.SUBMITTED);
-			userRepository.save(user);
+			if (user.getUserState().equals(UserState.FILLED_FORM)) {
+				user.setUserState(UserState.SUBMITTED);
+				userRepository.save(user);
+			}
 		}
 		return team;
 	}
@@ -79,8 +81,10 @@ public class TeamServiceImpl implements TeamService {
 	@Override
 	public Team approveTeamMembers(Team team) {
 		for (User user : team.getMembers()) {
-			user.setUserState(UserState.APPROVED);
-			userRepository.save(user);
+			if (user.getUserState().equals(UserState.SUBMITTED)) {
+				user.setUserState(UserState.APPROVED);
+				userRepository.save(user);
+			}
 		}
 		return team;
 	}
