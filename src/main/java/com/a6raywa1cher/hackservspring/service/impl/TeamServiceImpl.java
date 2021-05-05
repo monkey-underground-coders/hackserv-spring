@@ -68,15 +68,12 @@ public class TeamServiceImpl implements TeamService {
 	}
 
 	@Override
-	public Optional<Team> submitTeamMembers(Team team) {
+	public Team submitTeamMembers(Team team) {
 		for (User user : team.getMembers()) {
-			if (!user.getUserState().equals(UserState.FILLED_FORM)) {
-				return Optional.empty();
-			}
 			user.setUserState(UserState.SUBMITTED);
 			userRepository.save(user);
 		}
-		return Optional.of(team);
+		return team;
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public interface TeamService {
 
 	Optional<Team> getTeamRequestForUser(User user);
 
-	Optional<Team> submitTeamMembers(Team team);
+	Team submitTeamMembers(Team team);
 
 	Team approveTeamMembers(Team team);
 

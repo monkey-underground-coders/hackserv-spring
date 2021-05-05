@@ -1,9 +1,6 @@
 package com.a6raywa1cher.hackservspring.rest;
 
-import com.a6raywa1cher.hackservspring.model.Team;
-import com.a6raywa1cher.hackservspring.model.Track;
-import com.a6raywa1cher.hackservspring.model.User;
-import com.a6raywa1cher.hackservspring.model.UserRole;
+import com.a6raywa1cher.hackservspring.model.*;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateTeamRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutTeamInfoRequest;
@@ -88,9 +85,14 @@ public class TeamController {
 	@JsonView(Views.Internal.class)
 	public Team submitTeam(@PathVariable long teamId) {
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
-		teamService.submitTeamMembers(team).orElseThrow(UserNotFilledFormException::new);
-		return teamService.submitTeamMembers(team).orElseThrow(UserNotFilledFormException::new);
+		for (User user : team.getMembers()) {
+			if (!user.getUserState().equals(UserState.FILLED_FORM)) {
+				throw new UserNotFilledFormException();
+			}
+		}
+		return teamService.submitTeamMembers(team);
 	}
+
 
 	@PostMapping("/{teamId:[0-9]+}/approve")
 	@PreAuthorize("@mvcAccessChecker.checkUserIsAdmin()")
