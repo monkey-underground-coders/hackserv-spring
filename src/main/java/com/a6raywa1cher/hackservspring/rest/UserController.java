@@ -3,10 +3,12 @@ package com.a6raywa1cher.hackservspring.rest;
 import com.a6raywa1cher.hackservspring.model.EmailValidationToken;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
+import com.a6raywa1cher.hackservspring.model.UserState;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
 import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
 import com.a6raywa1cher.hackservspring.rest.req.EmailValidationTokenRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
+import com.a6raywa1cher.hackservspring.rest.req.UserStateRequest;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.service.UserService;
@@ -152,6 +154,25 @@ public class UserController {
 			throw new TokenIsWrongException();
 		}
 		userService.editEmailValidated(user, true);
+	}
+
+	@PostMapping("/{uid:[0-9]+}/user_filled_form")
+	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
+	@JsonView(Views.Internal.class)
+	public User userFilledForm(@PathVariable long uid) {
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
+		if (!user.getUserState().equals(UserState.REGISTERED)) {
+			throw new UserIsNotRegisteredException();
+		}
+		return userService.editUserState(user, UserState.FILLED_FORM);
+	}
+
+	@PostMapping("/{uid:[0-9]+}/change_state")
+	@PreAuthorize("@mvcAccessChecker.checkUserIsAdmin()")
+	@JsonView(Views.Internal.class)
+	public User changeUserSate(@RequestBody @Valid UserStateRequest request, @PathVariable long uid) {
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
+		return userService.editUserState(user, request.getUserState());
 	}
 
 	@DeleteMapping("/{uid:[0-9]+}/delete")
