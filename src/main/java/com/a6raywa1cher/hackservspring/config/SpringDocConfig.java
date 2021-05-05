@@ -40,6 +40,7 @@ public class SpringDocConfig {
 			)
 			.addSecurityItem(new SecurityRequirement()
 				.addList("jwt")
+				.addList("basic")
 			);
 		if (apiEndpoint != null) {
 			openAPI = openAPI

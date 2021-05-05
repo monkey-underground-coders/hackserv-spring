@@ -48,6 +48,12 @@ public class UserServiceImpl implements UserService {
 		return create(userRole, email, password, null, null);
 	}
 
+	@Override
+	public Optional<User> getByEmailAndPassword(String email, String password) {
+		return repository.findByEmail(email)
+			.filter(u -> passwordEncoder.matches(password, u.getPassword()));
+	}
+
 	private User create(UserRole userRole, String email, String password, VendorId vendorId, String vendorSub) {
 		User user = new User();
 		user.setEmail(email);

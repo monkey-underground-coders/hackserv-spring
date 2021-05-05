@@ -3,10 +3,8 @@ package com.a6raywa1cher.hackservspring.security;
 import com.a6raywa1cher.hackservspring.config.AppConfigProperties;
 import com.a6raywa1cher.hackservspring.security.authentication.CustomAuthenticationEntryPoint;
 import com.a6raywa1cher.hackservspring.security.authentication.CustomAuthenticationSuccessHandler;
-import com.a6raywa1cher.hackservspring.security.component.DefaultUserEnabledChecker;
-import com.a6raywa1cher.hackservspring.security.component.EmailBasedUserEnabledChecker;
+import com.a6raywa1cher.hackservspring.security.component.GrantedAuthorityService;
 import com.a6raywa1cher.hackservspring.security.component.LastVisitFilter;
-import com.a6raywa1cher.hackservspring.security.component.UserEnabledChecker;
 import com.a6raywa1cher.hackservspring.security.jwt.JwtAuthenticationFilter;
 import com.a6raywa1cher.hackservspring.security.jwt.service.BlockedRefreshTokensService;
 import com.a6raywa1cher.hackservspring.security.jwt.service.JwtTokenService;
@@ -76,8 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final BlockedRefreshTokensService blockedRefreshTokensService;
 
-	@Value("${app.email-verification:false}")
-	boolean emailVerification;
+	private final GrantedAuthorityService grantedAuthorityService;
 
 	@Value("${app.oauth-support}")
 	boolean oauthSupport;
@@ -88,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	                      PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
 	                      @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
 	                      @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
-	                      CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+	                      CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler, GrantedAuthorityService grantedAuthorityService) {
 		this.userService = userService;
 		this.appConfigProperties = appConfigProperties;
 		this.jwtTokenService = jwtTokenService;
@@ -98,13 +95,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		this.oidcUserService = oidcUserService;
 		this.oAuth2UserService = oAuth2UserService;
 		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+		this.grantedAuthorityService = grantedAuthorityService;
 	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) {
 		auth
-				.authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService, userEnabledChecker()))
-				.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder, userEnabledChecker()));
+			.authenticationProvider(new JwtAuthenticationProvider(userService, blockedRefreshTokensService, grantedAuthorityService))
+			.authenticationProvider(new UsernamePasswordAuthenticationProvider(userService, passwordEncoder, grantedAuthorityService));
 	}
 
 	@Override
@@ -113,15 +111,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests()
-				.antMatchers("/oauth2/**", "/error", "/login").permitAll()
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.antMatchers("/").permitAll()
-				.antMatchers("/user/create").permitAll()
-				.antMatchers("/v3/api-docs/**", "/webjars/**", "/swagger-resources", "/swagger-resources/**",
-					"/swagger-ui.html", "/swagger-ui/**").permitAll()
+			.antMatchers("/oauth2/**", "/error", "/login").permitAll()
+			.antMatchers(HttpMethod.OPTIONS).permitAll()
+			.antMatchers("/").permitAll()
+			.antMatchers("/user/create").permitAll()
+			.antMatchers("/v3/api-docs/**", "/webjars/**", "/swagger-resources", "/swagger-resources/**",
+				"/swagger-ui.html", "/swagger-ui/**").permitAll()
 			.antMatchers("/csrf").permitAll()
 			.antMatchers("/ws-entry").permitAll()
-			.antMatchers("/auth/convert").hasAuthority(SecurityConstants.CONVERTIBLE)
+			.antMatchers("/auth/convert").permitAll()
 			.antMatchers("/auth/get_access").permitAll()
 			.antMatchers("/auth/**").authenticated()
 			.antMatchers("/favicon.ico").permitAll()
@@ -209,14 +207,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
-	}
-
-	@Bean
-	public UserEnabledChecker userEnabledChecker() {
-		if (emailVerification) {
-			return new EmailBasedUserEnabledChecker();
-		} else {
-			return new DefaultUserEnabledChecker();
-		}
 	}
 }

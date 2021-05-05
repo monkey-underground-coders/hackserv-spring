@@ -15,6 +15,8 @@ public interface UserService {
 
 	User create(UserRole userRole, String email, String password);
 
+	Optional<User> getByEmailAndPassword(String email, String password);
+
 	Optional<User> getById(Long id);
 
 	Stream<User> getById(Collection<Long> ids);

@@ -11,16 +11,15 @@ import com.a6raywa1cher.hackservspring.security.rest.exc.SameUserTokensProvidedE
 import com.a6raywa1cher.hackservspring.security.rest.req.GetNewJwtTokenRequest;
 import com.a6raywa1cher.hackservspring.security.rest.req.InvalidateTokenRequest;
 import com.a6raywa1cher.hackservspring.security.rest.req.LinkSocialAccountsRequest;
+import com.a6raywa1cher.hackservspring.security.rest.req.LoginRequest;
 import com.a6raywa1cher.hackservspring.service.UserService;
 import com.a6raywa1cher.hackservspring.utils.AuthenticationResolver;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,17 +58,18 @@ public class AuthController {
 	}
 
 	@PostMapping("/convert")
-	@SecurityRequirements({@SecurityRequirement(name = "basic")})
-	public ResponseEntity<JwtRefreshPair> convertToJwt(HttpServletRequest request, Authentication authentication) {
-		if (authentication instanceof UsernamePasswordAuthenticationToken) {
-			User user = authenticationResolver.getUser();
-			JwtRefreshPair pair = jwtRefreshPairService.issue(user);
-			SecurityContextHolder.clearContext();
-			request.getSession().invalidate();
-			return ResponseEntity.ok(pair);
-		} else {
-			return ResponseEntity.badRequest().build();
+	@SecurityRequirements // erase jwt login
+	public ResponseEntity<JwtRefreshPair> convertToJwt(@RequestBody @Valid LoginRequest loginRequest,
+	                                                   HttpServletRequest request) {
+		Optional<User> optional = userService.getByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+		if (optional.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+		User user = optional.get();
+		JwtRefreshPair pair = jwtRefreshPairService.issue(user);
+		SecurityContextHolder.clearContext();
+		request.getSession().invalidate();
+		return ResponseEntity.ok(pair);
 	}
 
 	@PostMapping("/get_access")
