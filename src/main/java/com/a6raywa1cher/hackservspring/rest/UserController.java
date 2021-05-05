@@ -16,6 +16,7 @@ import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -163,6 +164,12 @@ public class UserController {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 		if (!user.getUserState().equals(UserState.REGISTERED)) {
 			throw new UserIsNotRegisteredException();
+		}
+
+		if (StringUtils.isBlank(user.getFirstName()) || StringUtils.isBlank(user.getLastName()) ||
+			StringUtils.isBlank(user.getTelegram()) || user.getDateOfBirth() == null ||
+			StringUtils.isBlank(user.getWorkPlace())) {
+			throw new UserNotFilledFormException();
 		}
 		return userService.editUserState(user, UserState.FILLED_FORM);
 	}
