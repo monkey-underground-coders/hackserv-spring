@@ -166,9 +166,8 @@ public class UserController {
 			throw new UserIsNotRegisteredException();
 		}
 
-		if (StringUtils.isBlank(user.getFirstName()) || StringUtils.isBlank(user.getLastName()) ||
-			StringUtils.isBlank(user.getTelegram()) || user.getDateOfBirth() == null ||
-			StringUtils.isBlank(user.getWorkPlace())) {
+		if (StringUtils.isAnyBlank(user.getFirstName(), user.getLastName(), user.getTelegram(), user.getWorkPlace()) ||
+			user.getDateOfBirth() == null) {
 			throw new UserNotFilledFormException();
 		}
 		return userService.editUserState(user, UserState.FILLED_FORM);
