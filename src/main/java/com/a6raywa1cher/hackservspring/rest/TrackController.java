@@ -25,7 +25,7 @@ public class TrackController {
 	}
 
 	@GetMapping("/{trackId}")
-	@JsonView(Views.Public.class)
+	@JsonView(Views.Detailed.class)
 	public Track getTrack(@PathVariable long trackId) throws TrackNotExistsException {
 		return trackService.getById(trackId).orElseThrow(TrackNotExistsException::new);
 	}

@@ -1,8 +1,8 @@
 package com.a6raywa1cher.hackservspring.model;
 
 import com.a6raywa1cher.hackservspring.utils.Views;
+import com.a6raywa1cher.hackservspring.utils.jackson.JsonViewOrId;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
@@ -32,7 +32,6 @@ public class Track {
 	private List<VoteCriteria> criteriaList;
 
 	@OneToMany(mappedBy = "track")
-	@JsonView(Views.Public.class)
-	@JsonIdentityReference(alwaysAsId = true)
+	@JsonViewOrId(Views.Detailed.class)
 	private List<Team> teams;
 }

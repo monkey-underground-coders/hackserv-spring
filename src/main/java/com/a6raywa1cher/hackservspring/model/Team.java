@@ -12,9 +12,9 @@ import java.util.List;
 @Entity
 @Data
 @JsonIdentityInfo(
-		generator = ObjectIdGenerators.PropertyGenerator.class,
-		property = "id")
-@ToString(exclude = {"members"})
+	generator = ObjectIdGenerators.PropertyGenerator.class,
+	property = "id")
+@ToString(exclude = {"members", "captain"})
 public class Team {
 	@Id
 	@GeneratedValue

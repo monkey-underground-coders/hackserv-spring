@@ -58,7 +58,7 @@ public class TeamController {
 	public Team getTeam(@PathVariable long teamId) throws TeamNotExistsException {
 		return teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
 	}
-	
+
 	@GetMapping("/{teamId:[0-9]+}/internal")
 	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamId)")
 	@JsonView(Views.Internal.class)

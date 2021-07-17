@@ -1,6 +1,5 @@
 package com.a6raywa1cher.hackservspring.rest.req;
 
-import com.a6raywa1cher.hackservspring.utils.jackson.HtmlEscape;
 import lombok.Data;
 
 import javax.validation.constraints.Past;
@@ -10,13 +9,13 @@ import java.time.LocalDate;
 
 @Data
 public class PutUserInfoRequest {
-	@HtmlEscape
+	@Size(max = 250)
 	private String firstName;
 
-	@HtmlEscape
+	@Size(max = 250)
 	private String middleName;
 
-	@HtmlEscape
+	@Size(max = 250)
 	private String lastName;
 
 	@Pattern(regexp = "^@(?=\\w{5,64}\\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$")
@@ -26,14 +25,12 @@ public class PutUserInfoRequest {
 	@Past
 	private LocalDate dateOfBirth;
 
-	@HtmlEscape
+	@Size(max = 250)
 	private String workPlace;
 
 	@Size(max = 5000)
-	@HtmlEscape
 	private String resume;
 
 	@Size(max = 5000)
-	@HtmlEscape
 	private String otherInfo;
 }
