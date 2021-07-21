@@ -1,6 +1,5 @@
 package com.a6raywa1cher.hackservspring.rest;
 
-import com.a6raywa1cher.hackservspring.model.EmailValidationToken;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.UserState;
@@ -127,16 +126,13 @@ public class UserController {
 
 	@PostMapping("/{uid:[0-9]+}/email/req")
 	@PreAuthorize("@mvcAccessChecker.checkUserInternalInfoAccess(#uid)")
-	@JsonView(Views.Internal.class)
-	public EmailValidationToken sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException, TooManyValidationRequestsExсeption {
+	public void sendEmailValidationToken(@PathVariable long uid) throws MessagingException, UserNotExistsException, TooManyValidationRequestsExсeption {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
 		if (emailValidationService.isLastSendWasRecently(user)) {
 			throw new TooManyValidationRequestsExсeption();
 		}
 		emailValidationService.createToken(user);
 		emailValidationService.sendMassage(user);
-
-		return user.getEmailValidationToken();
 	}
 
 
