@@ -4,10 +4,9 @@ import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.UserState;
 import com.a6raywa1cher.hackservspring.rest.exc.*;
-import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
-import com.a6raywa1cher.hackservspring.rest.req.EmailValidationTokenRequest;
-import com.a6raywa1cher.hackservspring.rest.req.PutUserInfoRequest;
-import com.a6raywa1cher.hackservspring.rest.req.UserStateRequest;
+import com.a6raywa1cher.hackservspring.rest.req.*;
+import com.a6raywa1cher.hackservspring.security.jwt.JwtRefreshPair;
+import com.a6raywa1cher.hackservspring.security.jwt.service.JwtRefreshPairService;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.service.UserService;
@@ -41,14 +40,17 @@ public class UserController {
 	private final UserService userService;
 	private final EmailValidationService emailValidationService;
 	private final DiscService discService;
+	private final JwtRefreshPairService jwtRefreshPairService;
 
 	@Value("${spring.servlet.multipart.max-file-size}")
 	private DataSize maxFileSize;
 
-	public UserController(UserService userService, DiscService discService, EmailValidationService emailValidationService) {
+	public UserController(UserService userService, DiscService discService,
+						  EmailValidationService emailValidationService, JwtRefreshPairService jwtRefreshPairService) {
 		this.userService = userService;
 		this.emailValidationService = emailValidationService;
 		this.discService = discService;
+		this.jwtRefreshPairService = jwtRefreshPairService;
 	}
 
 	@GetMapping(value = "/{uid}/cv/", produces = "application/octet-stream")
@@ -151,6 +153,26 @@ public class UserController {
 			throw new TokenIsWrongException();
 		}
 		userService.editEmailValidated(user, true);
+		emailValidationService.delete(user);
+	}
+
+	@PostMapping("/{uid:[0-9]+}/email/validateById")
+	@SecurityRequirements // erase jwt login
+	public JwtRefreshPair validateById(@RequestBody @Valid EmailValidationTokenIdRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnabledException {
+		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
+
+		if (user.getEmailValidationToken() == null) {
+			throw new TokenNotExistsException();
+		}
+		if (!emailValidationService.isTokenEnable(user)) {
+			throw new TokenIsNotEnabledException();
+		}
+		if (!emailValidationService.checkToken(user, request.getId())) {
+			throw new TokenIsWrongException();
+		}
+		userService.editEmailValidated(user, true);
+		emailValidationService.delete(user);
+		return jwtRefreshPairService.issue(user);
 	}
 
 	@PostMapping("/{uid:[0-9]+}/user_filled_form")

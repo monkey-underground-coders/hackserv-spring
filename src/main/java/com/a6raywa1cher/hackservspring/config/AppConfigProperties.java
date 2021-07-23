@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.time.Duration;
 
 @Component
@@ -41,6 +42,8 @@ public class AppConfigProperties {
 	private int maxMembersInTeam;
 
 	private String apiEndpoint;
+
+	private URI emailValidationBaseLink;
 
 	@Data
 	public static final class FirstAdmin {

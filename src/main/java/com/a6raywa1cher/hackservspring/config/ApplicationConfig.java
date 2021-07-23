@@ -40,7 +40,7 @@ public class ApplicationConfig {
 
 			@Override
 			public void send(MimeMessage mimeMessage) throws MailException {
-
+				int a = 0;
 			}
 
 			@Override

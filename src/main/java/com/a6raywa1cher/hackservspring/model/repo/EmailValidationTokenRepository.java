@@ -4,11 +4,9 @@ import com.a6raywa1cher.hackservspring.model.EmailValidationToken;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface EmailValidationTokenRepository extends PagingAndSortingRepository<EmailValidationToken, Long> {
-
-	Optional<EmailValidationToken> findByToken(int token);
+public interface EmailValidationTokenRepository extends PagingAndSortingRepository<EmailValidationToken, UUID> {
 
 }

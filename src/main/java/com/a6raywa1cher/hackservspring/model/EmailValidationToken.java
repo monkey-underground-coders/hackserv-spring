@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -15,7 +16,7 @@ public class EmailValidationToken {
 
 	@Id
 	@GeneratedValue
-	private Long id;
+	private UUID id;
 
 	@Column
 	private int token;

@@ -6,19 +6,25 @@ import com.a6raywa1cher.hackservspring.model.repo.EmailValidationTokenRepository
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.utils.ResourceReader;
+import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -41,6 +47,9 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 	@Value("${app.max-email-duration}")
 	private Duration maxEmailDuration;
 
+	@Value("${app.email-validation-base-link}")
+	private URI emailValidationBaseLink;
+
 	@Autowired
 	public EmailValidationServiceImpl(EmailValidationTokenRepository tokenRepository, UserRepository userRepository, JavaMailSender emailSender) {
 		this.tokenRepository = tokenRepository;
@@ -50,7 +59,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 
 
 	@Override
-	public Optional<EmailValidationToken> getById(Long id) {
+	public Optional<EmailValidationToken> getById(UUID id) {
 		return tokenRepository.findById(id);
 	}
 
@@ -70,10 +79,17 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 
 	@Override
 	public void sendMassage(User user) throws MessagingException {
-
 		MimeMessage mimeMessage = emailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-		String editedMessage = String.format(ResourceReader.asString(mailHtml), user.getEmailValidationToken().getToken());
+		String template = ResourceReader.asString(mailHtml);
+		EmailValidationToken validationToken = user.getEmailValidationToken();
+		StringSubstitutor sub = new StringSubstitutor(Map.of(
+			"token", validationToken.getToken(),
+			"link", UriComponentsBuilder.fromUri(emailValidationBaseLink)
+				.queryParam("id", validationToken.getId().toString())
+				.build().toString()
+		));
+		String editedMessage = sub.replace(template);
 		helper.setText(editedMessage, true);
 		helper.setTo(user.getEmail());
 		helper.setSubject("Открой");
@@ -84,6 +100,11 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 	@Override
 	public boolean checkToken(User user, int token) {
 		return user.getEmailValidationToken().getToken() == token;
+	}
+
+	@Override
+	public boolean checkToken(User user, UUID id) {
+		return Objects.equals(user.getEmailValidationToken().getId(), id);
 	}
 
 	@Override
@@ -107,5 +128,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 	public void delete(User user) {
 		EmailValidationToken token = user.getEmailValidationToken();
 		tokenRepository.delete(token);
+		user.setEmailValidationToken(null);
+		userRepository.save(user);
 	}
 }

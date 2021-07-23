@@ -12,6 +12,7 @@ app:
   max-email-duration: P1D
   max-members-in-team: 5
 #  api-endpoint: optional field for springdoc
+  email-validation-base-link: http://localhost:3000/user/email-link
 jwt:
   max-refresh-tokens-per-user: 10
   secret: fill-me-later
