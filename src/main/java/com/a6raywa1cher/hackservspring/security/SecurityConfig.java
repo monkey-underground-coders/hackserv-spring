@@ -125,7 +125,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/favicon.ico").permitAll()
 			.antMatchers("/user/{uid:[0-9]+}/email/req").hasRole("USER")
 			.antMatchers("/user/{uid:[0-9]+}/email/validate").hasRole("USER")
-			.antMatchers("/user/{uid:[0-9]+}/email/validateById").permitAll()
+			.antMatchers("/user/{uid:[0-9]+}/email/validate_by_id").permitAll()
 			.antMatchers(HttpMethod.GET, "/conf").permitAll()
 			.antMatchers(HttpMethod.PUT, "/conf/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.POST, "/criteria/**").hasRole("ADMIN")
