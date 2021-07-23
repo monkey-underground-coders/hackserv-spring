@@ -87,6 +87,7 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 			"token", validationToken.getToken(),
 			"link", UriComponentsBuilder.fromUri(emailValidationBaseLink)
 				.queryParam("id", validationToken.getId().toString())
+				.queryParam("user", user.getId())
 				.build().toString()
 		));
 		String editedMessage = sub.replace(template);

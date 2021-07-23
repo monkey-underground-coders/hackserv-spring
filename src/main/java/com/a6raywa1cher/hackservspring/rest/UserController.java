@@ -156,7 +156,7 @@ public class UserController {
 		emailValidationService.delete(user);
 	}
 
-	@PostMapping("/{uid:[0-9]+}/email/validateById")
+	@PostMapping("/{uid:[0-9]+}/email/validate_by_id")
 	@SecurityRequirements // erase jwt login
 	public JwtRefreshPair validateById(@RequestBody @Valid EmailValidationTokenIdRequest request, @PathVariable long uid) throws UserNotExistsException, TokenIsWrongException, TokenIsNotEnabledException {
 		User user = userService.getById(uid).orElseThrow(UserNotExistsException::new);
