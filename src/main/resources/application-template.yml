@@ -2,7 +2,7 @@
 app:
   upload-dir: /container # absolute path to upload dir
   version: '@project.version@ c:@git.commit.id.abbrev@_@git.build.time@ b:@maven.build.timestamp@'
-  cors-allowed-origins: [ "*" ]
+  cors-allowed-origins: [ "http://localhost:8080", "http://localhost:3000" ]
   first-admin:
     email: # REQUIRED first admin email
     password: # REQUIRED first admin password

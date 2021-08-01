@@ -81,11 +81,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public SecurityConfig(UserService userService, JwtTokenService jwtTokenService,
-	                      AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
-	                      PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
-	                      @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
-	                      @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
-	                      CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler, GrantedAuthorityService grantedAuthorityService) {
+						  AuthenticationResolver authenticationResolver, AppConfigProperties appConfigProperties,
+						  PasswordEncoder passwordEncoder, BlockedRefreshTokensService blockedRefreshTokensService,
+						  @Qualifier("oidc-user-service") OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService,
+						  @Qualifier("oauth2-user-service") OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
+						  CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler, GrantedAuthorityService grantedAuthorityService) {
 		this.userService = userService;
 		this.appConfigProperties = appConfigProperties;
 		this.jwtTokenService = jwtTokenService;
@@ -109,7 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests()
 			.antMatchers("/oauth2/**", "/error", "/login").permitAll()
 			.antMatchers(HttpMethod.OPTIONS).permitAll()
@@ -128,8 +128,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/user/{uid:[0-9]+}/email/validate_by_id").permitAll()
 			.antMatchers(HttpMethod.GET, "/conf").permitAll()
 			.antMatchers(HttpMethod.PUT, "/conf/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.POST, "/criteria/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.PUT, "/criteria/**").hasRole("ADMIN")
+			.antMatchers(HttpMethod.POST, "/criteria/**").hasRole("ADMIN")
+			.antMatchers(HttpMethod.PUT, "/criteria/**").hasRole("ADMIN")
 			.antMatchers(HttpMethod.DELETE, "/criteria/**").hasRole("ADMIN")
 			.antMatchers(HttpMethod.POST, "/track/**").hasRole("ADMIN")
 			.antMatchers(HttpMethod.PUT, "/track/**").hasRole("ADMIN")
@@ -166,11 +166,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@ConditionalOnProperty(prefix = "app", name = "oauth-support", havingValue = "true")
 	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
 		DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient =
-				new DefaultAuthorizationCodeTokenResponseClient();
+			new DefaultAuthorizationCodeTokenResponseClient();
 		accessTokenResponseClient.setRequestEntityConverter(new OAuth2AuthorizationCodeGrantRequestEntityConverter());
 
 		OAuth2AccessTokenResponseHttpMessageConverter tokenResponseHttpMessageConverter =
-				new OAuth2AccessTokenResponseHttpMessageConverter();
+			new OAuth2AccessTokenResponseHttpMessageConverter();
 		tokenResponseHttpMessageConverter.setTokenResponseConverter(map -> {
 			String accessToken = map.get(OAuth2ParameterNames.ACCESS_TOKEN);
 
@@ -181,8 +181,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			map.forEach(additionalParameters::put);
 
 			OAuth2AccessTokenResponse.Builder builder = OAuth2AccessTokenResponse.withToken(accessToken)
-					.tokenType(accessTokenType)
-					.additionalParameters(additionalParameters);
+				.tokenType(accessTokenType)
+				.additionalParameters(additionalParameters);
 			if (map.containsKey(OAuth2ParameterNames.EXPIRES_IN)) {
 				long expiresIn = Long.parseLong(map.get(OAuth2ParameterNames.EXPIRES_IN));
 				builder.expiresIn(expiresIn);
@@ -191,7 +191,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			return builder.build();
 		});
 		RestTemplate restTemplate = new RestTemplate(Arrays.asList(
-				new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
+			new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
 		restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
 
 		accessTokenResponseClient.setRestOperations(restTemplate);

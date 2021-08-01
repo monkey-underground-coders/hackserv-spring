@@ -2,13 +2,14 @@
 app:
   upload-dir: /container # absolute path to upload dir
   version: '@project.version@ c:@git.commit.id.abbrev@_@git.build.time@ b:@maven.build.timestamp@'
-  cors-allowed-origins: [ "*" ]
+  cors-allowed-origins: [ "http://localhost:8080", "http://localhost:3000" ]
   email-verification: false
   oauth-support: false
   redirect: http://localhost:8080/ls
   min-email-req: PT1M
   max-email-duration: P1D
   max-members-in-team: 5
+  email-validation-base-link: http://localhost:3000/user/email-link
 jwt:
   max-refresh-tokens-per-user: 10
   secret: fill-me-later

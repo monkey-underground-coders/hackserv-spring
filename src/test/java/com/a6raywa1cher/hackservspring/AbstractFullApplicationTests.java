@@ -3,6 +3,7 @@ package com.a6raywa1cher.hackservspring;
 import com.a6raywa1cher.hackservspring.rest.req.CreateUserRequest;
 import com.a6raywa1cher.hackservspring.rest.req.EmailValidationTokenRequest;
 import com.a6raywa1cher.hackservspring.security.jwt.service.JwtTokenService;
+import com.a6raywa1cher.hackservspring.security.rest.req.LoginRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.a6raywa1cher.hackservspring.TestUtils.base64Encode;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,11 +51,11 @@ public abstract class AbstractFullApplicationTests {
 	protected Long uid = null;
 
 	protected String getJwt(String email, String password) throws Exception {
-		String authorization = "basic " + base64Encode(email + ":" + password);
+//		String authorization = "basic " + base64Encode(email + ":" + password);
 		MvcResult result = mvc.perform(
 			post("/auth/convert")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header(AUTHORIZATION, authorization))
+				.content(objectMapper.writeValueAsString(new LoginRequest(email, password))))
 			.andExpect(status().isOk())
 			.andReturn();
 		JsonNode objectNode = objectMapper.readTree(result.getResponse().getContentAsString());
