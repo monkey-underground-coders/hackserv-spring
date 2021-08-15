@@ -75,7 +75,7 @@ public class User {
 	private EmailValidationToken emailValidationToken;
 
 	@Column
-	@JsonView(Views.Public.class)
+	@JsonView(Views.Internal.class)
 	private boolean emailValidated;
 
 	@Column
@@ -92,10 +92,12 @@ public class User {
 
 	@ManyToOne
 	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
 	private Team team;
 
 	@ManyToOne
 	@JsonView(Views.Public.class)
+	@JsonIdentityReference(alwaysAsId = true)
 	private Team request;
 
 	@OneToMany(mappedBy = "judge")
@@ -138,6 +140,7 @@ public class User {
 
 	}
 
+	@JsonView(Views.Internal.class)
 	public String getFullName() {
 		List<String> segments = new ArrayList<>(3);
 		if (lastName != null) segments.add(lastName);
