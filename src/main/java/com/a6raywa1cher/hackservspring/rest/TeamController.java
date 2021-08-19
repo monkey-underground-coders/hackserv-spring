@@ -134,8 +134,8 @@ public class TeamController {
 
 
 	@PostMapping("/{teamId:[0-9]+}/accept")
-	@JsonView(Views.Internal.class)
 	@PreAuthorize("@mvcAccessChecker.checkUserIsOwnerOfTeam(#teamId)")
+	@JsonView(Views.Internal.class)
 	public Team acceptUser(@RequestBody @Valid UserIdRequest request, @PathVariable long teamId) {
 		User user = userService.getById(request.getUserId()).orElseThrow(UserNotExistsException::new);
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);
@@ -166,6 +166,7 @@ public class TeamController {
 
 	@DeleteMapping("/{teamId:[0-9]+}/del_member")
 	@PreAuthorize("@mvcAccessChecker.checkMemberOfTeamOrRequested(#teamId)")
+	@JsonView(Views.DetailedInternal.class)
 	public Team deleteMember(@RequestBody @Valid UserIdRequest request, @PathVariable long teamId, @Parameter(hidden = true) User requester) {
 		User user = userService.getById(request.getUserId()).orElseThrow(UserNotExistsException::new);
 		Team team = teamService.getById(teamId).orElseThrow(TeamNotExistsException::new);

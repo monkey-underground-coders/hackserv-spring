@@ -29,7 +29,8 @@ public class JsonViewOrIdJsonSerializer extends StdSerializer<Object> implements
 
 	@SneakyThrows
 	private void serializeObject(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-		if (parameterView.isAssignableFrom(serializers.getActiveView())) {
+		Class<?> activeView = serializers.getActiveView();
+		if (activeView != null && parameterView.isAssignableFrom(activeView)) {
 			serializers.defaultSerializeValue(value, gen);
 		} else {
 			Long id = (Long) value.getClass().getMethod("getId").invoke(value);
