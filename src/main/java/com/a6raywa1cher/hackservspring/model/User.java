@@ -41,15 +41,15 @@ public class User {
 	private String documentResumePath;
 
 	@Column(name = "google_id", unique = true)
-	@JsonView(Views.Internal.class)
+	@JsonIgnore
 	private String googleId;
 
 	@Column(name = "vk_id", unique = true)
-	@JsonView(Views.Internal.class)
+	@JsonIgnore
 	private String vkId;
 
 	@Column(name = "github_id", unique = true)
-	@JsonView(Views.Internal.class)
+	@JsonIgnore
 	private String githubId;
 
 	@Column(name = "email", nullable = false, length = 1024, unique = true)
@@ -150,5 +150,20 @@ public class User {
 			return "";
 		}
 		return String.join(" ", segments);
+	}
+
+	@JsonView(Views.Internal.class)
+	public boolean isGoogleConnected() {
+		return googleId != null;
+	}
+
+	@JsonView(Views.Internal.class)
+	public boolean isVkConnected() {
+		return vkId != null;
+	}
+
+	@JsonView(Views.Internal.class)
+	public boolean isGithubConnected() {
+		return githubId != null;
 	}
 }
