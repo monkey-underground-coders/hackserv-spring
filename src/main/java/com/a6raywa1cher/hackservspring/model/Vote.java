@@ -5,18 +5,26 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"criteria_id", "judge_id", "team_id"})
+	@UniqueConstraint(columnNames = {"criteria_id", "judge_id", "team_id"})
 })
 @JsonIdentityInfo(
-		generator = ObjectIdGenerators.PropertyGenerator.class,
-		property = "id")
+	generator = ObjectIdGenerators.PropertyGenerator.class,
+	property = "id")
 public class Vote {
 	@Id
 	@GeneratedValue
@@ -41,4 +49,17 @@ public class Vote {
 	@Column(nullable = false)
 	@JsonView(Views.Public.class)
 	private int vote;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Vote vote = (Vote) o;
+		return Objects.equals(id, vote.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }

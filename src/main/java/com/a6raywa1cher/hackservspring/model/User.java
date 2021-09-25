@@ -2,30 +2,30 @@ package com.a6raywa1cher.hackservspring.model;
 
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
+@ToString
 @Builder
 @Table(uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"google_id", "email"}),
-		@UniqueConstraint(columnNames = {"vk_id", "email"}),
-		@UniqueConstraint(columnNames = {"github_id", "email"}),
+	@UniqueConstraint(columnNames = {"google_id", "email"}),
+	@UniqueConstraint(columnNames = {"vk_id", "email"}),
+	@UniqueConstraint(columnNames = {"github_id", "email"}),
 })
 @JsonIdentityInfo(
-		generator = ObjectIdGenerators.PropertyGenerator.class,
+	generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "id")
-@ToString(exclude = {"votings"})
 public class User {
 	@Id
 	@GeneratedValue
@@ -102,6 +102,7 @@ public class User {
 
 	@OneToMany(mappedBy = "judge")
 	@JsonIgnore
+	@ToString.Exclude
 	private List<Vote> votings;
 
 	@Column
@@ -165,5 +166,18 @@ public class User {
 	@JsonView(Views.Internal.class)
 	public boolean isGithubConnected() {
 		return githubId != null;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		User user = (User) o;
+		return Objects.equals(id, user.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
 	}
 }

@@ -65,11 +65,8 @@ public class EmailValidationServiceImpl implements EmailValidationService {
 
 	@Override
 	public void createToken(User user) {
-		EmailValidationToken token = new EmailValidationToken();
 		int tokenInt = 100000 + secureRandom.nextInt(900000);
-		token.setToken(tokenInt);
-		token.setCreatedAt(ZonedDateTime.now());
-		EmailValidationToken saved = tokenRepository.save(token);
+		EmailValidationToken saved = tokenRepository.save(new EmailValidationToken(tokenInt));
 		if (user.getEmailValidationToken() != null) {
 			tokenRepository.delete(user.getEmailValidationToken());
 		}

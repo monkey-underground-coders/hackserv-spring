@@ -3,39 +3,46 @@ package com.a6raywa1cher.hackservspring.model;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.a6raywa1cher.hackservspring.utils.jackson.JsonViewOrId;
 import com.fasterxml.jackson.annotation.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
 @JsonIdentityInfo(
 	generator = ObjectIdGenerators.PropertyGenerator.class,
 	property = "id")
-@ToString(exclude = {"members", "captain"})
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 public class Team {
 	@Id
 	@GeneratedValue
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@Column
+	@Column(nullable = false, unique = true)
 	@JsonView(Views.Public.class)
 	private String name;
 
 	@OneToMany(mappedBy = "team")
 	@JsonViewOrId(Views.DetailedInternal.class)
+	@ToString.Exclude
 	private List<User> members;
-
 
 	@OneToMany(mappedBy = "request")
 	@JsonViewOrId(Views.DetailedInternal.class)
+	@ToString.Exclude
 	private List<User> requests;
 
-	@OneToOne
+	@OneToOne(optional = false)
 	@JsonView(Views.Public.class)
 	@JsonIdentityReference(alwaysAsId = true)
 	private User captain;
@@ -49,4 +56,17 @@ public class Team {
 	@JsonView(Views.Public.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private ZonedDateTime createdAt;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Team team = (Team) o;
+		return Objects.equals(id, team.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }

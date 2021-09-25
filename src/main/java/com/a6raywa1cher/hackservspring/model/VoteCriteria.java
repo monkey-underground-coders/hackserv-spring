@@ -2,18 +2,24 @@ package com.a6raywa1cher.hackservspring.model;
 
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 @JsonIdentityInfo(
-		generator = ObjectIdGenerators.PropertyGenerator.class,
-		property = "id")
-@ToString(exclude = {"voteList"})
+	generator = ObjectIdGenerators.PropertyGenerator.class,
+	property = "id")
 public class VoteCriteria {
 	@Id
 	@GeneratedValue
@@ -40,5 +46,19 @@ public class VoteCriteria {
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE, mappedBy = "criteria")
 	@JsonView(Views.Public.class)
 	@JsonIgnore
+	@ToString.Exclude
 	private List<Vote> voteList;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		VoteCriteria that = (VoteCriteria) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }
