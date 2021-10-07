@@ -1,7 +1,6 @@
 package com.a6raywa1cher.hackservspring.model;
 
 import com.a6raywa1cher.hackservspring.utils.Views;
-import com.a6raywa1cher.hackservspring.utils.jackson.JsonViewOrId;
 import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +32,14 @@ public class Team {
 	private String name;
 
 	@OneToMany(mappedBy = "team")
-	@JsonViewOrId(Views.DetailedInternal.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	@JsonView(Views.Internal.class)
 	@ToString.Exclude
 	private List<User> members;
 
 	@OneToMany(mappedBy = "request")
-	@JsonViewOrId(Views.DetailedInternal.class)
+	@JsonIdentityReference(alwaysAsId = true)
+	@JsonView(Views.Internal.class)
 	@ToString.Exclude
 	private List<User> requests;
 
@@ -67,6 +68,6 @@ public class Team {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return Objects.hash(id, name);
 	}
 }

@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
+import com.a6raywa1cher.hackservspring.dto.TeamInfo;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
@@ -7,7 +8,6 @@ import com.a6raywa1cher.hackservspring.model.UserState;
 import com.a6raywa1cher.hackservspring.model.repo.TeamRepository;
 import com.a6raywa1cher.hackservspring.model.repo.UserRepository;
 import com.a6raywa1cher.hackservspring.service.TeamService;
-import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

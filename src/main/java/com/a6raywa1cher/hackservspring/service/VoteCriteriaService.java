@@ -1,8 +1,8 @@
 package com.a6raywa1cher.hackservspring.service;
 
+import com.a6raywa1cher.hackservspring.dto.VoteCriteriaInfo;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.VoteCriteria;
-import com.a6raywa1cher.hackservspring.service.dto.VoteCriteriaInfo;
 
 import java.util.Collection;
 import java.util.Optional;

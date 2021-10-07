@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.service.impl;
 
+import com.a6raywa1cher.hackservspring.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.UserState;
@@ -9,7 +10,6 @@ import com.a6raywa1cher.hackservspring.security.jwt.service.RefreshTokenService;
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.TeamService;
 import com.a6raywa1cher.hackservspring.service.UserService;
-import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

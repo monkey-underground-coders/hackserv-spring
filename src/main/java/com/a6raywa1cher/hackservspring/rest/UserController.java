@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.rest;
 
+import com.a6raywa1cher.hackservspring.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.model.User;
 import com.a6raywa1cher.hackservspring.model.UserRole;
 import com.a6raywa1cher.hackservspring.model.UserState;
@@ -10,7 +11,6 @@ import com.a6raywa1cher.hackservspring.security.jwt.service.JwtRefreshPairServic
 import com.a6raywa1cher.hackservspring.service.DiscService;
 import com.a6raywa1cher.hackservspring.service.EmailValidationService;
 import com.a6raywa1cher.hackservspring.service.UserService;
-import com.a6raywa1cher.hackservspring.service.dto.UserInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;

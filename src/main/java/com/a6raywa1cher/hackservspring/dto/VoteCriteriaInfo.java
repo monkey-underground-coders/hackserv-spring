@@ -1,4 +1,4 @@
-package com.a6raywa1cher.hackservspring.service.dto;
+package com.a6raywa1cher.hackservspring.dto;
 
 import lombok.Data;
 

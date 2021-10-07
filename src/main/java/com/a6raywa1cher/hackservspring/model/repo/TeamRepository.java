@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends PagingAndSortingRepository<Team, Long> {
-
 	@Query("from Team team where ?1 member of team.requests")
 	Optional<Team> findTeamRequestForUser(User user);
 

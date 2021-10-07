@@ -1,9 +1,9 @@
 package com.a6raywa1cher.hackservspring.service;
 
+import com.a6raywa1cher.hackservspring.dto.TeamInfo;
 import com.a6raywa1cher.hackservspring.model.Team;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.User;
-import com.a6raywa1cher.hackservspring.service.dto.TeamInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

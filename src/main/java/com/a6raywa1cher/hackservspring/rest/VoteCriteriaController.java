@@ -1,5 +1,6 @@
 package com.a6raywa1cher.hackservspring.rest;
 
+import com.a6raywa1cher.hackservspring.dto.VoteCriteriaInfo;
 import com.a6raywa1cher.hackservspring.model.Track;
 import com.a6raywa1cher.hackservspring.model.VoteCriteria;
 import com.a6raywa1cher.hackservspring.rest.exc.TrackNotExistsException;
@@ -8,7 +9,6 @@ import com.a6raywa1cher.hackservspring.rest.req.CreateVoteCriteriaRequest;
 import com.a6raywa1cher.hackservspring.rest.req.PutVoteCriteriaInfoRequest;
 import com.a6raywa1cher.hackservspring.service.TrackService;
 import com.a6raywa1cher.hackservspring.service.VoteCriteriaService;
-import com.a6raywa1cher.hackservspring.service.dto.VoteCriteriaInfo;
 import com.a6raywa1cher.hackservspring.utils.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
